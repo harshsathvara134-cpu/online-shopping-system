@@ -1,0 +1,148 @@
+/* Modern Auth CSS */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary: #3498db;
+    --primary-gradient: linear-gradient(135deg, #3498db 0%, #8e44ad 100%);
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.9);
+    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+body {
+    font-family: 'Outfit', sans-serif !important;
+    background: var(--bg-gradient) !important;
+}
+
+.limiter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container-login100 {
+    background: transparent !important;
+    max-width: 1200px;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex !important;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.login100-more {
+    width: 60% !important;
+    display: block !important;
+}
+
+.wrap-login100 {
+    width: 40% !important;
+    background: var(--glass) !important;
+    padding: 60px 40px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.login100-form-title {
+    font-weight: 700;
+    font-size: 32px !important;
+    color: #2c3e50 !important;
+    margin-bottom: 40px;
+    text-align: center !important;
+}
+
+.wrap-input100 {
+    border-bottom: 2px solid #e0e0e0 !important;
+    margin-bottom: 30px !important;
+    transition: 0.3s;
+}
+
+.wrap-input100:hover, .wrap-input100:focus-within {
+    border-bottom-color: var(--primary) !important;
+}
+
+.label-input100 {
+    color: #7f8c8d !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input100 {
+    font-size: 18px !important;
+    color: #34495e !important;
+    padding: 10px 0 !important;
+    height: auto !important;
+}
+
+.wrap-login100-form-btn {
+    width: 100%;
+    border-radius: 12px !important;
+}
+
+.login100-form-bgbtn {
+    background: var(--primary-gradient) !important;
+}
+
+.login100-form-btn {
+    height: 55px !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.txt3 {
+    color: #34495e !important;
+    font-weight: 500 !important;
+    transition: 0.3s;
+}
+
+.txt3:hover {
+    color: var(--primary) !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.wrap-login100 {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Checkout Modernization */
+.container-checkout {
+    background: var(--white) !important;
+    border: none !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+    padding: 30px !important;
+}
+
+.checkout-btn {
+    background: var(--primary-gradient) !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 15px !important;
+    transition: 0.3s !important;
+}
+
+.checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+@media (max-width: 991px) {
+    .login100-more {
+        display: none !important;
+    }
+    .wrap-login100 {
+        width: 100% !important;
+    }
+}
