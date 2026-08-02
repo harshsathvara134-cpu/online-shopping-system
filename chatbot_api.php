@@ -102,14 +102,15 @@ function extractKeyword($msg_lower) {
 }
 
 // ===== CATEGORY KEYWORD MAP =====
+// Database Categories: 1: Electronics, 2: Ladies Wears, 3: Mens Wear, 4: Kids Wear, 5: Furnitures, 6: Home Appliances, 7: Sports
 $cat_keywords = [
-    'phone'      => 1, 'mobile'     => 1, 'smartphone' => 1,
-    'laptop'     => 2, 'computer'   => 2, 'pc'         => 2,
-    'fashion'    => 3, 'cloth'      => 3, 'shirt'      => 3, 'dress'  => 3, 'wear' => 3,
-    'furniture'  => 4, 'sofa'       => 4, 'table'      => 4, 'chair'  => 4,
-    'appliance'  => 5, 'kitchen'    => 5, 'fridge'     => 5, 'washing' => 5,
-    'sport'      => 6, 'fitness'    => 6, 'gym'        => 6,
-    'electronic' => 7, 'gadget'     => 7, 'camera'     => 7, 'headphone' => 7, 'earphone' => 7,
+    'electronic' => 1, 'electronics' => 1, 'gadget' => 1, 'phone' => 1, 'mobile' => 1, 'smartphone' => 1, 'laptop' => 1, 'computer' => 1, 'pc' => 1, 'camera' => 1, 'headphone' => 1, 'earphone' => 1,
+    'ladies'     => 2, 'women'       => 2, 'dress'  => 2, 'saree' => 2,
+    'men'        => 3, 'mens'        => 3, 'shirt'  => 3, 'pant'  => 3, 'hoodie' => 3,
+    'kids'       => 4, 'kid'         => 4, 'toy'    => 4, 'baby'  => 4,
+    'furniture'  => 5, 'furnitures'  => 5, 'sofa'   => 5, 'table' => 5, 'chair'  => 5, 'bed' => 5,
+    'appliance'  => 6, 'appliances'  => 6, 'fridge' => 6, 'kitchen' => 6, 'washing' => 6, 'refrigerator' => 6,
+    'sport'      => 7, 'sports'      => 7, 'fitness' => 7, 'gym'   => 7, 'ball'  => 7,
 ];
 
 // ===== INTENT DETECTION & REPLIES =====

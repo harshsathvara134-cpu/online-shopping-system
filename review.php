@@ -27,11 +27,11 @@ if (isset($_POST["review"])) {
 			'$review','$datetime', '$rating')";
 			
 			if(mysqli_query($con,$sql)){
-				echo "Thanks for Better reach ";
-				echo "<script> location.href='product.php?q=$product_id'; </script>";
-				exit;
+				echo "<div class='alert alert-success'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a><b>Thank you for your review!</b></div>";
+				exit();
 			}else {
-				echo "something went wrong";
+				echo "<div class='alert alert-danger'><a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a><b>Something went wrong. Please try again!</b></div>";
+				exit();
 			}
 		}
 	

@@ -1,5 +1,6 @@
 <?php
 include 'header.php';
+$cat_id = isset($_GET['cat_id']) ? intval($_GET['cat_id']) : (isset($_GET['cid']) ? intval($_GET['cid']) : 0);
 ?>
      
       <div class="main main-raised"> 
@@ -87,7 +88,7 @@ include 'header.php';
 						<div class="col-md-12 col-xs-12" id="product_msg">
 					</div>
 							<!-- product -->
-							<div id="get_product" cid="1">
+							<div id="get_product" cid="<?php echo $cat_id; ?>">
 							<!--Here we get product jquery Ajax Request-->
 						</div>
 							

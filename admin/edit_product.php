@@ -31,6 +31,7 @@ if ($product_id > 0) {
         $p_title = $row['product_title'];
         $p_desc = $row['product_desc'];
         $p_price = $row['product_price'];
+        $p_qty = $row['product_qty'];
         $p_cat = $row['product_cat']; // Store ID instead of string now
         $p_brand = $row['product_brand']; // Store ID instead of string now
         $p_keywords = $row['product_keywords'];

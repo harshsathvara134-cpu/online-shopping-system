@@ -239,7 +239,7 @@ if (isset($_POST["login_user_with_product"])) {
             $(document).ajaxComplete(function(event, xhr, settings) {
                 if (settings.url === "login.php") {
                     var data = xhr.responseText;
-                    if(data != "login_success" && data != "cart_login") {
+                    if(data != "login_success" && data != "cart_login" && data != "admin_login_success") {
                         $("#error_alert").show();
                         $("#e_msg").html(data);
                     } else {

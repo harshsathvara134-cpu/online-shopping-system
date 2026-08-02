@@ -21,7 +21,7 @@ include "header.php";
                 <ul class="cartWrap">
                 <?php
                 if (isset($_SESSION["uid"])) {
-                    $sql="SELECT c.order_id,c.payment_method,a.product_id,a.product_title,a.product_price,a.product_image,b.qty,b.amt,c.total_amt FROM products a,order_products b,orders_info c WHERE a.product_id=b.product_id AND c.user_id='$_SESSION[uid]' AND b.order_id=c.order_id ORDER BY `c`.`order_id` DESC";
+                    $sql="SELECT c.order_id,c.payment_method,a.product_id,a.product_title,a.product_price,a.product_image,b.qty,b.amt,c.total_amt FROM products a,order_products b,orders_info c WHERE a.product_id=b.product_id AND c.user_id='{$_SESSION['uid']}' AND b.order_id=c.order_id ORDER BY `c`.`order_id` DESC";
                     $query = mysqli_query($con,$sql);
                     //display cart item in dropdown menu
                     
@@ -141,7 +141,20 @@ include "header.php";
                             
                         }
                     }else{
+                        echo '<div style="text-align:center; padding:60px 20px;">
+                            <i class="fa fa-cube" style="font-size:64px; color:#ccc; margin-bottom:20px;"></i>
+                            <h3 style="color:#555;">No orders found!</h3>
+                            <p style="color:#888;">You haven\'t placed any orders yet.</p>
+                            <a href="store.php" class="btn btn-primary" style="margin-top:15px; padding:10px 30px; background:#2874f0; border:none; color:#fff; border-radius:4px; text-decoration:none; display:inline-block;">Explore Products</a>
+                        </div>';
                     }
+                } else {
+                    echo '<div style="text-align:center; padding:60px 20px;">
+                        <i class="fa fa-user-circle-o" style="font-size:64px; color:#ccc; margin-bottom:20px;"></i>
+                        <h3 style="color:#555;">Please Sign In</h3>
+                        <p style="color:#888;">Log in to view your orders and track delivery status.</p>
+                        <a href="signin_form.php" class="btn btn-primary" style="margin-top:15px; padding:10px 30px; background:#2874f0; border:none; color:#fff; border-radius:4px; text-decoration:none; display:inline-block;">Sign In Now</a>
+                    </div>';
                 }
                 ?>
                 

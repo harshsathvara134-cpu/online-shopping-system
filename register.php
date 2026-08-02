@@ -77,6 +77,7 @@ if(empty($f_name) || empty($l_name) || empty($email) || empty($password) || empt
 				<b>password is not same</b>
 			</div>
 		";
+		exit();
 	}
 	if(!preg_match($number,$mobile)){
 		echo "
@@ -127,7 +128,7 @@ if(empty($f_name) || empty($l_name) || empty($email) || empty($password) || empt
 		if(mysqli_stmt_execute($stmt)){
 			$_SESSION["uid"] = mysqli_insert_id($con);
 			$_SESSION["name"] = $f_name;
-			$ip_add = getenv("REMOTE_ADDR");
+			$ip_add = $_SERVER['REMOTE_ADDR'] ?? getenv("REMOTE_ADDR") ?? '127.0.0.1';
 			
 			$update_cart = "UPDATE cart SET user_id = ? WHERE ip_add=? AND user_id = -1";
 			$stmt_cart = mysqli_prepare($con, $update_cart);

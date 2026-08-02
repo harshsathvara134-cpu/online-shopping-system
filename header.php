@@ -329,7 +329,7 @@ require_once __DIR__ . "/session_bootstrap.php";
 			width: 100%;
 		}
 
-		.side-cart_subtotal div {
+		.side-cart-subtotal div {
 			font-size: 11px;
 			color: #111;
 			font-weight: 500;

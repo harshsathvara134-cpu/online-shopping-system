@@ -47,15 +47,15 @@ if(isset($_POST["review_action"]) && isset($_POST["proId"])){
             
             
             echo'<ul class="rating">';
-                $stars=array();
-                $total_stars= 0;
-                $rat=1;
+                $stars = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0);
+                $total_stars = 0;
+                $rat = 1;
                 while ($rat <= 5){
-                        $rating_query = "SELECT  COUNT(*) as count FROM reviews WHERE product_id='$p_id' AND rating='$rat'";
+                        $rating_query = "SELECT COUNT(*) as count FROM reviews WHERE product_id='$p_id' AND rating='$rat'";
                         $run_query = mysqli_query($con,$rating_query);
                         $row = mysqli_fetch_array($run_query);
-                        if($row > 0){
-                            $stars[$rat]= $row['count'];
+                        if($row && isset($row['count'])){
+                            $stars[$rat] = intval($row['count']);
                             $total_stars += $stars[$rat];
                         }
                         $rat++;

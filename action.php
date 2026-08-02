@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/session_bootstrap.php";
-$ip_add = getenv("REMOTE_ADDR");
+$ip_add = $_SERVER['REMOTE_ADDR'] ?? getenv("REMOTE_ADDR") ?? '127.0.0.1';
 include "db.php";
 
 if (isset($_POST["category"])) {
@@ -825,9 +825,9 @@ if (isset($_POST["wishListCommon"])) {
 							</td>
                             <input type="hidden" name="product_id[]" value="' . $product_id . '"/>
 				            <input type="hidden" name="" value="' . $wishlist_item_id . '"/>
-							<td data-th="Price"><input type="text" class="form-control price" value="' . $product_price . '" readonly="readonly"></td>
+							<td data-th="Price"><input type="text" class="form-control price" value="' . rupee($product_price) . '" readonly="readonly"></td>
 							
-							<td data-th="Subtotal" class="text-center"><input type="text" class="form-control total" value="' . $product_price . '" readonly="readonly"></td>
+							<td data-th="Subtotal" class="text-center"><input type="text" class="form-control total" value="' . rupee($product_price) . '" readonly="readonly"></td>
 							<td class="actions" data-th="">
 							<div class="btn-group">
 								
@@ -836,7 +836,7 @@ if (isset($_POST["wishListCommon"])) {
 							</div>							
 							</td>
 							<td class="actions" data-th="">
-							<a href="#" id="product" pid="' . $product_id . '" class="btn btn-success">Move to Cart</a>
+							<a href="#" id="product" pid="' . $product_id . '" class="add-to-cart-btn btn btn-success">Move to Cart</a>
 							</td>
 						</tr>
 					
