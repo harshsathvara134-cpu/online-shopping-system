@@ -45,7 +45,7 @@ $result = mysqli_query($con, $sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories - JAYVEER Commerce</title>
+    <title>Categories - NexusMart Enterprise</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -186,10 +186,10 @@ $result = mysqli_query($con, $sql);
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <i class="fa-brands fa-envira text-green logo-icon"></i>
+                <i class="fa-solid fa-bag-shopping text-green logo-icon"></i>
                 <div>
-                    <h2>JAYVEER</h2>
-                    <p>COMMERCE</p>
+                    <h2>NexusMart</h2>
+                    <p>ENTERPRISE</p>
                 </div>
             </div>
 

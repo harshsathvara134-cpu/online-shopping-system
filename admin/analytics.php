@@ -30,7 +30,7 @@ $total_orders = $order_row['total'] ?? 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - JAYVEER Commerce</title>
+    <title>Analytics - NexusMart Enterprise</title>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="analytics.css">
@@ -42,10 +42,10 @@ $total_orders = $order_row['total'] ?? 0;
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <i class="fa-brands fa-envira text-green logo-icon"></i>
+                <i class="fa-solid fa-bag-shopping text-green logo-icon"></i>
                 <div>
-                    <h2>JAYVEER</h2>
-                    <p>COMMERCE</p>
+                    <h2>NexusMart</h2>
+                    <p>ENTERPRISE</p>
                 </div>
             </div>
 

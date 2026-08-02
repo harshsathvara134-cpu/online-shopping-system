@@ -1,0 +1,10 @@
+# NexusMart Enterprise Robots.txt File
+User-agent: *
+Disallow: /admin/
+Disallow: /config/
+Disallow: /includes/
+Disallow: /api/
+Disallow: /logs/
+Disallow: /tmp/
+
+Sitemap: http://localhost/online-shopping-system/sitemap.xml
