@@ -43,56 +43,70 @@ if ($product_id > 0) {
 
 // Save/Add product logic
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['save_product'])) {
-    $p_title = mysqli_real_escape_string($con, $_POST['p_title']);
-    $p_desc = mysqli_real_escape_string($con, $_POST['p_desc']);
-    $p_price = mysqli_real_escape_string($con, $_POST['p_price']);
-    $p_cat = intval($_POST['p_cat']);
-    $p_brand = intval($_POST['p_brand']);
-    $p_keywords = mysqli_real_escape_string($con, $_POST['p_keywords']);
+    $p_title = trim($_POST['p_title'] ?? '');
+    $p_desc = trim($_POST['p_desc'] ?? '');
+    $p_price = max(0, floatval($_POST['p_price'] ?? 0));
+    $p_cat = intval($_POST['p_cat'] ?? 0);
+    $p_brand = intval($_POST['p_brand'] ?? 0);
+    $p_keywords = trim($_POST['p_keywords'] ?? '');
+    $p_qty = max(0, intval($_POST['p_qty'] ?? 0));
     
-    // Handle images upload
+    // Secure file upload validation
     $images = [];
     $image_fields = ['p_image', 'p_image2', 'p_image3'];
-    
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
+    $allowed_mimes = ['image/jpeg', 'image/png', 'image/webp'];
+
     foreach ($image_fields as $field) {
         $img_name = "";
-        if (isset($_FILES[$field]) && $_FILES[$field]['error'] == 0) {
-            $img_name = time() . "_" . $field . "_" . $_FILES[$field]['name'];
-            move_uploaded_file($_FILES[$field]['tmp_name'], "../product_images/" . $img_name);
+        if (isset($_FILES[$field]) && $_FILES[$field]['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES[$field]['tmp_name'];
+            $file_size = $_FILES[$field]['size'];
+            $ext = strtolower(pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION));
+
+            if ($file_size <= 5 * 1024 * 1024 && in_array($ext, $allowed_extensions)) {
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $tmp_name);
+                finfo_close($finfo);
+
+                if (in_array($mime, $allowed_mimes)) {
+                    $img_name = time() . "_" . bin2hex(random_bytes(4)) . "." . $ext;
+                    $target_path = "../product_images/" . $img_name;
+                    move_uploaded_file($tmp_name, $target_path);
+                }
+            }
         }
         $images[$field] = $img_name;
     }
     
-    $p_qty = intval($_POST['p_qty']);
-    
     if ($product_id > 0) {
-        // Update product
-        $update_parts = [
-            "product_title='$p_title'",
-            "product_desc='$p_desc'",
-            "product_price='$p_price'",
-            "product_cat='$p_cat'",
-            "product_brand='$p_brand'",
-            "product_keywords='$p_keywords'",
-            "product_qty='$p_qty'"
-        ];
-        
-        if (!empty($images['p_image'])) $update_parts[] = "product_image='{$images['p_image']}'";
-        if (!empty($images['p_image2'])) $update_parts[] = "product_image2='{$images['p_image2']}'";
-        if (!empty($images['p_image3'])) $update_parts[] = "product_image3='{$images['p_image3']}'";
-        
-        $sql = "UPDATE products SET " . implode(", ", $update_parts) . " WHERE product_id=$product_id";
-        mysqli_query($con, $sql) or die(mysqli_error($con));
+        // Fetch current images
+        $cur_sql = "SELECT product_image, product_image2, product_image3 FROM products WHERE product_id = ?";
+        $cur_stmt = mysqli_prepare($con, $cur_sql);
+        mysqli_stmt_bind_param($cur_stmt, "i", $product_id);
+        mysqli_stmt_execute($cur_stmt);
+        $cur_res = mysqli_stmt_get_result($cur_stmt);
+        $cur_row = mysqli_fetch_assoc($cur_res);
+
+        $img1 = !empty($images['p_image']) ? $images['p_image'] : ($cur_row['product_image'] ?? '');
+        $img2 = !empty($images['p_image2']) ? $images['p_image2'] : ($cur_row['product_image2'] ?? '');
+        $img3 = !empty($images['p_image3']) ? $images['p_image3'] : ($cur_row['product_image3'] ?? '');
+
+        $sql = "UPDATE products SET product_title=?, product_desc=?, product_price=?, product_cat=?, product_brand=?, product_keywords=?, product_qty=?, product_image=?, product_image2=?, product_image3=? WHERE product_id=?";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "ssdiiissssi", $p_title, $p_desc, $p_price, $p_cat, $p_brand, $p_keywords, $p_qty, $img1, $img2, $img3, $product_id);
+        mysqli_stmt_execute($stmt);
         header("Location: products_list.php");
         exit();
     } else {
-        // Add new product
         $img1 = $images['p_image'];
         $img2 = $images['p_image2'];
         $img3 = $images['p_image3'];
-        $sql = "INSERT INTO products (product_cat, product_brand, product_title, product_price, product_desc, product_image, product_image2, product_image3, product_keywords, product_qty) 
-                VALUES ('$p_cat', '$p_brand', '$p_title', '$p_price', '$p_desc', '$img1', '$img2', '$img3', '$p_keywords', '$p_qty')";
-        mysqli_query($con, $sql) or die(mysqli_error($con));
+
+        $sql = "INSERT INTO products (product_cat, product_brand, product_title, product_price, product_desc, product_image, product_image2, product_image3, product_keywords, product_qty) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($con, $sql);
+        mysqli_stmt_bind_param($stmt, "iisdsssssi", $p_cat, $p_brand, $p_title, $p_price, $p_desc, $img1, $img2, $img3, $p_keywords, $p_qty);
+        mysqli_stmt_execute($stmt);
         header("Location: products_list.php");
         exit();
     }

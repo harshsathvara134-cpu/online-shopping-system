@@ -21,8 +21,17 @@ include "header.php";
                 <ul class="cartWrap">
                 <?php
                 if (isset($_SESSION["uid"])) {
-                    $sql="SELECT c.order_id,c.payment_method,a.product_id,a.product_title,a.product_price,a.product_image,b.qty,b.amt,c.total_amt FROM products a,order_products b,orders_info c WHERE a.product_id=b.product_id AND c.user_id='{$_SESSION['uid']}' AND b.order_id=c.order_id ORDER BY `c`.`order_id` DESC";
-                    $query = mysqli_query($con,$sql);
+                    $uid = intval($_SESSION["uid"]);
+                    $sql = "SELECT c.order_id, c.payment_method, a.product_id, a.product_title, a.product_price, a.product_image, b.qty, b.amt, c.total_amt 
+                            FROM products a 
+                            JOIN order_products b ON a.product_id = b.product_id 
+                            JOIN orders_info c ON b.order_id = c.order_id 
+                            WHERE c.user_id = ? 
+                            ORDER BY c.order_id DESC";
+                    $stmt_ord = mysqli_prepare($con, $sql);
+                    mysqli_stmt_bind_param($stmt_ord, "i", $uid);
+                    mysqli_stmt_execute($stmt_ord);
+                    $query = mysqli_stmt_get_result($stmt_ord);
                     //display cart item in dropdown menu
                     
                     if (mysqli_num_rows($query) > 0) {

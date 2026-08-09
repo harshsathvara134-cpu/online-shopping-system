@@ -8,12 +8,24 @@ include "../db.php";
 $admin_name = isset($_SESSION['admin_name']) ? $_SESSION['admin_name'] : 'Admin';
 
 // Handle Delete from Grid
-if (isset($_GET['delete'])) {
-    $pid = intval($_GET['delete']);
-    mysqli_query($con, "DELETE FROM wishlist WHERE p_id = $pid");
-    mysqli_query($con, "DELETE FROM cart WHERE p_id = $pid");
-    mysqli_query($con, "DELETE FROM reviews WHERE product_id = $pid");
-    mysqli_query($con, "DELETE FROM products WHERE product_id = $pid");
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_product_id'])) {
+    $pid = intval($_POST['delete_product_id']);
+    $stmt1 = mysqli_prepare($con, "DELETE FROM wishlist WHERE p_id = ?");
+    mysqli_stmt_bind_param($stmt1, "i", $pid);
+    mysqli_stmt_execute($stmt1);
+
+    $stmt2 = mysqli_prepare($con, "DELETE FROM cart WHERE p_id = ?");
+    mysqli_stmt_bind_param($stmt2, "i", $pid);
+    mysqli_stmt_execute($stmt2);
+
+    $stmt3 = mysqli_prepare($con, "DELETE FROM reviews WHERE product_id = ?");
+    mysqli_stmt_bind_param($stmt3, "i", $pid);
+    mysqli_stmt_execute($stmt3);
+
+    $stmt4 = mysqli_prepare($con, "DELETE FROM products WHERE product_id = ?");
+    mysqli_stmt_bind_param($stmt4, "i", $pid);
+    mysqli_stmt_execute($stmt4);
+
     header("Location: index.php");
     exit();
 }
@@ -189,7 +201,10 @@ $oos_count = $oos_row['total'] ?? 0;
                                     
                                     <div class="card-actions-hover">
                                         <a href="edit_product.php?id=<?php echo $p_row['product_id']; ?>" class="btn-grid-green">EDIT</a>
-                                        <a href="index.php?delete=<?php echo $p_row['product_id']; ?>" class="btn-grid-red" onclick="return confirm('Are you sure?')">DELETE</a>
+                                        <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                            <input type="hidden" name="delete_product_id" value="<?php echo $p_row['product_id']; ?>">
+                                            <button type="submit" class="btn-grid-red" style="border:none; cursor:pointer;">DELETE</button>
+                                        </form>
                                     </div>
                                 </div>
                                 <?php

@@ -13,12 +13,12 @@ mysqli_report(MYSQLI_REPORT_OFF);
 
 // Create connection if not already established
 if (!isset($con) || !$con) {
-    $con = mysqli_connect($servername, $username, $password, $db, $port);
+    $con = @mysqli_connect($servername, $username, $password, $db, $port);
 
     // Check connection
     if (!$con) {
         // Try fallback port 3306 if 3307 fails
-        $con = mysqli_connect($servername, $username, $password, $db, 3306);
+        $con = @mysqli_connect($servername, $username, $password, $db, 3306);
         if (!$con) {
             http_response_code(503);
             die("Database connection failed. Please start MySQL in XAMPP and confirm the 'onlineshop' database exists.");

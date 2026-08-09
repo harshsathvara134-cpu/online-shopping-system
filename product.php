@@ -7,7 +7,10 @@ if ($product_id <= 0) {
 	exit();
 }
 
-$product_check = mysqli_query($con, "SELECT product_id FROM products WHERE product_id = $product_id LIMIT 1");
+$stmt_chk = mysqli_prepare($con, "SELECT product_id FROM products WHERE product_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt_chk, "i", $product_id);
+mysqli_stmt_execute($stmt_chk);
+$product_check = mysqli_stmt_get_result($stmt_chk);
 if (!$product_check || mysqli_num_rows($product_check) === 0) {
 	header("Location: store.php");
 	exit();
