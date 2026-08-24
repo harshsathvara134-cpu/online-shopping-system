@@ -441,42 +441,100 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Category Bar */}
-      <nav style={{ backgroundColor: 'var(--bg-subtle)', borderTop: '1px solid var(--border-light)' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', overflowX: 'auto', padding: '0.5rem 1.5rem' }}>
-          <Link
-            to="/store"
-            style={{
-              fontSize: '0.875rem',
-              fontWeight: 700,
-              color: 'var(--primary)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <Sparkles size={16} /> All Categories
-          </Link>
-
-          {categories.map((cat) => (
-            <Link
-              key={cat.cat_id}
-              to={`/store?cat=${cat.cat_id}`}
-              style={{
-                fontSize: '0.875rem',
-                fontWeight: location.search.includes(`cat=${cat.cat_id}`) ? 700 : 500,
-                color: location.search.includes(`cat=${cat.cat_id}`) ? 'var(--primary)' : 'var(--text-main)',
-                whiteSpace: 'nowrap',
-                padding: '4px 8px',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              {cat.cat_title}
-            </Link>
-          ))}
+      {/* Flipkart-style Icon Category Navigation Bar */}
+      <nav
+        style={{
+          backgroundColor: 'white',
+          borderTop: '1px solid #f1f5f9',
+          borderBottom: '1px solid #f1f5f9',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+        }}
+      >
+        <div
+          className="container"
+          style={{
+            display: 'flex',
+            alignItems: 'stretch',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            padding: '0 1rem',
+            gap: '0',
+          }}
+        >
+          {/* "For You" / All Categories pill */}
+          {[
+            { label: 'For You', icon: '✨', to: '/store', key: 'all' },
+            { label: 'Electronics', icon: '📱', to: '/store?cat=1', key: 'cat1' },
+            { label: 'Ladies Wears', icon: '👗', to: '/store?cat=2', key: 'cat2' },
+            { label: 'Mens Wear', icon: '👔', to: '/store?cat=3', key: 'cat3' },
+            { label: 'Kids Wear', icon: '🧸', to: '/store?cat=4', key: 'cat4' },
+            { label: 'Furnitures', icon: '🛋️', to: '/store?cat=5', key: 'cat5' },
+            { label: 'Home Appliances', icon: '📺', to: '/store?cat=6', key: 'cat6' },
+            { label: 'Sports', icon: '⚽', to: '/store?cat=7', key: 'cat7' },
+          ].map((item) => {
+            const isActive =
+              item.key === 'all'
+                ? location.pathname === '/store' && !location.search.includes('cat=')
+                : location.search.includes(item.to.split('?')[1] || '____');
+            return (
+              <Link
+                key={item.key}
+                to={item.to}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  padding: '10px 16px',
+                  textDecoration: 'none',
+                  borderBottom: isActive ? '3px solid var(--primary)' : '3px solid transparent',
+                  whiteSpace: 'nowrap',
+                  transition: 'border-color 0.2s ease, color 0.2s ease',
+                  minWidth: '72px',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLElement).style.borderBottomColor = '#c7d2fe';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLElement).style.borderBottomColor = 'transparent';
+                  }
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '1.35rem',
+                    lineHeight: 1,
+                    filter: isActive ? 'none' : 'grayscale(0.2)',
+                    transition: 'transform 0.2s ease',
+                  }}
+                >
+                  {item.icon}
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: isActive ? 700 : 500,
+                    color: isActive ? 'var(--primary)' : '#374151',
+                    letterSpacing: '0.01em',
+                    maxWidth: '68px',
+                    textAlign: 'center',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </nav>
+
 
       {/* Mobile Search Bar Drop */}
       <div className="show-mobile-only" style={{ padding: '0.5rem 1rem', background: 'white', borderTop: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -27,7 +27,7 @@ export const LanguageSelector: React.FC = () => {
 
   return (
     <div ref={dropdownRef} style={{ position: 'relative', zIndex: 9000 }}>
-      {/* Trigger Button */}
+      {/* Amazon nav-line-2 style trigger */}
       <button
         type="button"
         id="language-selector-btn"
@@ -35,30 +35,80 @@ export const LanguageSelector: React.FC = () => {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '5px',
-          padding: '6px 10px',
+          gap: '4px',
+          padding: '5px 8px',
           borderRadius: 'var(--radius-md)',
           border: '1px solid var(--border-color)',
           backgroundColor: 'white',
           cursor: 'pointer',
-          fontSize: '0.8125rem',
-          fontWeight: 700,
-          color: 'var(--text-main)',
           whiteSpace: 'nowrap',
-          transition: 'border-color 0.2s ease',
+          transition: 'border-color 0.2s ease, background 0.2s ease',
           boxShadow: 'var(--shadow-sm)',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--primary)')}
-        onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-color)')}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'var(--primary)';
+          e.currentTarget.style.background = '#f8f7ff';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = 'var(--border-color)';
+          e.currentTarget.style.background = 'white';
+        }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        title={`Language: ${current.nativeName}`}
       >
-        <span role="img" aria-label="India" style={{ fontSize: '1rem', lineHeight: 1 }}>🇮🇳</span>
-        <span style={{ fontWeight: 800, color: '#1e293b' }}>{current.code}</span>
+        {/* nav-line-2: flag stacked above language code */}
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px', lineHeight: 1 }}>
+          {/* India flag — SVG inline for pixel-perfect rendering */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 900 600"
+            width="22"
+            height="15"
+            style={{ borderRadius: '2px', display: 'block', flexShrink: 0 }}
+            aria-label="India"
+            role="img"
+          >
+            <rect width="900" height="600" fill="#FF9933"/>
+            <rect y="200" width="900" height="200" fill="#fff"/>
+            <rect y="400" width="900" height="200" fill="#128807"/>
+            {/* Ashoka Chakra */}
+            <circle cx="450" cy="300" r="70" fill="none" stroke="#000080" strokeWidth="8"/>
+            <circle cx="450" cy="300" r="10" fill="#000080"/>
+            {Array.from({ length: 24 }).map((_, i) => {
+              const angle = (i * 360) / 24;
+              const rad = (angle * Math.PI) / 180;
+              const x2 = 450 + 60 * Math.sin(rad);
+              const y2 = 300 - 60 * Math.cos(rad);
+              return (
+                <line
+                  key={i}
+                  x1="450"
+                  y1="300"
+                  x2={x2}
+                  y2={y2}
+                  stroke="#000080"
+                  strokeWidth="3"
+                />
+              );
+            })}
+          </svg>
+          {/* Language code */}
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#1e293b', letterSpacing: '0.02em' }}>
+            {current.code}
+          </span>
+        </span>
+
+        {/* Chevron */}
         <ChevronDown
-          size={13}
-          color="var(--text-muted)"
-          style={{ marginTop: '1px', transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+          size={11}
+          color="#64748b"
+          style={{
+            marginLeft: '1px',
+            transform: isOpen ? 'rotate(180deg)' : 'none',
+            transition: 'transform 0.2s',
+            flexShrink: 0,
+          }}
         />
       </button>
 

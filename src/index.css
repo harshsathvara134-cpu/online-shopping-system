@@ -553,4 +553,9 @@ button, input, select, textarea {
   }
 }
 
+/* ── Category Icon Nav Bar (Flipkart / Meesho Style) ── */
+nav [style*="overflowX: auto"]::-webkit-scrollbar { display: none; }
 
+.cat-icon-link:hover > span:first-child {
+  transform: scale(1.2) translateY(-2px);
+}
