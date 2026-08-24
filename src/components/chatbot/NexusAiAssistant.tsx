@@ -181,6 +181,7 @@ export const NexusAiAssistant: React.FC = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
+          className="chatbot-launcher-btn"
           style={{
             position: 'fixed',
             bottom: '24px',
@@ -220,7 +221,7 @@ export const NexusAiAssistant: React.FC = () => {
       {/* Expandable Chat Window */}
       {isOpen && (
         <div
-          className="animate-fade-in"
+          className="animate-fade-in chatbot-window-responsive"
           style={{
             position: 'fixed',
             bottom: '24px',

@@ -19,6 +19,7 @@ import { useAuth } from '../context/AuthContext';
 import { ProductCard } from '../components/store/ProductCard';
 import { StarRating } from '../components/common/StarRating';
 import { formatCurrency, formatDate } from '../utils/formatters';
+import { useLanguage } from '../context/LanguageContext';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +30,7 @@ export const ProductDetailPage: React.FC = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const product = getProductById(productId);
   const reviews = getProductReviews(productId);
@@ -125,7 +127,7 @@ export const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* Main Details Showcase */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'start', marginBottom: '4rem' }}>
+      <div className="product-detail-grid" style={{ marginBottom: '3.5rem' }}>
         {/* Left Column: Image Gallery */}
         <div>
           <div
@@ -290,7 +292,7 @@ export const ProductDetailPage: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <ShoppingBag size={20} /> Add to Cart
+                    <ShoppingBag size={20} /> {t('addToCart')}
                   </>
                 )}
               </button>
@@ -301,7 +303,7 @@ export const ProductDetailPage: React.FC = () => {
                 className="btn btn-lg btn-secondary"
                 style={{ flex: '1 1 200px', backgroundColor: '#0f172a', color: 'white' }}
               >
-                <Zap size={20} color="#fbbf24" /> Buy Now
+                <Zap size={20} color="#fbbf24" /> {t('buyNow')}
               </button>
 
               <button
@@ -504,16 +506,37 @@ export const ProductDetailPage: React.FC = () => {
       {/* Related Products Carousel */}
       {relatedProducts.length > 0 && (
         <section>
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.25rem' }}>
             Customers Also Viewed
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem' }}>
+          <div className="store-products-grid">
             {relatedProducts.map((p) => (
               <ProductCard key={p.product_id} product={p} />
             ))}
           </div>
         </section>
       )}
+
+      {/* Sticky Mobile Bottom Buy Bar */}
+      <div className="mobile-sticky-buy-bar show-mobile-only">
+        <button
+          onClick={handleAddToCart}
+          disabled={isOutOfStock}
+          className={`btn btn-secondary ${addedAnim ? 'btn-success' : ''}`}
+          style={{ flex: 1, padding: '10px', fontSize: '0.875rem' }}
+        >
+          {addedAnim ? '✓ Added' : t('addToCart')}
+        </button>
+
+        <button
+          onClick={handleBuyNow}
+          disabled={isOutOfStock}
+          className="btn btn-primary"
+          style={{ flex: 1, padding: '10px', fontSize: '0.875rem' }}
+        >
+          {t('buyNow')} ⚡
+        </button>
+      </div>
     </div>
   );
 };

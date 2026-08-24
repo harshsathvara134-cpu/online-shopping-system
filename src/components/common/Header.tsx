@@ -18,12 +18,15 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useProducts } from '../../context/ProductContext';
 import { formatCurrency } from '../../utils/formatters';
+import { LanguageSelector } from './LanguageSelector';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { toggleCart, itemCount: cartCount, total: cartTotal } = useCart();
   const { itemCount: wishCount } = useWishlist();
   const { products, categories } = useProducts();
+  const { t } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
@@ -87,12 +90,7 @@ export const Header: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} className="hide-mobile">
             <Link to="/my-orders" style={{ color: '#cbd5e1' }}>Track Order</Link>
             <span style={{ opacity: 0.3 }}>|</span>
-            <Link
-              to={isAdmin ? '/admin' : '/admin/login'}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#a5b4fc', fontWeight: 600 }}
-            >
-              <ShieldCheck size={14} /> Admin Portal
-            </Link>
+            <Link to="/store" style={{ color: '#cbd5e1' }}>Explore Store</Link>
           </div>
         </div>
       </div>
@@ -132,7 +130,7 @@ export const Header: React.FC = () => {
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <input
                 type="text"
-                placeholder="Search smartphones, laptops, fashion, furnitures..."
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -232,6 +230,11 @@ export const Header: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Language Selector (Next to Search Bar) */}
+        <div className="hide-mobile">
+          <LanguageSelector />
         </div>
 
         {/* Action Controls */}
@@ -476,12 +479,12 @@ export const Header: React.FC = () => {
       </nav>
 
       {/* Mobile Search Bar Drop */}
-      <div className="show-mobile-only" style={{ padding: '0.5rem 1rem', background: 'white', borderTop: '1px solid var(--border-light)' }}>
-        <form onSubmit={handleSearchSubmit}>
+      <div className="show-mobile-only" style={{ padding: '0.5rem 1rem', background: 'white', borderTop: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <form onSubmit={handleSearchSubmit} style={{ flex: 1 }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="input-field"
@@ -490,6 +493,7 @@ export const Header: React.FC = () => {
             <Search size={16} style={{ position: 'absolute', left: '12px', color: 'var(--text-muted)' }} />
           </div>
         </form>
+        <LanguageSelector />
       </div>
     </header>
   );

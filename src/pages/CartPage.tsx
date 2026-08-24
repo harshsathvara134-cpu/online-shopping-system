@@ -79,7 +79,7 @@ export const CartPage: React.FC = () => {
         Shopping Cart ({cartItems.reduce((s, i) => s + i.qty, 0)} Items)
       </h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.6fr', gap: '2.5rem', alignItems: 'start' }}>
+      <div className="cart-layout-grid">
         {/* Left Column: Cart Items List */}
         <div>
           <div className="card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>

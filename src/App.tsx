@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // Providers
+import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
@@ -63,6 +64,7 @@ const StorefrontLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
 export const App: React.FC = () => {
   return (
+    <LanguageProvider>
     <AuthProvider>
       <ProductProvider>
         <CartProvider>
@@ -120,6 +122,7 @@ export const App: React.FC = () => {
         </CartProvider>
       </ProductProvider>
     </AuthProvider>
+    </LanguageProvider>
   );
 };
 

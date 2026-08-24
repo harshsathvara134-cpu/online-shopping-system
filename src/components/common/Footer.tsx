@@ -135,7 +135,7 @@ export const Footer: React.FC = () => {
                 <Link to="/wishlist" style={{ color: '#94a3b8' }}>Saved Wishlist</Link>
               </li>
               <li>
-                <Link to="/admin/login" style={{ color: '#818cf8', fontWeight: 600 }}>Admin Portal Login</Link>
+                <Link to="/store" style={{ color: '#94a3b8' }}>Latest Offers & Deals</Link>
               </li>
             </ul>
           </div>

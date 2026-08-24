@@ -11,16 +11,19 @@ import {
   ChevronRight,
   ShoppingBag,
   Star,
+  X,
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
 import { ProductCard } from '../components/store/ProductCard';
 import { QuickViewModal } from '../components/common/QuickViewModal';
 import { Product } from '../types';
 import { formatCurrency } from '../utils/formatters';
+import { useLanguage } from '../context/LanguageContext';
 
 export const StorePage: React.FC = () => {
   const { products, categories, brands } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t } = useLanguage();
 
   // URL state sync
   const urlCat = searchParams.get('cat') ? Number(searchParams.get('cat')) : null;
@@ -104,6 +107,29 @@ export const StorePage: React.FC = () => {
         )}
       </div>
 
+      {/* Mobile Horizontal Swipeable Category Pills */}
+      <div className="show-mobile-only" style={{ marginBottom: '1.25rem' }}>
+        <div className="mobile-horizontal-scroll">
+          <button
+            onClick={() => setSelectedCat(null)}
+            className={`btn btn-sm ${selectedCat === null ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ borderRadius: 'var(--radius-full)', flexShrink: 0 }}
+          >
+            All Categories
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.cat_id}
+              onClick={() => setSelectedCat(cat.cat_id)}
+              className={`btn btn-sm ${selectedCat === cat.cat_id ? 'btn-primary' : 'btn-secondary'}`}
+              style={{ borderRadius: 'var(--radius-full)', flexShrink: 0 }}
+            >
+              {cat.cat_title}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Header Title & Controls Bar */}
       <div
         style={{
@@ -112,27 +138,31 @@ export const StorePage: React.FC = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '1rem',
-          marginBottom: '2rem',
-          paddingBottom: '1.25rem',
+          marginBottom: '1.5rem',
+          paddingBottom: '1rem',
           borderBottom: '1px solid var(--border-color)',
         }}
       >
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800 }}>
-            {selectedCategoryObj ? selectedCategoryObj.cat_title : 'Product Catalog'}
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800 }}>
+            {selectedCategoryObj ? selectedCategoryObj.cat_title : t('productCatalog')}
           </h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
             Showing <strong>{filteredProducts.length}</strong> items found
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {/* Mobile Filter Toggle */}
           <button
-            onClick={() => setShowMobileFilter(!showMobileFilter)}
-            className="btn btn-secondary show-mobile-only"
+            onClick={() => setShowMobileFilter(true)}
+            className="btn btn-secondary btn-sm show-mobile-only"
+            style={{ borderRadius: 'var(--radius-full)', gap: '6px' }}
           >
-            <Filter size={16} /> Filters
+            <Filter size={15} /> {t('filters')}
+            {(selectedCat !== null || selectedBrand !== null || searchQuery || priceLimit < 150000 || minRating > 0 || inStockOnly) && (
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--primary)' }} />
+            )}
           </button>
 
           {/* Sort Dropdown */}
@@ -144,11 +174,11 @@ export const StorePage: React.FC = () => {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
               style={{
-                padding: '6px 12px',
+                padding: '6px 10px',
                 borderRadius: 'var(--radius-md)',
                 border: '1.5px solid var(--border-color)',
                 backgroundColor: 'white',
-                fontSize: '0.875rem',
+                fontSize: '0.8125rem',
                 fontWeight: 600,
                 outline: 'none',
               }}
@@ -191,16 +221,15 @@ export const StorePage: React.FC = () => {
       </div>
 
       {/* Main Grid: Sidebar + Products */}
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '2rem', alignItems: 'start' }}>
-        {/* Left Sidebar Filter */}
+      <div className="store-layout-grid">
+        {/* Left Sidebar Filter (Desktop) */}
         <aside
-          className={`card ${showMobileFilter ? 'animate-fade-in' : ''}`}
+          className="card hide-mobile"
           style={{
             position: 'sticky',
             top: '90px',
             padding: '1.5rem',
             borderRadius: 'var(--radius-lg)',
-            display: showMobileFilter ? 'block' : undefined,
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -466,7 +495,7 @@ export const StorePage: React.FC = () => {
               </button>
             </div>
           ) : viewMode === 'grid' ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem' }}>
+            <div className="store-products-grid">
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.product_id}
@@ -527,6 +556,142 @@ export const StorePage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Filter Bottom Sheet Drawer */}
+      {showMobileFilter && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+          <div
+            onClick={() => setShowMobileFilter(false)}
+            style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)' }}
+          />
+
+          <div
+            className="mobile-filter-drawer animate-slide-up"
+            style={{ position: 'relative', zIndex: 1, maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}
+          >
+            {/* Drawer Header */}
+            <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Filter size={18} color="var(--primary)" /> Filters & Refinements
+              </div>
+              <button
+                onClick={() => setShowMobileFilter(false)}
+                style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Drawer Scrollable Content */}
+            <div style={{ overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1 }}>
+              {/* Categories */}
+              <div>
+                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Category</h4>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  <button
+                    onClick={() => setSelectedCat(null)}
+                    className={`btn btn-sm ${selectedCat === null ? 'btn-primary' : 'btn-secondary'}`}
+                    style={{ borderRadius: 'var(--radius-full)' }}
+                  >
+                    All Categories
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.cat_id}
+                      onClick={() => setSelectedCat(cat.cat_id)}
+                      className={`btn btn-sm ${selectedCat === cat.cat_id ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ borderRadius: 'var(--radius-full)' }}
+                    >
+                      {cat.cat_title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Brands */}
+              <div>
+                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Brand</h4>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  <button
+                    onClick={() => setSelectedBrand(null)}
+                    className={`btn btn-sm ${selectedBrand === null ? 'btn-primary' : 'btn-secondary'}`}
+                    style={{ borderRadius: 'var(--radius-full)' }}
+                  >
+                    All Brands
+                  </button>
+                  {brands.map((b) => (
+                    <button
+                      key={b.brand_id}
+                      onClick={() => setSelectedBrand(b.brand_id)}
+                      className={`btn btn-sm ${selectedBrand === b.brand_id ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ borderRadius: 'var(--radius-full)' }}
+                    >
+                      {b.brand_title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Limit Slider */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+                  <span>Max Price:</span>
+                  <span style={{ color: 'var(--primary)' }}>{formatCurrency(priceLimit)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={1000}
+                  max={150000}
+                  step={2000}
+                  value={priceLimit}
+                  onChange={(e) => setPriceLimit(Number(e.target.value))}
+                  style={{ width: '100%', accentColor: 'var(--primary)' }}
+                />
+              </div>
+
+              {/* Rating */}
+              <div>
+                <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.5rem' }}>Customer Rating</h4>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {[4, 3, 2].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setMinRating(minRating === star ? 0 : star)}
+                      className={`btn btn-sm ${minRating === star ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ borderRadius: 'var(--radius-full)', gap: '4px' }}
+                    >
+                      {star}★+
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* In Stock Only */}
+              <div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+                  />
+                  <span>In Stock Products Only</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Drawer Footer CTA */}
+            <div style={{ padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '10px', background: 'white' }}>
+              <button onClick={handleResetFilters} className="btn btn-secondary" style={{ flex: 1 }}>
+                Reset
+              </button>
+              <button onClick={() => setShowMobileFilter(false)} className="btn btn-primary" style={{ flex: 2 }}>
+                {t('applyFilters')} ({filteredProducts.length} Items)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick View Modal */}
       <QuickViewModal

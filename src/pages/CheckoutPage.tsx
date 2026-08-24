@@ -141,7 +141,7 @@ export const CheckoutPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmitOrder}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 0.7fr', gap: '2.5rem', alignItems: 'start' }}>
+        <div className="checkout-layout-grid">
           {/* Left Column: Address & Payment */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             {/* Step 1: Shipping Address */}

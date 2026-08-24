@@ -108,22 +108,14 @@ export const LoginPage: React.FC = () => {
         <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#4338ca', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '4px' }}>
           <Zap size={14} /> Quick Demo One-Click Login
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex' }}>
           <button
             type="button"
             onClick={() => handleQuickDemo('customer')}
             className="btn btn-sm btn-primary"
-            style={{ flex: 1 }}
+            style={{ width: '100%' }}
           >
-            Demo Customer
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo('admin')}
-            className="btn btn-sm btn-secondary"
-            style={{ flex: 1, borderColor: '#a5b4fc', color: '#4338ca' }}
-          >
-            <ShieldCheck size={14} /> Demo Admin
+            ⚡ One-Click Demo Customer Login
           </button>
         </div>
       </div>
@@ -319,15 +311,6 @@ export const LoginPage: React.FC = () => {
             </button>
           </form>
         )}
-      </div>
-
-      <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-        <Link
-          to="/admin/login"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', color: 'var(--primary)', fontWeight: 600 }}
-        >
-          <ShieldCheck size={16} /> Administrator Login Portal →
-        </Link>
       </div>
     </div>
   );
