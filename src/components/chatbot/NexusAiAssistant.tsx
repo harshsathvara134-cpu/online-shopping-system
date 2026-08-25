@@ -142,9 +142,10 @@ export const NexusAiAssistant: React.FC = () => {
     setIsTyping(true);
 
     setTimeout(() => {
-      const userOrders = user ? orders.filter(o => o.user_id === user.user_id) : orders;
+      // Strictly scope order visibility to authenticated user only (prevents chatbot IDOR/PII leak)
+      const userOrders = user ? orders.filter((o) => o.user_id === user.user_id) : [];
       const botResponse = processChatMessage(messageContent, products, userOrders, user?.first_name);
-      setMessages(prev => [...prev, botResponse]);
+      setMessages((prev) => [...prev, botResponse]);
       setIsTyping(false);
     }, 550);
   };

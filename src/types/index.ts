@@ -84,6 +84,8 @@ export interface User {
   address1: string;
   address2: string;
   role: 'customer' | 'admin';
+  password_hash?: string;
+  password_salt?: string;
 }
 
 export interface Review {
@@ -111,3 +113,18 @@ export interface FilterState {
   sort_by: 'default' | 'price_asc' | 'price_desc' | 'rating' | 'newest';
   in_stock_only: boolean;
 }
+
+export interface StoreSettings {
+  storeName: string;
+  supportEmail: string;
+  supportPhone: string;
+  storeAddress: string;
+  currency: string;
+  freeShippingThreshold: number;
+  standardShippingFee: number;
+  taxRatePercent: number;
+  maintenanceMode: boolean;
+  autoConfirmOrders: boolean;
+  orderPrefix: string;
+}
+

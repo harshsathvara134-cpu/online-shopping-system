@@ -5,6 +5,7 @@ import { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useProducts } from '../../context/ProductContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { formatCurrency } from '../../utils/formatters';
 import { StarRating } from '../common/StarRating';
 
@@ -17,6 +18,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { getCategoryById, getBrandById } = useProducts();
+  const { t } = useLanguage();
   const [addedAnim, setAddedAnim] = React.useState(false);
 
   const category = getCategoryById(product.product_cat);
@@ -63,8 +65,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
     >
       {/* Top Badges */}
       <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 3, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-        {product.featured && <span className="badge badge-primary">Featured</span>}
-        {isOutOfStock && <span className="badge badge-danger">Out of Stock</span>}
+        {product.featured && <span className="badge badge-primary">{t('featured')}</span>}
+        {isOutOfStock && <span className="badge badge-danger">{t('outOfStock')}</span>}
         {isLowStock && !isOutOfStock && <span className="badge badge-warning">Only {product.product_qty} Left</span>}
       </div>
 

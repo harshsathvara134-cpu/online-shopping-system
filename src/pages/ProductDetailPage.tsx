@@ -21,6 +21,7 @@ import { ProductCard } from '../components/store/ProductCard';
 import { StarRating } from '../components/common/StarRating';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { useLanguage } from '../context/LanguageContext';
+import { sanitizeInput } from '../utils/security';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -110,10 +111,10 @@ export const ProductDetailPage: React.FC = () => {
 
     addReview({
       product_id: product.product_id,
-      name: reviewerName.trim(),
-      email: reviewerEmail.trim(),
-      rating: newRating,
-      review: reviewComment.trim(),
+      name: sanitizeInput(reviewerName.trim()),
+      email: sanitizeInput(reviewerEmail.trim().toLowerCase()),
+      rating: Math.max(1, Math.min(5, Math.round(Number(newRating) || 5))),
+      review: sanitizeInput(reviewComment.trim()),
     });
 
     setReviewComment('');
@@ -434,7 +435,7 @@ export const ProductDetailPage: React.FC = () => {
               </div>
               <div style={{ padding: '1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Brand</div>
-                <div style={{ fontWeight: 700 }}>{brand?.brand_title || 'NexusMart'}</div>
+                <div style={{ fontWeight: 700 }}>{brand?.brand_title || 'JAYVEERMart'}</div>
               </div>
               <div style={{ padding: '1rem', backgroundColor: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Stock Availability</div>

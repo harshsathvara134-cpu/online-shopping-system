@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../../context/LanguageContext';
 
-export const LanguageSelector: React.FC = () => {
+interface LanguageSelectorProps {
+  idPrefix?: string;
+}
+
+export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ idPrefix = 'desktop' }) => {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -30,7 +34,7 @@ export const LanguageSelector: React.FC = () => {
       {/* Amazon nav-line-2 style trigger */}
       <button
         type="button"
-        id="language-selector-btn"
+        id={`language-selector-btn-${idPrefix}`}
         onClick={() => setIsOpen((p) => !p)}
         style={{
           display: 'flex',
@@ -160,8 +164,18 @@ export const LanguageSelector: React.FC = () => {
                 <button
                   key={lang.code}
                   role="option"
+                  type="button"
                   aria-selected={isSelected}
-                  onClick={() => handleSelect(lang.code)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSelect(lang.code);
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSelect(lang.code);
+                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -208,7 +222,7 @@ export const LanguageSelector: React.FC = () => {
           <div style={{ margin: '10px 0 6px', borderTop: '1px solid #f1f5f9' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#64748b' }}>
             <span>🇮🇳</span>
-            <span>Shopping on <strong>NexusMart.in</strong></span>
+            <span>Shopping on <strong>JAYVEERMart.in</strong></span>
           </div>
         </div>
       )}

@@ -70,14 +70,16 @@ export const CheckoutPage: React.FC = () => {
     try {
       const orderItems = cartItems.map((item) => ({
         product_id: item.product.product_id,
-        product_title: item.product.product_title,
-        product_image: item.product.product_image,
         qty: item.qty,
-        amt: item.product.product_price * item.qty,
       }));
 
+      // Mask card number strictly without storing CVV or full PAN
+      const maskedCard = paymentMethod === 'Card'
+        ? `•••• •••• •••• ${cardNumber.replace(/\s+/g, '').slice(-4) || '4242'}`
+        : undefined;
+
       const newOrder = await placeOrder({
-        user_id: user ? user.user_id : 1,
+        user_id: user ? user.user_id : 0, // 0 signifies guest checkout with email association
         f_name: fullName.trim(),
         email: email.trim(),
         address: address.trim(),
@@ -85,12 +87,8 @@ export const CheckoutPage: React.FC = () => {
         state: state.trim(),
         zip: zip.trim(),
         payment_method: paymentMethod,
-        cardname: paymentMethod === 'Card' ? cardName : undefined,
-        cardnumber: paymentMethod === 'Card' ? `•••• •••• •••• ${cardNumber.slice(-4)}` : undefined,
-        expdate: paymentMethod === 'Card' ? cardExp : undefined,
-        prod_count: cartItems.reduce((s, i) => s + i.qty, 0),
-        total_amt: total,
-        discount_amt: discountAmount,
+        cardname: paymentMethod === 'Card' ? cardName.trim() : undefined,
+        cardnumber: maskedCard,
         coupon_code: couponCode || undefined,
         items: orderItems,
       });
@@ -108,8 +106,8 @@ export const CheckoutPage: React.FC = () => {
 
       clearCart();
       navigate(`/order-success/${newOrder.order_id}`);
-    } catch (err) {
-      setErrorMessage('An error occurred while creating your order. Please try again.');
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'An error occurred while creating your order. Please try again.');
       setIsSubmitting(false);
     }
   };
@@ -395,7 +393,7 @@ export const CheckoutPage: React.FC = () => {
                   </div>
                   <h4 style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '4px' }}>Scan with Any UPI App</h4>
                   <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                    UPI ID: <strong>nexusmart@upi</strong> • GPay / PhonePe / Paytm accepted
+                    UPI ID: <strong>jayveermart@upi</strong> • GPay / PhonePe / Paytm accepted
                   </p>
                 </div>
               )}

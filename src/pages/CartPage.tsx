@@ -14,6 +14,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 import { formatCurrency, AVAILABLE_COUPONS } from '../utils/formatters';
 
 export const CartPage: React.FC = () => {
@@ -31,6 +32,7 @@ export const CartPage: React.FC = () => {
     applyCoupon,
     removeCoupon,
   } = useCart();
+  const { t } = useLanguage();
 
   const [inputCoupon, setInputCoupon] = useState('');
   const [couponMsg, setCouponMsg] = useState<{ text: string; isError: boolean } | null>(null);
@@ -62,12 +64,12 @@ export const CartPage: React.FC = () => {
         >
           <ShoppingBag size={48} />
         </div>
-        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.75rem' }}>Your Shopping Cart is Empty</h2>
+        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.75rem' }}>{t('emptyCart')}</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', maxWidth: '450px', margin: '0 auto 2rem' }}>
           Explore our wide selection of high-performance electronics, trendy apparel, and luxury home essentials.
         </p>
         <Link to="/store" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)' }}>
-          Start Shopping <ArrowRight size={18} />
+          {t('continueShopping')} <ArrowRight size={18} />
         </Link>
       </div>
     );
@@ -280,16 +282,16 @@ export const CartPage: React.FC = () => {
 
           {/* Order Total Card */}
           <div className="card" style={{ padding: '1.75rem' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>Order Summary</h3>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>{t('orderSummary')}</h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
-                <span>Subtotal ({cartItems.reduce((s, i) => s + i.qty, 0)} items)</span>
+                <span>{t('subtotal')} ({cartItems.reduce((s, i) => s + i.qty, 0)} items)</span>
                 <span>{formatCurrency(subtotal)}</span>
               </div>
               {discountAmount > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)', fontWeight: 600 }}>
-                  <span>Coupon Discount</span>
+                  <span>{t('discount')}</span>
                   <span>-{formatCurrency(discountAmount)}</span>
                 </div>
               )}
@@ -299,7 +301,7 @@ export const CartPage: React.FC = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
                 <span>Express Shipping</span>
-                <span>{shipping === 0 ? <strong style={{ color: 'var(--success)' }}>FREE</strong> : formatCurrency(shipping)}</span>
+                <span>{shipping === 0 ? <strong style={{ color: 'var(--success)' }}>{t('deliveryFree')}</strong> : formatCurrency(shipping)}</span>
               </div>
               <div
                 style={{
@@ -314,7 +316,7 @@ export const CartPage: React.FC = () => {
                   fontFamily: 'var(--font-heading)',
                 }}
               >
-                <span>Total Amount</span>
+                <span>{t('total')}</span>
                 <span style={{ color: 'var(--primary)' }}>{formatCurrency(total)}</span>
               </div>
             </div>
@@ -324,7 +326,7 @@ export const CartPage: React.FC = () => {
               className="btn btn-primary btn-lg"
               style={{ width: '100%', borderRadius: 'var(--radius-md)', fontWeight: 700 }}
             >
-              Proceed to Checkout <ArrowRight size={20} />
+              {t('checkout')} <ArrowRight size={20} />
             </button>
           </div>
         </div>

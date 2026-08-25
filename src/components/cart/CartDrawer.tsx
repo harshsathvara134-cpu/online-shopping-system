@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Tag, Check } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { formatCurrency } from '../../utils/formatters';
 
 export const CartDrawer: React.FC = () => {
@@ -20,6 +21,7 @@ export const CartDrawer: React.FC = () => {
     applyCoupon,
     removeCoupon,
   } = useCart();
+  const { t } = useLanguage();
 
   const [inputCoupon, setInputCoupon] = useState('');
   const [couponMsg, setCouponMsg] = useState<{ text: string; isError: boolean } | null>(null);
@@ -81,7 +83,7 @@ export const CartDrawer: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShoppingBag size={20} color="var(--primary)" />
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>
-              Shopping Cart ({cartItems.reduce((sum, item) => sum + item.qty, 0)})
+              {t('cartDrawerTitle')} ({cartItems.reduce((sum, item) => sum + item.qty, 0)})
             </h3>
           </div>
           <button
@@ -108,7 +110,7 @@ export const CartDrawer: React.FC = () => {
             <span style={{ fontWeight: 600 }}>🎉 You've unlocked FREE Express Shipping!</span>
           ) : (
             <span>
-              Add <strong>{formatCurrency(1000 - subtotal)}</strong> more to get <strong>FREE Delivery</strong>
+              Add <strong>{formatCurrency(1000 - subtotal)}</strong> more to get <strong>{t('deliveryFree')}</strong>
             </span>
           )}
         </div>
@@ -131,12 +133,12 @@ export const CartDrawer: React.FC = () => {
               >
                 <ShoppingBag size={36} />
               </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Your cart is empty</h4>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('emptyCart')}</h4>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
                 Looks like you haven't added anything to your cart yet.
               </p>
               <Link to="/store" onClick={closeCart} className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
-                Explore Products <ArrowRight size={16} />
+                {t('explore')} <ArrowRight size={16} />
               </Link>
             </div>
           ) : (
@@ -318,7 +320,7 @@ export const CartDrawer: React.FC = () => {
               </div>
               {discountAmount > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)', fontWeight: 600 }}>
-                  <span>Discount</span>
+                  <span>{t('discount')}</span>
                   <span>-{formatCurrency(discountAmount)}</span>
                 </div>
               )}
@@ -328,7 +330,7 @@ export const CartDrawer: React.FC = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)' }}>
                 <span>Shipping</span>
-                <span>{shipping === 0 ? <strong style={{ color: 'var(--success)' }}>FREE</strong> : formatCurrency(shipping)}</span>
+                <span>{shipping === 0 ? <strong style={{ color: 'var(--success)' }}>{t('deliveryFree')}</strong> : formatCurrency(shipping)}</span>
               </div>
               <div
                 style={{
@@ -342,7 +344,7 @@ export const CartDrawer: React.FC = () => {
                   marginTop: '4px',
                 }}
               >
-                <span>Total</span>
+                <span>{t('total')}</span>
                 <span>{formatCurrency(total)}</span>
               </div>
             </div>
@@ -352,7 +354,7 @@ export const CartDrawer: React.FC = () => {
               className="btn btn-primary"
               style={{ width: '100%', padding: '0.85rem', fontSize: '1rem', fontWeight: 700 }}
             >
-              Checkout Now <ArrowRight size={18} />
+              {t('proceedCheckout')} <ArrowRight size={18} />
             </button>
 
             <Link
@@ -367,7 +369,7 @@ export const CartDrawer: React.FC = () => {
                 textDecoration: 'underline',
               }}
             >
-              View Full Cart Details
+              {t('viewCart')}
             </Link>
           </div>
         )}

@@ -38,6 +38,7 @@ import { AdminBrands } from './pages/admin/AdminBrands';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminAnalytics } from './pages/admin/AdminAnalytics';
 import { AdminSettings } from './pages/admin/AdminSettings';
+import { AdminRouteGuard } from './components/common/AdminRouteGuard';
 
 // Scroll to top helper on route change
 const ScrollToTop: React.FC = () => {
@@ -85,9 +86,16 @@ export const App: React.FC = () => {
                   <Route path="/my-profile" element={<StorefrontLayout><MyProfilePage /></StorefrontLayout>} />
                   <Route path="/login" element={<StorefrontLayout><LoginPage /></StorefrontLayout>} />
 
-                  {/* Admin Portal Routes */}
+                  {/* Admin Portal Routes (Protected by AdminRouteGuard) */}
                   <Route path="/admin/login" element={<AdminLoginPage />} />
-                  <Route path="/admin" element={<AdminLayout />}>
+                  <Route
+                    path="/admin"
+                    element={
+                      <AdminRouteGuard>
+                        <AdminLayout />
+                      </AdminRouteGuard>
+                    }
+                  >
                     <Route index element={<AdminDashboard />} />
                     <Route path="products" element={<AdminProducts />} />
                     <Route path="categories" element={<AdminCategories />} />

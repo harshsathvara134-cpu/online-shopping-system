@@ -12,18 +12,16 @@ export const AdminLoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (!email.trim()) return;
 
-    if (email.trim().toLowerCase() === 'admin@nexusmart.com') {
-      demoLogin('admin');
+    const res = await login(email.trim(), password);
+    if (res.success && res.user?.role === 'admin') {
       navigate('/admin');
+    } else if (res.success && res.user?.role !== 'admin') {
+      setError('Access Denied: This account does not possess administrative privileges.');
     } else {
-      const res = await login(email, password);
-      if (res.success) {
-        navigate('/admin');
-      } else {
-        setError('Invalid administrative credentials.');
-      }
+      setError(res.message || 'Invalid administrative credentials.');
     }
   };
 
@@ -62,7 +60,7 @@ export const AdminLoginPage: React.FC = () => {
             <ShieldCheck size={32} />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'white', marginBottom: '4px' }}>
-            NexusMart Admin Portal
+            JAYVEERMart Admin Portal
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>
             Enter your credentials to access the administrative control center

@@ -65,7 +65,7 @@ export const AdminLayout: React.FC = () => {
           </div>
           <div>
             <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'white', fontFamily: 'var(--font-heading)' }}>
-              Nexus<span style={{ color: '#818cf8' }}>Admin</span>
+              JAYVEER<span style={{ color: '#818cf8' }}>Admin</span>
             </div>
             <div style={{ fontSize: '0.6875rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Control Center v3.0

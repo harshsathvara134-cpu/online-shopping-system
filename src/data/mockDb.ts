@@ -1,5 +1,19 @@
-import { Product, Category, Brand, User, Order, Review, CartItem, WishlistItem } from '../types';
+import { Product, Category, Brand, User, Order, Review, CartItem, WishlistItem, StoreSettings } from '../types';
 import { INITIAL_PRODUCTS, INITIAL_CATEGORIES, INITIAL_BRANDS, INITIAL_USER, INITIAL_ORDERS, INITIAL_REVIEWS, INITIAL_ADMIN } from './initialData';
+
+export const INITIAL_STORE_SETTINGS: StoreSettings = {
+  storeName: 'JAYVEERMart Enterprise',
+  supportEmail: 'support@jayveermart.com',
+  supportPhone: '+91 1800 123 4567',
+  storeAddress: 'JAYVEER Tech Park, Sector 5, Bengaluru, Karnataka 560100',
+  currency: 'INR (₹)',
+  freeShippingThreshold: 1000,
+  standardShippingFee: 99,
+  taxRatePercent: 18,
+  maintenanceMode: false,
+  autoConfirmOrders: true,
+  orderPrefix: 'JVM',
+};
 
 const STORAGE_KEYS = {
   PRODUCTS: 'nexusmart_products',
@@ -11,6 +25,7 @@ const STORAGE_KEYS = {
   CURRENT_USER: 'nexusmart_current_user',
   CART: 'nexusmart_cart',
   WISHLIST: 'nexusmart_wishlist',
+  STORE_SETTINGS: 'jayveermart_store_settings',
 };
 
 function getStorageItem<T>(key: string, fallback: T): T {
@@ -47,7 +62,22 @@ export const mockDb = {
   getReviews: (): Review[] => getStorageItem(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS),
   saveReviews: (reviews: Review[]): void => setStorageItem(STORAGE_KEYS.REVIEWS, reviews),
 
-  getUsers: (): User[] => getStorageItem(STORAGE_KEYS.USERS, [INITIAL_USER, INITIAL_ADMIN]),
+  getStoreSettings: (): StoreSettings => getStorageItem(STORAGE_KEYS.STORE_SETTINGS, INITIAL_STORE_SETTINGS),
+  saveStoreSettings: (settings: StoreSettings): void => setStorageItem(STORAGE_KEYS.STORE_SETTINGS, settings),
+
+  getUsers: (): User[] => {
+    const rawUsers = getStorageItem<User[]>(STORAGE_KEYS.USERS, [INITIAL_USER, INITIAL_ADMIN]);
+    // Ensure default demo users retain valid hashes if migrated from legacy storage
+    return rawUsers.map((u) => {
+      if (u.email === 'customer@nexusmart.com' && !u.password_hash) {
+        return { ...u, password_hash: INITIAL_USER.password_hash, password_salt: INITIAL_USER.password_salt };
+      }
+      if (u.email === 'admin@nexusmart.com' && !u.password_hash) {
+        return { ...u, password_hash: INITIAL_ADMIN.password_hash, password_salt: INITIAL_ADMIN.password_salt };
+      }
+      return u;
+    });
+  },
   saveUsers: (users: User[]): void => setStorageItem(STORAGE_KEYS.USERS, users),
 
   getCurrentUser: (): User | null => getStorageItem(STORAGE_KEYS.CURRENT_USER, INITIAL_USER),
@@ -59,6 +89,10 @@ export const mockDb = {
   getWishlist: (): WishlistItem[] => getStorageItem(STORAGE_KEYS.WISHLIST, []),
   saveWishlist: (wishlist: WishlistItem[]): void => setStorageItem(STORAGE_KEYS.WISHLIST, wishlist),
 
+  clearOrders: (): void => {
+    setStorageItem(STORAGE_KEYS.ORDERS, []);
+  },
+
   resetToDefault: (): void => {
     localStorage.clear();
     setStorageItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
@@ -68,5 +102,7 @@ export const mockDb = {
     setStorageItem(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS);
     setStorageItem(STORAGE_KEYS.USERS, [INITIAL_USER, INITIAL_ADMIN]);
     setStorageItem(STORAGE_KEYS.CURRENT_USER, INITIAL_USER);
+    setStorageItem(STORAGE_KEYS.STORE_SETTINGS, INITIAL_STORE_SETTINGS);
   },
 };
+

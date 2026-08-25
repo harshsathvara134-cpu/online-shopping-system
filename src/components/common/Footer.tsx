@@ -76,21 +76,21 @@ export const Footer: React.FC = () => {
                 <ShoppingBag size={20} />
               </div>
               <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'white', fontFamily: 'var(--font-heading)' }}>
-                Nexus<span style={{ color: '#818cf8' }}>Mart</span>
+                JAYVEER<span style={{ color: '#818cf8' }}>Mart</span>
               </span>
             </Link>
             <p style={{ fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              NexusMart Enterprise is a modern e-commerce platform delivering curated electronics, apparel, furniture, and appliances with high speed and unmatched reliability.
+              JAYVEERMart Enterprise is a modern e-commerce platform delivering curated electronics, apparel, furniture, and appliances with high speed and unmatched reliability.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8125rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Phone size={14} color="#818cf8" /> +91 1800 123 4567
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Mail size={14} color="#818cf8" /> support@nexusmart.com
+                <Mail size={14} color="#818cf8" /> support@jayveermart.com
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MapPin size={14} color="#818cf8" /> Nexus Tech Park, Sector 5, Bengaluru
+                <MapPin size={14} color="#818cf8" /> JAYVEER Tech Park, Sector 5, Bengaluru
               </div>
             </div>
           </div>
@@ -192,7 +192,7 @@ export const Footer: React.FC = () => {
           }}
         >
           <div>
-            © {new Date().getFullYear()} NexusMart Enterprise. All rights reserved. Refactored into React Single Page Application.
+            © {new Date().getFullYear()} JAYVEERMart Enterprise. All rights reserved. Refactored into React Single Page Application.
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <span style={{ backgroundColor: '#1e293b', padding: '4px 8px', borderRadius: '4px', color: '#94a3b8', fontWeight: 600 }}>COD Available</span>

@@ -4,11 +4,13 @@ import { Home, Grid, Heart, ShoppingBag, User } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const MobileNav: React.FC = () => {
   const { toggleCart, itemCount: cartCount } = useCart();
   const { itemCount: wishCount } = useWishlist();
   const { isAuthenticated } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <nav
@@ -43,7 +45,7 @@ export const MobileNav: React.FC = () => {
         })}
       >
         <Home size={20} />
-        <span>Home</span>
+        <span>{t('navHome')}</span>
       </NavLink>
 
       <NavLink
@@ -60,7 +62,7 @@ export const MobileNav: React.FC = () => {
         })}
       >
         <Grid size={20} />
-        <span>Store</span>
+        <span>{t('navStore')}</span>
       </NavLink>
 
       <NavLink
@@ -99,7 +101,7 @@ export const MobileNav: React.FC = () => {
             {wishCount}
           </span>
         )}
-        <span>Wishlist</span>
+        <span>{t('navWishlist')}</span>
       </NavLink>
 
       <button
@@ -140,7 +142,7 @@ export const MobileNav: React.FC = () => {
             {cartCount}
           </span>
         )}
-        <span>Cart</span>
+        <span>{t('navCart')}</span>
       </button>
 
       <NavLink
@@ -157,7 +159,7 @@ export const MobileNav: React.FC = () => {
         })}
       >
         <User size={20} />
-        <span>{isAuthenticated ? 'Profile' : 'Login'}</span>
+        <span>{isAuthenticated ? t('myProfile') : t('login')}</span>
       </NavLink>
     </nav>
   );

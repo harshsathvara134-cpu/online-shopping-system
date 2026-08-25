@@ -92,17 +92,30 @@ export const StorePage: React.FC = () => {
   const selectedCategoryObj = categories.find(c => c.cat_id === selectedCat);
   const selectedBrandObj = brands.find(b => b.brand_id === selectedBrand);
 
+  const getTranslatedCategoryTitle = (catTitle: string) => {
+    switch (catTitle) {
+      case 'Electronics': return t('electronics');
+      case 'Ladies Wears': return t('ladiesWears');
+      case 'Mens Wear': return t('mensWear');
+      case 'Kids Wear': return t('kidsWear');
+      case 'Furnitures': return t('furnitures');
+      case 'Home Appliances': return t('homeAppliances');
+      case 'Sports': return t('sports');
+      default: return catTitle;
+    }
+  };
+
   return (
     <div className="container" style={{ padding: '2rem 1.5rem 4rem' }}>
       {/* Breadcrumbs */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-        <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
+        <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('home')}</Link>
         <ChevronRight size={14} />
-        <Link to="/store" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Store</Link>
+        <Link to="/store" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{t('store')}</Link>
         {selectedCategoryObj && (
           <>
             <ChevronRight size={14} />
-            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{selectedCategoryObj.cat_title}</span>
+            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{getTranslatedCategoryTitle(selectedCategoryObj.cat_title)}</span>
           </>
         )}
       </div>
@@ -115,7 +128,7 @@ export const StorePage: React.FC = () => {
             className={`btn btn-sm ${selectedCat === null ? 'btn-primary' : 'btn-secondary'}`}
             style={{ borderRadius: 'var(--radius-full)', flexShrink: 0 }}
           >
-            All Categories
+            {t('allCategories')}
           </button>
           {categories.map((cat) => (
             <button
@@ -124,7 +137,7 @@ export const StorePage: React.FC = () => {
               className={`btn btn-sm ${selectedCat === cat.cat_id ? 'btn-primary' : 'btn-secondary'}`}
               style={{ borderRadius: 'var(--radius-full)', flexShrink: 0 }}
             >
-              {cat.cat_title}
+              {getTranslatedCategoryTitle(cat.cat_title)}
             </button>
           ))}
         </div>
@@ -234,7 +247,7 @@ export const StorePage: React.FC = () => {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '1rem' }}>
-              <SlidersHorizontal size={18} color="var(--primary)" /> Filters
+              <SlidersHorizontal size={18} color="var(--primary)" /> {t('filters')}
             </div>
             {(selectedCat !== null || selectedBrand !== null || searchQuery || priceLimit < 150000 || minRating > 0 || inStockOnly) && (
               <button
@@ -251,7 +264,7 @@ export const StorePage: React.FC = () => {
                   gap: '4px',
                 }}
               >
-                <RotateCcw size={12} /> Reset
+                <RotateCcw size={12} /> {t('clearFilters')}
               </button>
             )}
           </div>
@@ -262,7 +275,7 @@ export const StorePage: React.FC = () => {
             <div style={{ position: 'relative' }}>
               <input
                 type="text"
-                placeholder="Type to filter..."
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="input-field"
@@ -274,7 +287,7 @@ export const StorePage: React.FC = () => {
 
           {/* Categories List */}
           <div style={{ marginBottom: '1.75rem' }}>
-            <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem' }}>Categories</h4>
+            <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem' }}>{t('allCategories')}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <button
                 onClick={() => setSelectedCat(null)}
@@ -292,7 +305,7 @@ export const StorePage: React.FC = () => {
                   textAlign: 'left',
                 }}
               >
-                <span>All Categories</span>
+                <span>{t('allCategories')}</span>
                 <span>{products.length}</span>
               </button>
               {categories.map((c) => {
@@ -305,6 +318,7 @@ export const StorePage: React.FC = () => {
                     style={{
                       display: 'flex',
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       padding: '6px 8px',
                       borderRadius: 'var(--radius-sm)',
                       border: 'none',
@@ -316,8 +330,8 @@ export const StorePage: React.FC = () => {
                       textAlign: 'left',
                     }}
                   >
-                    <span>{c.cat_title}</span>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{count}</span>
+                    <span>{getTranslatedCategoryTitle(c.cat_title)}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{count}</span>
                   </button>
                 );
               })}

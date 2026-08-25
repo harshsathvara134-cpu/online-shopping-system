@@ -42,14 +42,17 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     if (!regFirstName.trim() || !regEmail.trim()) return;
 
-    const res = await register({
-      first_name: regFirstName.trim(),
-      last_name: regLastName.trim(),
-      email: regEmail.trim(),
-      mobile: regMobile.trim(),
-      address1: regAddress1.trim(),
-      address2: regAddress2.trim(),
-    });
+    const res = await register(
+      {
+        first_name: regFirstName.trim(),
+        last_name: regLastName.trim(),
+        email: regEmail.trim(),
+        mobile: regMobile.trim(),
+        address1: regAddress1.trim(),
+        address2: regAddress2.trim(),
+      },
+      regPassword
+    );
 
     if (res.success) {
       navigate('/store');
@@ -86,7 +89,7 @@ export const LoginPage: React.FC = () => {
         >
           <ShoppingBag size={28} />
         </div>
-        <h1 style={{ fontSize: '1.85rem', fontWeight: 800 }}>Welcome to NexusMart</h1>
+        <h1 style={{ fontSize: '1.85rem', fontWeight: 800 }}>Welcome to JAYVEERMart</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9375rem' }}>
           Access your personal orders, wishlist, and exclusive member discounts
         </p>

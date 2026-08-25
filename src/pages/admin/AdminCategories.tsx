@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Layers, Plus, Trash2, Edit2, Check } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
+import { sanitizeInput } from '../../utils/security';
 
 export const AdminCategories: React.FC = () => {
   const { categories, products, addCategory, deleteCategory } = useProducts();
@@ -9,7 +10,7 @@ export const AdminCategories: React.FC = () => {
   const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCatTitle.trim()) return;
-    addCategory(newCatTitle.trim());
+    addCategory(sanitizeInput(newCatTitle.trim()));
     setNewCatTitle('');
   };
 

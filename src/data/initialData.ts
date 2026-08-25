@@ -213,6 +213,8 @@ export const INITIAL_USER: User = {
   address1: '402, Skyline Towers, MG Road',
   address2: 'Bengaluru, Karnataka 560001',
   role: 'customer',
+  password_hash: '603b4afbec803e984204dcaa7c2f958ef6c295d6654785791379e95ce28adf2a',
+  password_salt: 'salt_customer_nexus_2026',
 };
 
 export const INITIAL_ADMIN: User = {
@@ -224,6 +226,8 @@ export const INITIAL_ADMIN: User = {
   address1: 'NexusMart HQ',
   address2: 'Tech Park, Mumbai',
   role: 'admin',
+  password_hash: '5b2c012974576a3d9876120f3b2c30a4d6c1842e5a7d32e3c17b4b5cec365128',
+  password_salt: 'salt_admin_nexus_2026',
 };
 
 export const INITIAL_ORDERS: Order[] = [

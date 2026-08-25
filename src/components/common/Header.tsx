@@ -88,9 +88,9 @@ export const Header: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} className="hide-mobile">
-            <Link to="/my-orders" style={{ color: '#cbd5e1' }}>Track Order</Link>
+            <Link to="/my-orders" style={{ color: '#cbd5e1' }}>{t('trackOrder')}</Link>
             <span style={{ opacity: 0.3 }}>|</span>
-            <Link to="/store" style={{ color: '#cbd5e1' }}>Explore Store</Link>
+            <Link to="/store" style={{ color: '#cbd5e1' }}>{t('exploreStore')}</Link>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@ export const Header: React.FC = () => {
           </div>
           <div>
             <span style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)', color: '#0f172a' }}>
-              Nexus<span style={{ color: 'var(--primary)' }}>Mart</span>
+              JAYVEER<span style={{ color: 'var(--primary)' }}>Mart</span>
             </span>
             <span style={{ display: 'block', fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '-4px' }}>
               Enterprise Store
@@ -159,7 +159,7 @@ export const Header: React.FC = () => {
                   padding: '5px 14px',
                 }}
               >
-                Search
+                {t('searchBtn')}
               </button>
             </div>
           </form>
@@ -301,7 +301,7 @@ export const Header: React.FC = () => {
               )}
             </div>
             <span className="hide-mobile" style={{ fontWeight: 700, fontSize: '0.875rem' }}>
-              {cartTotal > 0 ? formatCurrency(cartTotal) : 'Cart'}
+              {cartTotal > 0 ? formatCurrency(cartTotal) : t('cart')}
             </span>
           </button>
 
@@ -320,7 +320,7 @@ export const Header: React.FC = () => {
             >
               <UserIcon size={18} />
               <span className="hide-mobile" style={{ fontSize: '0.85rem', fontWeight: 600, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user ? user.first_name : 'Sign In'}
+                {user ? user.first_name : t('signIn')}
               </span>
               <ChevronDown size={14} />
             </button>
@@ -358,7 +358,7 @@ export const Header: React.FC = () => {
                       onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <UserIcon size={16} /> My Profile
+                      <UserIcon size={16} /> {t('myProfile')}
                     </Link>
 
                     <Link
@@ -368,7 +368,7 @@ export const Header: React.FC = () => {
                       onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <Package size={16} /> My Orders
+                      <Package size={16} /> {t('myOrders')}
                     </Link>
 
                     {isAdmin && (
@@ -404,7 +404,7 @@ export const Header: React.FC = () => {
                         textAlign: 'left',
                       }}
                     >
-                      <LogOut size={16} /> Sign Out
+                      <LogOut size={16} /> {t('logout')}
                     </button>
                   </>
                 ) : (
@@ -415,7 +415,7 @@ export const Header: React.FC = () => {
                       className="btn btn-primary btn-sm"
                       style={{ width: '100%', justifyContent: 'center' }}
                     >
-                      Sign In
+                      {t('signIn')}
                     </Link>
                     <Link
                       to="/login?tab=register"
@@ -423,7 +423,7 @@ export const Header: React.FC = () => {
                       className="btn btn-secondary btn-sm"
                       style={{ width: '100%', justifyContent: 'center' }}
                     >
-                      Create Account
+                      {t('createAccount')}
                     </Link>
                   </div>
                 )}
@@ -461,16 +461,16 @@ export const Header: React.FC = () => {
             gap: '0',
           }}
         >
-          {/* "For You" / All Categories pill */}
+          {/* Categories with dynamic translation */}
           {[
-            { label: 'For You', icon: '✨', to: '/store', key: 'all' },
-            { label: 'Electronics', icon: '📱', to: '/store?cat=1', key: 'cat1' },
-            { label: 'Ladies Wears', icon: '👗', to: '/store?cat=2', key: 'cat2' },
-            { label: 'Mens Wear', icon: '👔', to: '/store?cat=3', key: 'cat3' },
-            { label: 'Kids Wear', icon: '🧸', to: '/store?cat=4', key: 'cat4' },
-            { label: 'Furnitures', icon: '🛋️', to: '/store?cat=5', key: 'cat5' },
-            { label: 'Home Appliances', icon: '📺', to: '/store?cat=6', key: 'cat6' },
-            { label: 'Sports', icon: '⚽', to: '/store?cat=7', key: 'cat7' },
+            { label: t('forYou'), icon: '✨', to: '/store', key: 'all' },
+            { label: t('electronics'), icon: '📱', to: '/store?cat=1', key: 'cat1' },
+            { label: t('ladiesWears'), icon: '👗', to: '/store?cat=2', key: 'cat2' },
+            { label: t('mensWear'), icon: '👔', to: '/store?cat=3', key: 'cat3' },
+            { label: t('kidsWear'), icon: '🧸', to: '/store?cat=4', key: 'cat4' },
+            { label: t('furnitures'), icon: '🛋️', to: '/store?cat=5', key: 'cat5' },
+            { label: t('homeAppliances'), icon: '📺', to: '/store?cat=6', key: 'cat6' },
+            { label: t('sports'), icon: '⚽', to: '/store?cat=7', key: 'cat7' },
           ].map((item) => {
             const isActive =
               item.key === 'all'
@@ -521,7 +521,7 @@ export const Header: React.FC = () => {
                     fontWeight: isActive ? 700 : 500,
                     color: isActive ? 'var(--primary)' : '#374151',
                     letterSpacing: '0.01em',
-                    maxWidth: '68px',
+                    maxWidth: '85px',
                     textAlign: 'center',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -551,7 +551,7 @@ export const Header: React.FC = () => {
             <Search size={16} style={{ position: 'absolute', left: '12px', color: 'var(--text-muted)' }} />
           </div>
         </form>
-        <LanguageSelector />
+        <LanguageSelector idPrefix="mobile" />
       </div>
     </header>
   );

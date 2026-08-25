@@ -9,21 +9,17 @@ import {
   Award,
   Laptop,
   ShoppingBag,
-  Shirt,
-  Smile,
-  Armchair,
-  Tv,
-  Activity,
   Star,
-  CheckCircle2
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ProductCard } from '../components/store/ProductCard';
 import { QuickViewModal } from '../components/common/QuickViewModal';
 import { Product } from '../types';
 
 export const HomePage: React.FC = () => {
-  const { products, categories, brands } = useProducts();
+  const { products, brands } = useProducts();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'trending' | 'featured' | 'deals'>('trending');
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
@@ -34,16 +30,6 @@ export const HomePage: React.FC = () => {
   const displayedProducts =
     activeTab === 'trending' ? trendingProducts :
     activeTab === 'featured' ? featuredProducts : dealsProducts;
-
-  const categoryIcons: Record<string, React.ReactNode> = {
-    'Electronics': <Laptop size={28} />,
-    'Ladies Wears': <ShoppingBag size={28} />,
-    'Mens Wear': <Shirt size={28} />,
-    'Kids Wear': <Smile size={28} />,
-    'Furnitures': <Armchair size={28} />,
-    'Home Appliances': <Tv size={28} />,
-    'Sports': <Activity size={28} />,
-  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem', paddingBottom: '2rem' }}>
@@ -116,11 +102,11 @@ export const HomePage: React.FC = () => {
                   fontFamily: 'var(--font-heading)',
                 }}
               >
-                Premium Tech, Luxury Apparel & Living Spaces
+                {t('heroTitle')}
               </h1>
 
               <p style={{ fontSize: '1.1rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '2rem', maxWidth: '560px' }}>
-                Discover flagship smartphones, high-performance creator laptops, and curated designer fashion with same-day dispatch and 24/7 AI shopping support.
+                {t('heroSubtitle')}
               </p>
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
@@ -129,7 +115,7 @@ export const HomePage: React.FC = () => {
                   className="btn btn-primary btn-lg"
                   style={{ borderRadius: 'var(--radius-full)', padding: '0.85rem 2rem', fontSize: '1.05rem' }}
                 >
-                  Explore Catalog <ArrowRight size={20} />
+                  {t('explore')} <ArrowRight size={20} />
                 </Link>
 
                 <Link
@@ -142,7 +128,7 @@ export const HomePage: React.FC = () => {
                     padding: '0.85rem 1.75rem',
                   }}
                 >
-                  <Laptop size={18} /> View Laptops
+                  <Laptop size={18} /> {t('electronics')}
                 </Link>
               </div>
 
@@ -216,71 +202,13 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Categories Grid */}
-      <section className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.75rem' }}>
-          <div>
-            <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Explore Catalog
-            </div>
-            <h2 style={{ fontSize: '1.85rem', fontWeight: 800 }}>Browse by Category</h2>
-          </div>
-          <Link to="/store" style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            All Categories <ArrowRight size={16} />
-          </Link>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1.25rem' }}>
-          {categories.map((cat) => {
-            const count = products.filter(p => p.product_cat === cat.cat_id).length;
-            return (
-              <Link
-                key={cat.cat_id}
-                to={`/store?cat=${cat.cat_id}`}
-                className="card card-interactive"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  padding: '1.75rem 1rem',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  borderRadius: 'var(--radius-lg)',
-                }}
-              >
-                <div
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '16px',
-                    background: 'var(--primary-light)',
-                    color: 'var(--primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '1rem',
-                    transition: 'transform 0.3s',
-                  }}
-                >
-                  {categoryIcons[cat.cat_title] || <ShoppingBag size={28} />}
-                </div>
-
-                <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '4px' }}>{cat.cat_title}</h3>
-                <span style={{ fontSize: '0.78125rem', color: 'var(--text-muted)' }}>{count} Products</span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
       {/* Featured & Trending Products Showcase */}
       <section className="container">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
-            Top Picks For You
+            {t('forYou')}
           </div>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1.25rem' }}>Featured & Trending Products</h2>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1.25rem' }}>{t('featuredProducts')}</h2>
 
           {/* Switcher Tabs */}
           <div
@@ -309,7 +237,7 @@ export const HomePage: React.FC = () => {
                 gap: '6px',
               }}
             >
-              <TrendingUp size={16} /> Trending
+              <TrendingUp size={16} /> {t('trending')}
             </button>
             <button
               onClick={() => setActiveTab('featured')}
@@ -328,7 +256,7 @@ export const HomePage: React.FC = () => {
                 gap: '6px',
               }}
             >
-              <Award size={16} /> Featured
+              <Award size={16} /> {t('featured')}
             </button>
             <button
               onClick={() => setActiveTab('deals')}

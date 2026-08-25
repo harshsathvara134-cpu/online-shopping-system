@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Tag, Plus, Trash2 } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
+import { sanitizeInput } from '../../utils/security';
 
 export const AdminBrands: React.FC = () => {
   const { brands, products, addBrand, deleteBrand } = useProducts();
@@ -9,7 +10,7 @@ export const AdminBrands: React.FC = () => {
   const handleAddBrand = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBrandTitle.trim()) return;
-    addBrand(newBrandTitle.trim());
+    addBrand(sanitizeInput(newBrandTitle.trim()));
     setNewBrandTitle('');
   };
 

@@ -1,45 +1,85 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Lock, Check, ShieldCheck } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, MapPin, Lock, Check, ShieldCheck, AlertCircle, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export const MyProfilePage: React.FC = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, updatePassword } = useAuth();
 
-  const [firstName, setFirstName] = useState(user?.first_name || 'Rahul');
-  const [lastName, setLastName] = useState(user?.last_name || 'Sharma');
-  const [email, setEmail] = useState(user?.email || 'customer@nexusmart.com');
-  const [mobile, setMobile] = useState(user?.mobile || '+91 98765 43210');
-  const [address1, setAddress1] = useState(user?.address1 || '402, Skyline Towers, MG Road');
-  const [address2, setAddress2] = useState(user?.address2 || 'Bengaluru, Karnataka 560001');
+  const [firstName, setFirstName] = useState(user?.first_name || '');
+  const [lastName, setLastName] = useState(user?.last_name || '');
+  const [email] = useState(user?.email || '');
+  const [mobile, setMobile] = useState(user?.mobile || '');
+  const [address1, setAddress1] = useState(user?.address1 || '');
+  const [address2, setAddress2] = useState(user?.address2 || '');
 
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [passSuccess, setPassSuccess] = useState(false);
+  const [passError, setPassError] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  if (!user) {
+    return (
+      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
+        <div
+          style={{
+            width: '80px',
+            height: '80px',
+            borderRadius: '50%',
+            backgroundColor: 'var(--bg-subtle)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 1.5rem',
+            color: 'var(--text-muted)',
+          }}
+        >
+          <Lock size={36} />
+        </div>
+        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.75rem' }}>Sign In to View Profile</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', maxWidth: '450px', margin: '0 auto 2rem' }}>
+          Please sign in to view and manage your verified account credentials, delivery addresses, and security settings.
+        </p>
+        <Link to="/login" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)' }}>
+          Sign In to Account <ArrowRight size={18} />
+        </Link>
+      </div>
+    );
+  }
 
   const handleProfileSave = (e: React.FormEvent) => {
     e.preventDefault();
     updateProfile({
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      mobile,
-      address1,
-      address2,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      mobile: mobile.trim(),
+      address1: address1.trim(),
+      address2: address2.trim(),
     });
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword && newPassword === confirmPassword) {
+    setPassError('');
+
+    if (newPassword !== confirmPassword) {
+      setPassError('New passwords do not match.');
+      return;
+    }
+
+    const res = await updatePassword(currentPassword, newPassword);
+    if (res.success) {
       setPassSuccess(true);
+      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       setTimeout(() => setPassSuccess(false), 3000);
     } else {
-      alert('New passwords do not match.');
+      setPassError(res.message);
     }
   };
 
@@ -73,19 +113,19 @@ export const MyProfilePage: React.FC = () => {
             fontFamily: 'var(--font-heading)',
           }}
         >
-          {firstName.charAt(0)}{lastName.charAt(0)}
+          {user.first_name.charAt(0)}{user.last_name?.charAt(0) || ''}
         </div>
 
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>
-              {firstName} {lastName}
+              {user.first_name} {user.last_name}
             </h1>
             <span style={{ backgroundColor: '#22c55e', color: 'white', padding: '2px 8px', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 700 }}>
-              Verified Customer
+              Verified {user.role === 'admin' ? 'Administrator' : 'Customer'}
             </span>
           </div>
-          <p style={{ fontSize: '0.875rem', opacity: 0.85 }}>{email}</p>
+          <p style={{ fontSize: '0.875rem', opacity: 0.85 }}>{user.email}</p>
         </div>
       </div>
 
@@ -120,7 +160,6 @@ export const MyProfilePage: React.FC = () => {
                 <label className="input-label">Last Name</label>
                 <input
                   type="text"
-                  required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   className="input-field"
@@ -128,13 +167,13 @@ export const MyProfilePage: React.FC = () => {
               </div>
 
               <div className="input-group">
-                <label className="input-label">Email Address</label>
+                <label className="input-label">Email Address (Immutable)</label>
                 <input
                   type="email"
-                  required
+                  disabled
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   className="input-field"
+                  style={{ backgroundColor: 'var(--bg-subtle)', cursor: 'not-allowed', color: 'var(--text-muted)' }}
                 />
               </div>
 
@@ -186,34 +225,54 @@ export const MyProfilePage: React.FC = () => {
 
           {passSuccess && (
             <div style={{ padding: '1rem', backgroundColor: 'var(--success-light)', color: 'var(--success)', borderRadius: 'var(--radius-md)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Check size={18} /> Password updated successfully!
+              <Check size={18} /> Password updated and hashed securely!
+            </div>
+          )}
+
+          {passError && (
+            <div style={{ padding: '1rem', backgroundColor: 'var(--danger-light)', color: 'var(--danger)', borderRadius: 'var(--radius-md)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertCircle size={18} /> {passError}
             </div>
           )}
 
           <form onSubmit={handlePasswordChange}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.25rem' }}>
               <div className="input-group">
-                <label className="input-label">New Password</label>
+                <label className="input-label">Current Password</label>
                 <input
                   type="password"
                   required
-                  placeholder="••••••••"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter current password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
                   className="input-field"
                 />
               </div>
 
-              <div className="input-group">
-                <label className="input-label">Confirm New Password</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="input-field"
-                />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+                <div className="input-group">
+                  <label className="input-label">New Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Min 6 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
+
+                <div className="input-group">
+                  <label className="input-label">Confirm New Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Repeat new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="input-field"
+                  />
+                </div>
               </div>
             </div>
 
@@ -226,3 +285,4 @@ export const MyProfilePage: React.FC = () => {
     </div>
   );
 };
+
