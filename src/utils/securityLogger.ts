@@ -1,80 +1,74 @@
 /**
- * NexusMart Centralized Security Audit Logger
- * Safely captures security events without logging passwords, tokens, or raw payment details.
+ * JAYVEERMart Enterprise Security Audit Logger
+ * Safely captures security and administrative audit trails without logging passwords, tokens, or raw payment details.
  */
 
-export type SecurityEventType =
-  | 'AUTH_LOGIN_SUCCESS'
-  | 'AUTH_LOGIN_FAILURE'
-  | 'AUTH_RATE_LIMITED'
-  | 'AUTH_REGISTER_SUCCESS'
-  | 'AUTH_UNAUTHORIZED_ACCESS'
-  | 'ORDER_PRICE_TAMPER_DETECTED'
-  | 'ORDER_STOCK_DEFICIT'
-  | 'ORDER_PLACED_SECURELY'
-  | 'ADMIN_ACTION_EXECUTED'
-  | 'ADMIN_ACCESS_DENIED'
-  | 'PROFILE_UPDATE_SECURITY';
+import { SecurityAuditEvent, SecurityEventType } from '../types';
+import { getClientDeviceMeta } from './security';
 
-export interface SecurityLogEntry {
-  id: string;
-  timestamp: string;
-  type: SecurityEventType;
-  userId?: number | string;
-  emailMasked?: string;
-  details?: Record<string, any>;
-  ipPlaceholder?: string;
-}
-
-const STORAGE_KEY = 'nexusmart_security_audit_logs';
+const STORAGE_KEY = 'jayveermart_security_audit_logs';
 
 /**
- * Mask an email for safe audit logging (e.g. j***e@example.com)
+ * Mask an email for safe audit logging (e.g. a***n@nexusmart.com)
  */
 export const maskEmail = (email?: string): string => {
   if (!email || !email.includes('@')) return 'anonymous';
   const [user, domain] = email.split('@');
   if (user.length <= 2) return `${user[0]}*@${domain}`;
-  return `${user[0]}${'*'.repeat(user.length - 2)}${user[user.length - 1]}@${domain}`;
+  return `${user[0]}${'*'.repeat(Math.max(1, user.length - 2))}${user[user.length - 1]}@${domain}`;
 };
 
 export const logSecurityEvent = (
-  type: SecurityEventType,
+  eventType: SecurityEventType,
   data: {
-    userId?: number | string;
+    userId?: number;
     email?: string;
-    details?: Record<string, any>;
+    action?: string;
+    resource?: string;
+    resourceId?: string | number;
+    status?: 'SUCCESS' | 'FAILURE' | 'WARNING';
+    details?: Record<string, unknown>;
   }
 ): void => {
   try {
-    const entry: SecurityLogEntry = {
-      id: `sec_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+    const device = getClientDeviceMeta();
+    const actionText = data.action || eventType.replace(/_/g, ' ').toLowerCase();
+
+    const entry: SecurityAuditEvent = {
+      id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       timestamp: new Date().toISOString(),
-      type,
+      eventType,
       userId: data.userId,
-      emailMasked: data.email ? maskEmail(data.email) : undefined,
+      email: data.email,
+      action: actionText,
+      resource: data.resource || 'SYSTEM',
+      resourceId: data.resourceId,
+      status: data.status || (eventType.includes('FAILURE') || eventType.includes('DENIED') ? 'FAILURE' : 'SUCCESS'),
+      ip: device.ip,
+      userAgent: `${device.browser} on ${device.os}`,
       details: data.details,
     };
 
-    // Keep last 100 entries in localStorage for security auditing
+    // Keep last 250 audit records in localStorage
     const existing = localStorage.getItem(STORAGE_KEY);
-    const logs: SecurityLogEntry[] = existing ? JSON.parse(existing) : [];
+    const logs: SecurityAuditEvent[] = existing ? JSON.parse(existing) : [];
     logs.unshift(entry);
-    if (logs.length > 100) logs.pop();
+    if (logs.length > 250) logs.pop();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
 
-    // Console notification in development with distinct security format
-    console.info(`[SECURITY AUDIT] [${entry.type}]`, {
+    console.info(`[SECURITY AUDIT] [${entry.eventType}] [${entry.status}]`, {
       timestamp: entry.timestamp,
-      user: entry.userId || entry.emailMasked || 'guest',
+      user: entry.email ? maskEmail(entry.email) : 'guest',
+      action: entry.action,
+      ip: entry.ip,
       details: entry.details,
     });
   } catch (err) {
-    // Fail silently so logging never breaks app execution
+    console.error('Failed to write audit log:', err);
   }
 };
 
-export const getSecurityLogs = (): SecurityLogEntry[] => {
+export const getSecurityLogs = (): SecurityAuditEvent[] => {
   try {
     const existing = localStorage.getItem(STORAGE_KEY);
     return existing ? JSON.parse(existing) : [];
@@ -91,3 +85,13 @@ export const clearSecurityLogs = (): void => {
   }
 };
 
+export const exportSecurityLogsAsJSON = (): void => {
+  const logs = getSecurityLogs();
+  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(logs, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute('href', dataStr);
+  downloadAnchor.setAttribute('download', `jayveermart_security_audit_${new Date().toISOString().slice(0, 10)}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+};

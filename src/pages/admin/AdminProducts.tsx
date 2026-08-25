@@ -311,7 +311,7 @@ export const AdminProducts: React.FC = () => {
       </div>
 
       {/* Main Grid: Left Filters Sidebar + Right Content Area */}
-      <div style={{ display: 'grid', gridTemplateColumns: showFiltersSidebar ? '280px 1fr' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: showFiltersSidebar ? '280px 1fr' : '1fr', gap: '1.5rem', alignItems: 'stretch' }}>
         {/* Left Sidebar Filter Card */}
         {showFiltersSidebar && (
           <aside
@@ -324,6 +324,7 @@ export const AdminProducts: React.FC = () => {
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
+              minHeight: '680px',
             }}
           >
             {/* Filter Header */}
@@ -388,7 +389,7 @@ export const AdminProducts: React.FC = () => {
                 <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b' }}>Brands</span>
                 <span style={{ color: '#94a3b8', cursor: 'pointer' }}><X size={14} /></span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '150px', overflowY: 'auto', paddingRight: '4px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto', paddingRight: '4px' }}>
                 {brands.map((b) => {
                   const isChecked = selectedBrandIds.includes(b.brand_id);
                   const count = products.filter((p) => p.product_brand === b.brand_id).length;
@@ -427,78 +428,34 @@ export const AdminProducts: React.FC = () => {
               </div>
             </div>
 
-            {/* Price Section */}
+            {/* Price Filter */}
             <div style={{ paddingTop: '0.75rem', borderTop: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
                 <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1e293b' }}>Price</span>
                 <span style={{ color: '#94a3b8', cursor: 'pointer' }}><X size={14} /></span>
               </div>
-
-              {/* From / To Inputs */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
                 <div>
-                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '4px' }}>From</span>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      padding: '5px 8px',
-                      fontSize: '0.8125rem',
-                      fontWeight: 600,
-                    }}
-                  >
-                    <span>₹</span>
-                    <input
-                      type="number"
-                      value={priceFrom}
-                      onChange={(e) => setPriceFrom(Number(e.target.value) || 0)}
-                      style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', paddingLeft: '4px', fontSize: '0.8125rem', fontWeight: 600 }}
-                    />
+                  <span style={{ fontSize: '0.6875rem', color: '#94a3b8' }}>From</span>
+                  <div style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '0.8125rem', fontWeight: 600 }}>
+                    ₹ {priceFrom}
                   </div>
                 </div>
-
                 <div>
-                  <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', marginBottom: '4px' }}>To</span>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      padding: '5px 8px',
-                      fontSize: '0.8125rem',
-                      fontWeight: 600,
-                    }}
-                  >
-                    <span>₹</span>
-                    <input
-                      type="number"
-                      value={priceTo}
-                      onChange={(e) => setPriceTo(Number(e.target.value) || 200000)}
-                      style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', paddingLeft: '4px', fontSize: '0.8125rem', fontWeight: 600 }}
-                    />
+                  <span style={{ fontSize: '0.6875rem', color: '#94a3b8' }}>To</span>
+                  <div style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', fontSize: '0.8125rem', fontWeight: 600 }}>
+                    ₹ {priceTo}
                   </div>
                 </div>
               </div>
-
-              {/* Interactive Range Slider */}
               <input
                 type="range"
-                min="0"
-                max="200000"
-                step="1000"
+                min={0}
+                max={200000}
+                step={5000}
                 value={priceTo}
                 onChange={(e) => setPriceTo(Number(e.target.value))}
-                style={{
-                  width: '100%',
-                  accentColor: '#e11d48',
-                  cursor: 'pointer',
-                  height: '4px',
-                }}
+                style={{ width: '100%', accentColor: '#e11d48', cursor: 'pointer' }}
               />
             </div>
 
@@ -579,6 +536,8 @@ export const AdminProducts: React.FC = () => {
             flexDirection: 'column',
             gap: '1.25rem',
             minWidth: 0,
+            minHeight: '680px',
+            justifyContent: 'space-between',
           }}
         >
           {/* Action Header: Tabs on Left + Search/Filter/New Product on Right */}
@@ -724,6 +683,7 @@ export const AdminProducts: React.FC = () => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flex: 1,
               }}
             >
               <Package size={48} style={{ margin: '0 auto 1rem', color: '#cbd5e1' }} />
@@ -739,9 +699,9 @@ export const AdminProducts: React.FC = () => {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
                 gap: '1.25rem',
-                minHeight: '540px',
+                flex: 1,
                 alignContent: 'start',
               }}
             >

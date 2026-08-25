@@ -146,26 +146,6 @@ export const AdminLayout: React.FC = () => {
 
       {/* Admin Content Area */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowY: 'auto' }}>
-        {/* Top Header */}
-        <header
-          style={{
-            backgroundColor: 'white',
-            borderBottom: '1px solid var(--border-color)',
-            padding: '1rem 2rem',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            Signed in as: <strong style={{ color: 'var(--text-main)' }}>{user?.email || 'admin@nexusmart.com'}</strong>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981' }} />
-            <span style={{ fontSize: '0.8125rem', color: 'var(--success)', fontWeight: 600 }}>System Live & Synced</span>
-          </div>
-        </header>
-
         {/* Dynamic Nested Page Content */}
         <div style={{ padding: '2rem', flex: 1 }}>
           <Outlet />

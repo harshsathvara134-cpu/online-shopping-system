@@ -38,6 +38,7 @@ import { AdminBrands } from './pages/admin/AdminBrands';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminAnalytics } from './pages/admin/AdminAnalytics';
 import { AdminSettings } from './pages/admin/AdminSettings';
+import { CustomerRouteGuard } from './components/common/CustomerRouteGuard';
 import { AdminRouteGuard } from './components/common/AdminRouteGuard';
 
 // Scroll to top helper on route change
@@ -83,11 +84,14 @@ export const App: React.FC = () => {
                   <Route path="/checkout" element={<StorefrontLayout><CheckoutPage /></StorefrontLayout>} />
                   <Route path="/order-success/:orderId" element={<StorefrontLayout><OrderSuccessPage /></StorefrontLayout>} />
                   <Route path="/my-orders" element={<StorefrontLayout><MyOrdersPage /></StorefrontLayout>} />
-                  <Route path="/my-profile" element={<StorefrontLayout><MyProfilePage /></StorefrontLayout>} />
+                  <Route path="/my-profile" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
+                  <Route path="/account" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
+                  <Route path="/account/*" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
                   <Route path="/login" element={<StorefrontLayout><LoginPage /></StorefrontLayout>} />
 
                   {/* Admin Portal Routes (Protected by AdminRouteGuard) */}
                   <Route path="/admin/login" element={<AdminLoginPage />} />
+                  <Route path="/admin-login" element={<AdminLoginPage />} />
                   <Route
                     path="/admin"
                     element={

@@ -13,6 +13,7 @@ interface CartContextType {
   updateQuantity: (id: string, qty: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  mergeGuestCart: (userCart: CartItem[]) => void;
   couponCode: string;
   discountAmount: number;
   applyCoupon: (code: string) => { success: boolean; message: string };
@@ -132,6 +133,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setDiscountAmount(0);
   };
 
+  const mergeGuestCart = (userCart: CartItem[]) => {
+    setCartItems((currentGuest) => {
+      const mergedMap = new Map<number, CartItem>();
+
+      // First add authenticated user's existing items
+      userCart.forEach((item) => {
+        mergedMap.set(item.p_id, { ...item });
+      });
+
+      // Then merge guest items
+      currentGuest.forEach((guestItem) => {
+        const existing = mergedMap.get(guestItem.p_id);
+        if (existing) {
+          existing.qty = Math.min(existing.qty + guestItem.qty, guestItem.product.product_qty);
+        } else {
+          mergedMap.set(guestItem.p_id, { ...guestItem });
+        }
+      });
+
+      const finalCart = Array.from(mergedMap.values());
+      mockDb.saveCart(finalCart);
+      return finalCart;
+    });
+  };
+
   const total = Math.max(0, subtotal + tax + shipping - discountAmount);
   const itemCount = cartItems.reduce((sum, item) => sum + item.qty, 0);
 
@@ -147,6 +173,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateQuantity,
         removeFromCart,
         clearCart,
+        mergeGuestCart,
         couponCode,
         discountAmount,
         applyCoupon,

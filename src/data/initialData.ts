@@ -204,132 +204,19 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
 ];
 
-export const INITIAL_USER: User = {
-  user_id: 1,
-  first_name: 'Rahul',
-  last_name: 'Sharma',
-  email: 'customer@nexusmart.com',
-  mobile: '+91 98765 43210',
-  address1: '402, Skyline Towers, MG Road',
-  address2: 'Bengaluru, Karnataka 560001',
-  role: 'customer',
-  password_hash: '603b4afbec803e984204dcaa7c2f958ef6c295d6654785791379e95ce28adf2a',
-  password_salt: 'salt_customer_nexus_2026',
-};
-
 export const INITIAL_ADMIN: User = {
   user_id: 999,
-  first_name: 'Admin',
-  last_name: 'Manager',
-  email: 'admin@nexusmart.com',
+  first_name: 'Harsh',
+  last_name: 'Sathvara',
+  email: 'harshsathvara134@gmail.com',
   mobile: '+91 99999 00000',
-  address1: 'NexusMart HQ',
+  address1: 'JAYVEER HQ',
   address2: 'Tech Park, Mumbai',
   role: 'admin',
   password_hash: '5b2c012974576a3d9876120f3b2c30a4d6c1842e5a7d32e3c17b4b5cec365128',
   password_salt: 'salt_admin_nexus_2026',
 };
 
-export const INITIAL_ORDERS: Order[] = [
-  {
-    order_id: 1001,
-    user_id: 1,
-    f_name: 'Rahul Sharma',
-    email: 'customer@nexusmart.com',
-    address: '402, Skyline Towers, MG Road',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    zip: '560001',
-    payment_method: 'Card',
-    cardname: 'Rahul Sharma',
-    cardnumber: '•••• •••• •••• 4242',
-    prod_count: 2,
-    total_amt: 126498,
-    discount_amt: 2000,
-    coupon_code: 'NEXUS2000',
-    status: 'Delivered',
-    created_at: '2026-08-18 11:30:00',
-    items: [
-      {
-        order_pro_id: 1,
-        product_id: 5,
-        product_title: 'Samsung Galaxy S25 Ultra',
-        product_image: '/product_images/1772203299_1770809937_samsung-galaxy-s25-ultra-front-and-back-2.png',
-        qty: 1,
-        amt: 124999,
-      },
-      {
-        order_pro_id: 2,
-        product_id: 11,
-        product_title: 'Lymio Casual Fleece Hoodie',
-        product_image: '/product_images/1778174079_p_image_1773469889_71GaH2nLQ6L._SY741_.jpg',
-        qty: 1,
-        amt: 1499,
-      }
-    ],
-  },
-  {
-    order_id: 1002,
-    user_id: 1,
-    f_name: 'Rahul Sharma',
-    email: 'customer@nexusmart.com',
-    address: '402, Skyline Towers, MG Road',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    zip: '560001',
-    payment_method: 'UPI',
-    prod_count: 1,
-    total_amt: 18999,
-    status: 'Shipped',
-    created_at: '2026-08-22 14:15:00',
-    items: [
-      {
-        order_pro_id: 3,
-        product_id: 6,
-        product_title: 'Motorola G85 5G',
-        product_image: '/product_images/1772203498_1770813172_motorola-g85-5g-pdp-ecom-render-6-gadget-gray-z2wh5m54a.png',
-        qty: 1,
-        amt: 18999,
-      }
-    ],
-  }
-];
+export const INITIAL_ORDERS: Order[] = [];
 
-export const INITIAL_REVIEWS: Review[] = [
-  {
-    review_id: 1,
-    product_id: 5,
-    name: 'Ananya Verma',
-    email: 'ananya@example.com',
-    rating: 5,
-    review: 'Unbelievable camera and the Galaxy AI features make photo editing like magic! Fast delivery from NexusMart.',
-    datetime: '2026-08-20 16:45:00',
-  },
-  {
-    review_id: 2,
-    product_id: 5,
-    name: 'Vikram Joshi',
-    email: 'vikram@example.com',
-    rating: 5,
-    review: 'Battery life easily lasts 1.5 days under heavy usage. Best flagship phone right now.',
-    datetime: '2026-08-21 10:12:00',
-  },
-  {
-    review_id: 3,
-    product_id: 6,
-    name: 'Karan Patel',
-    email: 'karan@example.com',
-    rating: 4,
-    review: 'Great curved screen in this budget segment. Sound quality and haptics are top notch.',
-    datetime: '2026-08-19 14:20:00',
-  },
-  {
-    review_id: 4,
-    product_id: 13,
-    name: 'Priya Sundaram',
-    email: 'priya@example.com',
-    rating: 5,
-    review: 'The titanium finish feels so lightweight compared to the 14 Pro. Excellent low-light photos.',
-    datetime: '2026-08-15 09:30:00',
-  },
-];
+export const INITIAL_REVIEWS: Review[] = [];
