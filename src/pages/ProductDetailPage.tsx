@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Heart,
@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Check,
   MessageSquarePlus,
+  ZoomIn,
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
@@ -39,6 +40,19 @@ export const ProductDetailPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews'>('desc');
   const [addedAnim, setAddedAnim] = useState(false);
+
+  // Interactive Image Zoom State
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleImageMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imageContainerRef.current) return;
+    const rect = imageContainerRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    setZoomPos({ x, y });
+  };
 
   // Review Form State
   const [newRating, setNewRating] = useState(5);
@@ -131,6 +145,10 @@ export const ProductDetailPage: React.FC = () => {
         {/* Left Column: Image Gallery */}
         <div>
           <div
+            ref={imageContainerRef}
+            onMouseEnter={() => setIsZoomed(true)}
+            onMouseMove={handleImageMouseMove}
+            onMouseLeave={() => setIsZoomed(false)}
             style={{
               width: '100%',
               height: '420px',
@@ -145,6 +163,8 @@ export const ProductDetailPage: React.FC = () => {
               overflow: 'hidden',
               marginBottom: '1rem',
               boxShadow: 'var(--shadow-sm)',
+              cursor: isZoomed ? 'crosshair' : 'zoom-in',
+              touchAction: 'none',
             }}
           >
             <img
@@ -157,14 +177,42 @@ export const ProductDetailPage: React.FC = () => {
                 maxHeight: '350px',
                 maxWidth: '90%',
                 objectFit: 'contain',
-                transition: 'transform 0.3s ease',
+                transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                transform: isZoomed ? 'scale(2.3)' : 'scale(1)',
+                transition: isZoomed ? 'transform-origin 0.05s ease-out, transform 0.2s ease-out' : 'transform 0.3s ease-out',
+                pointerEvents: 'none',
+                willChange: 'transform, transform-origin',
               }}
             />
             {product.featured && (
-              <span className="badge badge-primary" style={{ position: 'absolute', top: '16px', left: '16px' }}>
+              <span className="badge badge-primary" style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 2, pointerEvents: 'none' }}>
                 Featured Choice
               </span>
             )}
+            {/* Zoom Hint Floating Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '12px',
+                right: '12px',
+                backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                backdropFilter: 'blur(6px)',
+                color: 'white',
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                pointerEvents: 'none',
+                opacity: isZoomed ? 0 : 0.85,
+                transition: 'opacity 0.2s ease',
+                zIndex: 2,
+              }}
+            >
+              <ZoomIn size={13} /> Hover to Zoom
+            </div>
           </div>
 
           {/* Thumbnail Gallery */}

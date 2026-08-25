@@ -57,14 +57,14 @@ export const LanguageSelector: React.FC = () => {
         aria-expanded={isOpen}
         title={`Language: ${current.nativeName}`}
       >
-        {/* nav-line-2: flag stacked above language code */}
-        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px', lineHeight: 1 }}>
+        {/* Flag next to Language code */}
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', lineHeight: 1 }}>
           {/* India flag — SVG inline for pixel-perfect rendering */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 900 600"
-            width="22"
-            height="15"
+            width="20"
+            height="14"
             style={{ borderRadius: '2px', display: 'block', flexShrink: 0 }}
             aria-label="India"
             role="img"
@@ -94,17 +94,17 @@ export const LanguageSelector: React.FC = () => {
             })}
           </svg>
           {/* Language code */}
-          <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#1e293b', letterSpacing: '0.02em' }}>
+          <span style={{ fontSize: '0.8125rem', fontWeight: 800, color: '#1e293b', letterSpacing: '0.02em' }}>
             {current.code}
           </span>
         </span>
 
         {/* Chevron */}
         <ChevronDown
-          size={11}
+          size={12}
           color="#64748b"
           style={{
-            marginLeft: '1px',
+            marginLeft: '2px',
             transform: isOpen ? 'rotate(180deg)' : 'none',
             transition: 'transform 0.2s',
             flexShrink: 0,
