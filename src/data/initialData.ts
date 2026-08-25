@@ -206,14 +206,14 @@ export const INITIAL_PRODUCTS: Product[] = [
 
 export const INITIAL_ADMIN: User = {
   user_id: 999,
-  first_name: 'Harsh',
-  last_name: 'Sathvara',
-  email: 'harshsathvara134@gmail.com',
+  first_name: 'Admin',
+  last_name: 'JAYVEERMart',
+  email: 'admin@nexusmart.com',
   mobile: '+91 99999 00000',
   address1: 'JAYVEER HQ',
   address2: 'Tech Park, Mumbai',
   role: 'admin',
-  password_hash: '5b2c012974576a3d9876120f3b2c30a4d6c1842e5a7d32e3c17b4b5cec365128',
+  password_hash: '529d01281827afdc93db57f99a7d22d7fc863d43dbaaad5907558a0324f9103e',
   password_salt: 'salt_admin_nexus_2026',
 };
 

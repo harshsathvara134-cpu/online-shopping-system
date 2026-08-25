@@ -39,10 +39,10 @@ export const LoginPage: React.FC = () => {
   } = useAuth();
   const navigate = useNavigate();
 
-  // If already logged in, redirect
+  // If already logged in, redirect to store or requested page
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : returnUrl);
+      navigate(returnUrl);
     }
   }, [user, navigate, returnUrl]);
 
@@ -813,8 +813,8 @@ export const LoginPage: React.FC = () => {
                   </button>
                 </div>
                 {regPassword && (
-                  <div style={{ marginTop: '5px' }}>
-                    <div style={{ display: 'flex', gap: '3px', height: '3px', marginBottom: '3px' }}>
+                  <div style={{ marginTop: '6px' }}>
+                    <div style={{ display: 'flex', gap: '3px', height: '4px', marginBottom: '5px' }}>
                       {[1, 2, 3, 4].map((step) => (
                         <div
                           key={step}
@@ -833,9 +833,30 @@ export const LoginPage: React.FC = () => {
                         />
                       ))}
                     </div>
-                    <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
-                      Strength: <strong>{regPassPolicy.strengthLabel}</strong>
-                    </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
+                        Strength: <strong>{regPassPolicy.strengthLabel}</strong>
+                      </span>
+                      {!regPassPolicy.isValid && (
+                        <span style={{ fontSize: '0.6875rem', color: '#e11d48', fontWeight: 600 }}>
+                          Requirements incomplete
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 6px', fontSize: '0.6875rem', backgroundColor: '#f8fafc', padding: '6px 8px', borderRadius: '6px', border: '1px solid #f1f5f9' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: regPassword.length >= 8 ? '#16a34a' : '#94a3b8' }}>
+                        {regPassword.length >= 8 ? '✓' : '○'} 8+ Characters
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: /[A-Z]/.test(regPassword) ? '#16a34a' : '#e11d48', fontWeight: !/[A-Z]/.test(regPassword) ? 600 : 400 }}>
+                        {/[A-Z]/.test(regPassword) ? '✓' : '○'} Uppercase (A-Z)
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: /[0-9]/.test(regPassword) ? '#16a34a' : '#94a3b8' }}>
+                        {/[0-9]/.test(regPassword) ? '✓' : '○'} Number (0-9)
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(regPassword) ? '#16a34a' : '#94a3b8' }}>
+                        {/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(regPassword) ? '✓' : '○'} Special Symbol
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>

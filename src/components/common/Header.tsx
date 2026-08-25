@@ -22,7 +22,7 @@ import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '../../context/LanguageContext';
 
 export const Header: React.FC = () => {
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const { toggleCart, itemCount: cartCount, total: cartTotal } = useCart();
   const { itemCount: wishCount } = useWishlist();
   const { products, categories } = useProducts();
@@ -370,18 +370,6 @@ export const Header: React.FC = () => {
                     >
                       <Package size={16} /> {t('myOrders')}
                     </Link>
-
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setShowUserMenu(false)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', fontSize: '0.875rem', color: 'var(--primary)', fontWeight: 600 }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                      >
-                        <ShieldCheck size={16} /> Admin Dashboard
-                      </Link>
-                    )}
 
                     <button
                       onClick={() => {

@@ -93,9 +93,17 @@ export const mockDb = {
 
   getUsers: (): User[] => {
     const rawUsers = getStorageItem<User[]>(STORAGE_KEYS.USERS, [INITIAL_ADMIN]);
-    return rawUsers.map((u) => {
-      if ((u.email === 'harshsathvara134@gmail.com' || u.email === 'admin@nexusmart.com') && !u.password_hash) {
-        return { ...u, email: 'harshsathvara134@gmail.com', password_hash: INITIAL_ADMIN.password_hash, password_salt: INITIAL_ADMIN.password_salt };
+    const hasAdmin = rawUsers.some((u) => u.email.toLowerCase() === 'admin@nexusmart.com');
+    const allUsers = hasAdmin ? rawUsers : [INITIAL_ADMIN, ...rawUsers];
+
+    return allUsers.map((u) => {
+      if (u.email.toLowerCase() === 'admin@nexusmart.com') {
+        return {
+          ...u,
+          role: 'admin' as const,
+          password_hash: u.password_hash || INITIAL_ADMIN.password_hash,
+          password_salt: u.password_salt || INITIAL_ADMIN.password_salt,
+        };
       }
       return u;
     });

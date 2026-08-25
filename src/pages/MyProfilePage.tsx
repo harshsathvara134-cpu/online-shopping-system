@@ -43,16 +43,9 @@ export const MyProfilePage: React.FC = () => {
 
   const {
     user,
-    currentSession,
     logout,
-    logoutAllDevices,
-    terminateSession,
-    getActiveSessions,
     updateProfile,
     updatePassword,
-    enable2FA,
-    disable2FA,
-    regenerateRecoveryCodes,
     getCustomerAddresses,
     addCustomerAddress,
     updateCustomerAddress,
@@ -95,14 +88,6 @@ export const MyProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showCurrentPass, setShowCurrentPass] = useState(false);
   const [showNewPass, setShowNewPass] = useState(false);
-
-  // 2FA Management State
-  const [is2faModalOpen, setIs2faModalOpen] = useState(false);
-  const [generated2FASecret, setGenerated2FASecret] = useState('');
-  const [twoFactorOtpInput, setTwoFactorOtpInput] = useState('');
-  const [displayedRecoveryCodes, setDisplayedRecoveryCodes] = useState<string[] | null>(null);
-  const [disable2faPass, setDisable2faPass] = useState('');
-  const [isDisableModalOpen, setIsDisableModalOpen] = useState(false);
 
   // Address Management State
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
@@ -219,39 +204,7 @@ export const MyProfilePage: React.FC = () => {
     }
   };
 
-  // 3. 2FA Handlers
-  const handleStart2FASetup = () => {
-    const secret = generate2FASecret();
-    setGenerated2FASecret(secret);
-    setTwoFactorOtpInput('');
-    setIs2faModalOpen(true);
-  };
-
-  const handleConfirm2FA = (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = enable2FA(generated2FASecret, twoFactorOtpInput);
-    if (res.success) {
-      setIs2faModalOpen(false);
-      setDisplayedRecoveryCodes(res.recoveryCodes || []);
-      showNotification('success', 'Two-Factor Authentication is now ENABLED!');
-    } else {
-      showNotification('error', res.message);
-    }
-  };
-
-  const handleConfirmDisable2FA = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await disable2FA(disable2faPass);
-    if (res.success) {
-      setIsDisableModalOpen(false);
-      setDisable2faPass('');
-      showNotification('success', 'Two-Factor Authentication has been DISABLED.');
-    } else {
-      showNotification('error', res.message);
-    }
-  };
-
-  // 4. Address Handlers
+  // 3. Address Handlers
   const handleOpenAddAddress = () => {
     setEditingAddressId(null);
     setAddrName(`${user.first_name || ''} ${user.last_name || ''}`.trim());
@@ -804,159 +757,6 @@ export const MyProfilePage: React.FC = () => {
               </button>
             </form>
           </div>
-
-          {/* Section C: Two-Factor Authentication */}
-          <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '12px', backgroundColor: user.two_factor_enabled ? '#ecfdf5' : '#f1f5f9', color: user.two_factor_enabled ? '#10b981' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Fingerprint size={24} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Two-Factor Authentication (2FA)</h3>
-                  <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '2px 0 0' }}>
-                    Protect your account with Google Authenticator or Microsoft Authenticator (TOTP).
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                {user.two_factor_enabled ? (
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <span style={{ padding: '4px 10px', backgroundColor: '#ecfdf5', color: '#059669', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                      ● ACTIVE
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setIsDisableModalOpen(true)}
-                      style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #ef4444', backgroundColor: 'transparent', color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
-                    >
-                      Disable 2FA
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const codes = regenerateRecoveryCodes();
-                        setDisplayedRecoveryCodes(codes);
-                        showNotification('success', '8 new backup recovery codes generated!');
-                      }}
-                      style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
-                    >
-                      New Recovery Codes
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleStart2FASetup}
-                    style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', backgroundColor: '#10b981', color: 'white', fontSize: '0.8125rem', fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    Enable 2FA Protection
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {displayedRecoveryCodes && (
-              <div style={{ padding: '1.25rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', marginTop: '1.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}>Emergency Recovery Codes (Save securely)</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(displayedRecoveryCodes.join('\n'));
-                      showNotification('success', 'Recovery codes copied!');
-                    }}
-                    style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                  >
-                    <Copy size={13} /> Copy All
-                  </button>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                  {displayedRecoveryCodes.map((c, i) => (
-                    <div key={i} style={{ padding: '6px', backgroundColor: 'white', border: '1px solid #cbd5e1', borderRadius: '6px', fontFamily: 'monospace', fontSize: '0.75rem', textAlign: 'center', fontWeight: 700 }}>
-                      {c}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Section D: Active Device Sessions */}
-          <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Active Devices & Sessions</h3>
-                <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '2px 0 0' }}>
-                  Manage authorized devices accessing your account.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (window.confirm('Sign out from all other devices?')) {
-                    logoutAllDevices();
-                    navigate('/login');
-                  }
-                }}
-                style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #ef4444', backgroundColor: '#fef2f2', color: '#dc2626', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
-              >
-                Sign Out From All Devices
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {activeSessions.map((sess) => (
-                <div
-                  key={sess.sessionId}
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: '10px',
-                    border: '1px solid #e2e8f0',
-                    backgroundColor: sess.isCurrent ? '#f0fdf4' : 'white',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: '8px',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569' }}>
-                      {sess.os.includes('Android') || sess.os.includes('iOS') ? <Smartphone size={18} /> : <Laptop size={18} />}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#0f172a' }}>
-                        {sess.browser} on {sess.os}{' '}
-                        {sess.isCurrent && (
-                          <span style={{ padding: '2px 6px', backgroundColor: '#dcfce7', color: '#15803d', borderRadius: '4px', fontSize: '0.625rem', fontWeight: 700 }}>
-                            THIS DEVICE
-                          </span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                        IP: {sess.ip} • Signed in: {new Date(sess.createdAt).toLocaleString()}
-                      </div>
-                    </div>
-                  </div>
-
-                  {!sess.isCurrent && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        terminateSession(sess.sessionId);
-                        showNotification('success', 'Device signed out.');
-                      }}
-                      style={{ padding: '4px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', fontSize: '0.75rem', cursor: 'pointer' }}
-                    >
-                      Sign Out
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 
@@ -1268,76 +1068,6 @@ export const MyProfilePage: React.FC = () => {
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button type="button" onClick={() => setIsUpiModalOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
                 <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', backgroundColor: '#4f46e5', color: 'white', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer' }}>Link UPI</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ─── MODAL: 2FA Setup ──────────────────────────────────────────────── */}
-      {is2faModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1.5rem' }}>
-          <div style={{ width: '100%', maxWidth: '440px', backgroundColor: 'white', borderRadius: '16px', padding: '2rem' }}>
-            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#ecfdf5', color: '#10b981', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.75rem' }}>
-                <Fingerprint size={28} />
-              </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Setup Two-Factor Authenticator</h3>
-              <p style={{ fontSize: '0.8125rem', color: '#64748b', marginTop: '4px' }}>
-                Enter the secret key into Google Authenticator or Microsoft Authenticator
-              </p>
-            </div>
-
-            <div style={{ padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '1.25rem', textAlign: 'center' }}>
-              <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', marginBottom: '4px' }}>Secret Key (Base32):</span>
-              <div style={{ fontFamily: 'monospace', fontWeight: 800, fontSize: '1.1rem', color: '#4f46e5', letterSpacing: '2px', wordBreak: 'break-all' }}>
-                {generated2FASecret}
-              </div>
-              <div style={{ marginTop: '8px', fontSize: '0.75rem', color: '#64748b' }}>
-                Live OTP: <strong>{getActive2FAOTP(generated2FASecret)}</strong> (or <strong>123456</strong>)
-              </div>
-            </div>
-
-            <form onSubmit={handleConfirm2FA}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <input
-                  type="text"
-                  required
-                  maxLength={6}
-                  autoFocus
-                  placeholder="000000"
-                  value={twoFactorOtpInput}
-                  onChange={(e) => setTwoFactorOtpInput(e.target.value.replace(/\D/g, ''))}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '2px solid #6366f1', fontSize: '1.3rem', fontWeight: 800, letterSpacing: '6px', textAlign: 'center', outline: 'none' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" onClick={() => setIs2faModalOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', backgroundColor: '#10b981', color: 'white', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer' }}>Verify & Activate</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ─── MODAL: 2FA Disable ────────────────────────────────────────────── */}
-      {isDisableModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1.5rem' }}>
-          <div style={{ width: '100%', maxWidth: '400px', backgroundColor: 'white', borderRadius: '16px', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#991b1b', margin: '0 0 8px' }}>Disable Two-Factor Authentication</h3>
-            <p style={{ fontSize: '0.8125rem', color: '#64748b', marginBottom: '1.25rem' }}>
-              Please enter your password to confirm turning off 2FA security.
-            </p>
-
-            <form onSubmit={handleConfirmDisable2FA}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <input type="password" required placeholder="Your account password" value={disable2faPass} onChange={(e) => setDisable2faPass(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }} />
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" onClick={() => setIsDisableModalOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', backgroundColor: '#ef4444', color: 'white', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer' }}>Disable 2FA</button>
               </div>
             </form>
           </div>

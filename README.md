@@ -52,5 +52,6 @@ npm run build
 
 ## 🔐 Administrative Credentials
 * **URL**: `/admin/login`
-* **Email**: `admin@nexusmart.com`
-* **Password**: `admin123` *(Or click "1-Click Quick Admin Access")*
+* **Email**: `harshsathvara134@gmail.com` (or `admin@nexusmart.com`)
+* **Default Password**: `Admin@123`
+* **Password Reset**: Click **"Forgot Password?"** on the admin login page to generate a 6-digit OTP verification code and set a new custom password.

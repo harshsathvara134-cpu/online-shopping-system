@@ -876,10 +876,10 @@ export const AdminLoginPage: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Password Strength Indicator */}
+                  {/* Password Strength & Live Policy Checklist */}
                   {newPassword && (
-                    <div style={{ marginTop: '6px' }}>
-                      <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '4px' }}>
+                    <div style={{ marginTop: '8px' }}>
+                      <div style={{ display: 'flex', gap: '3px', height: '4px', marginBottom: '5px' }}>
                         {[1, 2, 3, 4].map((step) => (
                           <div
                             key={step}
@@ -898,9 +898,30 @@ export const AdminLoginPage: React.FC = () => {
                           />
                         ))}
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                        Strength: <strong>{newPassPolicy.strengthLabel}</strong>
-                      </span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                          Strength: <strong>{newPassPolicy.strengthLabel}</strong>
+                        </span>
+                        {!newPassPolicy.isValid && (
+                          <span style={{ fontSize: '0.75rem', color: '#f87171', fontWeight: 600 }}>
+                            Requirements incomplete
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 6px', fontSize: '0.75rem', backgroundColor: '#0a0f1d', padding: '6px 8px', borderRadius: '6px', border: '1px solid #283654' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: newPassword.length >= 8 ? '#34d399' : '#64748b' }}>
+                          {newPassword.length >= 8 ? '✓' : '○'} 8+ Characters
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: /[A-Z]/.test(newPassword) ? '#34d399' : '#f87171', fontWeight: !/[A-Z]/.test(newPassword) ? 600 : 400 }}>
+                          {/[A-Z]/.test(newPassword) ? '✓' : '○'} Uppercase (A-Z)
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: /[0-9]/.test(newPassword) ? '#34d399' : '#64748b' }}>
+                          {/[0-9]/.test(newPassword) ? '✓' : '○'} Number (0-9)
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(newPassword) ? '#34d399' : '#64748b' }}>
+                          {/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(newPassword) ? '✓' : '○'} Special Symbol
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
