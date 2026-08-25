@@ -546,21 +546,29 @@ export const AdminProducts: React.FC = () => {
           </aside>
         )}
 
-        {/* Right Content Area */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', minWidth: 0 }}>
+        {/* Right Content Area: Single Unified White Container Card */}
+        <div
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            padding: '1.25rem',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            minWidth: 0,
+          }}
+        >
           {/* Action Header: Tabs on Left + Search/Filter/New Product on Right */}
           <div
             style={{
-              backgroundColor: 'white',
-              borderRadius: '16px',
-              border: '1px solid #e2e8f0',
-              padding: '0.75rem 1rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
               gap: '1rem',
+              paddingBottom: '0.25rem',
             }}
           >
             {/* Segmented Pill Tabs: All | Active | Non Active */}
@@ -690,6 +698,11 @@ export const AdminProducts: React.FC = () => {
                 padding: '4rem 2rem',
                 textAlign: 'center',
                 color: '#64748b',
+                minHeight: '400px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <Package size={48} style={{ margin: '0 auto 1rem', color: '#cbd5e1' }} />
@@ -707,6 +720,8 @@ export const AdminProducts: React.FC = () => {
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
                 gap: '1.25rem',
+                minHeight: '540px',
+                alignContent: 'start',
               }}
             >
               {paginatedProducts.map((p) => {
@@ -726,6 +741,7 @@ export const AdminProducts: React.FC = () => {
                       position: 'relative',
                       boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
                       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                      height: '240px',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
@@ -890,15 +906,15 @@ export const AdminProducts: React.FC = () => {
                     {/* Centered Product Image */}
                     <div
                       style={{
-                        height: '130px',
+                        height: '110px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         backgroundColor: '#f8fafc',
                         borderRadius: '12px',
-                        marginBottom: '10px',
+                        marginBottom: '8px',
                         overflow: 'hidden',
-                        padding: '8px',
+                        padding: '6px',
                       }}
                     >
                       <img
@@ -909,7 +925,7 @@ export const AdminProducts: React.FC = () => {
                             'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
                         }}
                         style={{
-                          maxHeight: '110px',
+                          maxHeight: '95px',
                           maxWidth: '90%',
                           objectFit: 'contain',
                           transition: 'transform 0.3s ease',
@@ -923,7 +939,7 @@ export const AdminProducts: React.FC = () => {
                         fontSize: '0.875rem',
                         fontWeight: 600,
                         color: '#1e293b',
-                        marginBottom: '8px',
+                        marginBottom: '6px',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -989,15 +1005,18 @@ export const AdminProducts: React.FC = () => {
               <span>Per Page</span>
             </div>
 
-            {/* Pagination Controls (< 1 2 3 >) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {/* Pagination Controls (< 1 2 3 >) with strict identical dimensions */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <button
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 style={{
+                  boxSizing: 'border-box',
                   width: '32px',
                   height: '32px',
+                  minWidth: '32px',
+                  minHeight: '32px',
                   borderRadius: '8px',
                   border: '1px solid #e2e8f0',
                   backgroundColor: 'white',
@@ -1006,6 +1025,7 @@ export const AdminProducts: React.FC = () => {
                   justifyContent: 'center',
                   cursor: currentPage <= 1 ? 'not-allowed' : 'pointer',
                   color: currentPage <= 1 ? '#cbd5e1' : '#475569',
+                  padding: 0,
                 }}
               >
                 <ChevronLeft size={16} />
@@ -1020,15 +1040,22 @@ export const AdminProducts: React.FC = () => {
                     type="button"
                     onClick={() => setCurrentPage(pageNum)}
                     style={{
+                      boxSizing: 'border-box',
                       width: '32px',
                       height: '32px',
+                      minWidth: '32px',
+                      minHeight: '32px',
                       borderRadius: '8px',
-                      border: isActive ? 'none' : '1px solid #e2e8f0',
+                      border: isActive ? '1px solid #1e293b' : '1px solid #e2e8f0',
                       backgroundColor: isActive ? '#1e293b' : 'white',
                       color: isActive ? 'white' : '#475569',
                       fontWeight: isActive ? 700 : 500,
-                      fontSize: '0.8125rem',
+                      fontSize: '0.875rem',
                       cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -1042,8 +1069,11 @@ export const AdminProducts: React.FC = () => {
                 disabled={currentPage >= totalPages}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 style={{
+                  boxSizing: 'border-box',
                   width: '32px',
                   height: '32px',
+                  minWidth: '32px',
+                  minHeight: '32px',
                   borderRadius: '8px',
                   border: '1px solid #e2e8f0',
                   backgroundColor: 'white',
@@ -1052,6 +1082,7 @@ export const AdminProducts: React.FC = () => {
                   justifyContent: 'center',
                   cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
                   color: currentPage >= totalPages ? '#cbd5e1' : '#475569',
+                  padding: 0,
                 }}
               >
                 <ChevronRight size={16} />
