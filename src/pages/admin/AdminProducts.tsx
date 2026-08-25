@@ -16,6 +16,8 @@ import {
   RotateCw,
   Check,
   Package,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
 import { Product } from '../../types';
@@ -55,10 +57,29 @@ export const AdminProducts: React.FC = () => {
   const [price, setPrice] = useState<number>(999);
   const [qty, setQty] = useState<number>(10);
   const [image, setImage] = useState<string>('/product_images/1772203299_1770809937_samsung-galaxy-s25-ultra-front-and-back-2.png');
+  const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [keywords, setKeywords] = useState('');
   const [description, setDescription] = useState('');
   const [featured, setFeatured] = useState(false);
   const [trending, setTrending] = useState(false);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image file size should be less than 5MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setImage(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Color Swatches for Filter
   const colorOptions = [
@@ -1210,16 +1231,158 @@ export const AdminProducts: React.FC = () => {
                 </div>
 
                 <div className="input-group" style={{ gridColumn: 'span 2' }}>
-                  <label className="input-label" style={{ fontWeight: 600, fontSize: '0.8125rem' }}>Image Path or URL *</label>
-                  <input
-                    type="text"
-                    required
-                    value={image}
-                    onChange={(e) => setImage(e.target.value)}
-                    className="input-field"
-                    placeholder="/product_images/filename.jpg or https://..."
-                    style={{ borderRadius: '8px', padding: '8px 12px' }}
-                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <label className="input-label" style={{ fontWeight: 600, fontSize: '0.8125rem', margin: 0 }}>
+                      Product Image *
+                    </label>
+                    <div style={{ display: 'flex', gap: '4px', backgroundColor: '#f1f5f9', padding: '2px', borderRadius: '6px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setImageInputMode('upload')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: imageInputMode === 'upload' ? 700 : 500,
+                          backgroundColor: imageInputMode === 'upload' ? 'white' : 'transparent',
+                          color: imageInputMode === 'upload' ? '#0f172a' : '#64748b',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          boxShadow: imageInputMode === 'upload' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+                        }}
+                      >
+                        Upload Image
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setImageInputMode('url')}
+                        style={{
+                          padding: '3px 10px',
+                          fontSize: '0.75rem',
+                          fontWeight: imageInputMode === 'url' ? 700 : 500,
+                          backgroundColor: imageInputMode === 'url' ? 'white' : 'transparent',
+                          color: imageInputMode === 'url' ? '#0f172a' : '#64748b',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          boxShadow: imageInputMode === 'url' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+                        }}
+                      >
+                        Image URL / Path
+                      </button>
+                    </div>
+                  </div>
+
+                  {imageInputMode === 'upload' ? (
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '14px',
+                        alignItems: 'center',
+                        padding: '14px',
+                        border: '1.5px dashed #cbd5e1',
+                        borderRadius: '10px',
+                        backgroundColor: '#f8fafc',
+                      }}
+                    >
+                      {/* Image Thumbnail Preview */}
+                      <div
+                        style={{
+                          width: '74px',
+                          height: '74px',
+                          borderRadius: '10px',
+                          backgroundColor: 'white',
+                          border: '1px solid #e2e8f0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden',
+                          flexShrink: 0,
+                          padding: '4px',
+                        }}
+                      >
+                        {image ? (
+                          <img
+                            src={image}
+                            alt="Product Preview"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
+                            }}
+                            style={{ maxHeight: '64px', maxWidth: '64px', objectFit: 'contain' }}
+                          />
+                        ) : (
+                          <ImageIcon size={28} color="#94a3b8" />
+                        )}
+                      </div>
+
+                      {/* Upload Button & Format Info */}
+                      <div style={{ flex: 1 }}>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/png, image/jpeg, image/webp, image/svg+xml, image/avif"
+                          onChange={handleFileUpload}
+                          style={{ display: 'none' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '7px 14px',
+                            backgroundColor: '#1e293b',
+                            color: 'white',
+                            borderRadius: '8px',
+                            fontSize: '0.8125rem',
+                            fontWeight: 700,
+                            border: 'none',
+                            cursor: 'pointer',
+                            marginBottom: '6px',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                          }}
+                        >
+                          <Upload size={14} /> Choose Image to Upload
+                        </button>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                          Upload device photos (PNG, JPG, WebP, SVG up to 5MB)
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        required
+                        value={image}
+                        onChange={(e) => setImage(e.target.value)}
+                        className="input-field"
+                        placeholder="/product_images/filename.jpg or https://..."
+                        style={{ borderRadius: '8px', padding: '8px 12px', flex: 1 }}
+                      />
+                      {image && (
+                        <img
+                          src={image}
+                          alt="Preview"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src =
+                              'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
+                          }}
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            objectFit: 'contain',
+                            borderRadius: '6px',
+                            border: '1px solid #e2e8f0',
+                            backgroundColor: '#f8fafc',
+                            padding: '2px',
+                          }}
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="input-group" style={{ gridColumn: 'span 2' }}>

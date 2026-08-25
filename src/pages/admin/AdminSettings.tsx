@@ -353,10 +353,10 @@ export const AdminSettings: React.FC = () => {
           >
             <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                Administrator Contact Details
+                Administrator Profile Details
               </h2>
               <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '4px 0 0' }}>
-                Update your administrative name, contact phone, and dispatch center address.
+                Update your administrative display name and account information.
               </p>
             </div>
 
@@ -421,44 +421,6 @@ export const AdminSettings: React.FC = () => {
                     }}
                   />
                 </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>
-                    Contact Mobile Number
-                  </label>
-                  <input
-                    type="text"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '0.875rem',
-                      outline: 'none',
-                    }}
-                  />
-                </div>
-
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#1e293b', marginBottom: '6px' }}>
-                    Headquarters / Office Address
-                  </label>
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '0.875rem',
-                      outline: 'none',
-                    }}
-                  />
-                </div>
               </div>
 
               <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
@@ -479,7 +441,7 @@ export const AdminSettings: React.FC = () => {
                     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                   }}
                 >
-                  <Save size={15} /> Save Contact Details
+                  <Save size={15} /> Save Profile Details
                 </button>
               </div>
             </form>
