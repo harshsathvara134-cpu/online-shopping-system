@@ -36,6 +36,8 @@ jobs:
 
       - name: Build Application
         run: npm run build
+        env:
+          GITHUB_PAGES: 'true'
 
       - name: Copy index.html to 404.html for SPA fallback
         run: cp dist/index.html dist/404.html
