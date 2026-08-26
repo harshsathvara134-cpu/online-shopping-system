@@ -40,10 +40,8 @@ jobs:
       - name: Build Web Production Bundle
         run: npm run build
 
-      - name: Copy Web Bundle into Android Assets
-        run: |
-          mkdir -p android/app/src/main/assets/public
-          cp -r dist/* android/app/src/main/assets/public/
+      - name: Sync Capacitor Android
+        run: npx cap sync android
 
       - name: Grant Execute Permission for Gradle
         run: chmod +x android/gradlew
