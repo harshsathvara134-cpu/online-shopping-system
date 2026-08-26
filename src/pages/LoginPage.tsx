@@ -507,9 +507,9 @@ export const LoginPage: React.FC = () => {
             </form>
 
             <div style={{ marginTop: '1.5rem', fontSize: '0.75rem', color: '#64748b', lineHeight: 1.5 }}>
-              By continuing, you agree to JAYVEERMart's{' '}
-              <a href="#" style={{ color: '#4f46e5', textDecoration: 'none' }}>Conditions of Use</a> and{' '}
-              <a href="#" style={{ color: '#4f46e5', textDecoration: 'none' }}>Privacy Notice</a>.
+              By continuing, you agree to JAYVEERMart&apos;s{' '}
+              <Link to="/conditions-of-use" target="_blank" style={{ color: '#4f46e5', textDecoration: 'underline' }}>Conditions of Use</Link> and{' '}
+              <Link to="/privacy-notice" target="_blank" style={{ color: '#4f46e5', textDecoration: 'underline' }}>Privacy Notice</Link>.
             </div>
 
             <div style={{ marginTop: '1.75rem', paddingTop: '1.25rem', borderTop: '1px solid #f1f5f9', textAlign: 'center' }}>
@@ -881,7 +881,16 @@ export const LoginPage: React.FC = () => {
                     onChange={(e) => setAgreeTerms(e.target.checked)}
                     style={{ width: '15px', height: '15px', marginTop: '2px', accentColor: '#4f46e5' }}
                   />
-                  <span>I agree to JAYVEERMart's Conditions of Use and Privacy Notice.</span>
+                  <span>
+                    I agree to JAYVEERMart&apos;s{' '}
+                    <Link to="/conditions-of-use" target="_blank" style={{ color: '#4f46e5', textDecoration: 'underline' }}>
+                      Conditions of Use
+                    </Link>{' '}
+                    and{' '}
+                    <Link to="/privacy-notice" target="_blank" style={{ color: '#4f46e5', textDecoration: 'underline' }}>
+                      Privacy Notice
+                    </Link>.
+                  </span>
                 </label>
               </div>
 

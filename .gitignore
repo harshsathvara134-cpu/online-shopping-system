@@ -1,6 +1,22 @@
-# Environment and Secrets
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production & Build Outputs
+dist/
+dist-ssr/
+build/
+out/
+.next/
+
+# Environment Variables & Secrets
 .env
-.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
 !.env.example
 *.pem
 *.key
@@ -10,19 +26,19 @@
 *.p12
 secrets/
 
-# Database dumps and backups
-*.sql
+# Database dumps, local databases & backups
 *.sqlite
+*.sqlite3
 *.db
+*.dump
+dump.rdb
+*.sql.gz
+*.sql.bak
+backup/
+backups/
 
-# Build outputs
-node_modules
-dist
-dist-ssr
-*.local
-
-# Logs
-logs
+# Logs & Diagnostics
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -30,15 +46,37 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Editor and OS
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDE & Editor Files
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
-Thumbs.db
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.sublime-project
+*.sublime-workspace
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Temporary & Cache Files
+.cache/
+.parcel-cache/
+.turbo/
+*.tmp
+*.temp
+
 

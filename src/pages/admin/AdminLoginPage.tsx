@@ -368,7 +368,7 @@ export const AdminLoginPage: React.FC = () => {
                   <input
                     type="email"
                     required
-                    placeholder="harshsathvara134@gmail.com"
+                    placeholder="admin@jayveermart.com"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -776,7 +776,7 @@ export const AdminLoginPage: React.FC = () => {
                     <input
                       type="email"
                       required
-                      placeholder="harshsathvara134@gmail.com"
+                      placeholder="admin@jayveermart.com"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
                       style={{

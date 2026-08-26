@@ -135,7 +135,10 @@ export const Footer: React.FC = () => {
                 <Link to="/wishlist" style={{ color: '#94a3b8' }}>Saved Wishlist</Link>
               </li>
               <li>
-                <Link to="/store" style={{ color: '#94a3b8' }}>Latest Offers & Deals</Link>
+                <Link to="/conditions-of-use" style={{ color: '#94a3b8' }}>Conditions of Use</Link>
+              </li>
+              <li>
+                <Link to="/privacy-notice" style={{ color: '#94a3b8' }}>Privacy Notice</Link>
               </li>
             </ul>
           </div>
@@ -191,8 +194,16 @@ export const Footer: React.FC = () => {
             color: '#64748b',
           }}
         >
-          <div>
-            © {new Date().getFullYear()} JAYVEERMart Enterprise. All rights reserved. Refactored into React Single Page Application.
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+            <span>© {new Date().getFullYear()} JAYVEERMart Enterprise. All rights reserved.</span>
+            <span style={{ color: '#334155' }}>|</span>
+            <Link to="/conditions-of-use" style={{ color: '#94a3b8', textDecoration: 'none' }} onMouseEnter={(e) => e.currentTarget.style.color = '#818cf8'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>
+              Conditions of Use
+            </Link>
+            <span style={{ color: '#334155' }}>|</span>
+            <Link to="/privacy-notice" style={{ color: '#94a3b8', textDecoration: 'none' }} onMouseEnter={(e) => e.currentTarget.style.color = '#818cf8'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>
+              Privacy Notice
+            </Link>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <span style={{ backgroundColor: '#1e293b', padding: '4px 8px', borderRadius: '4px', color: '#94a3b8', fontWeight: 600 }}>COD Available</span>

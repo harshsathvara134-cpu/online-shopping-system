@@ -290,7 +290,7 @@ export const sendCustomerLoginEmails = async (params: {
 
   const deviceMeta = getClientDeviceMeta();
   const loginTime = new Date();
-  const adminRecipient = (import.meta.env.VITE_ADMIN_NOTIFICATION_EMAIL as string) || 'harshsathvara134@gmail.com';
+  const adminRecipient = (import.meta.env.VITE_ADMIN_NOTIFICATION_EMAIL as string) || 'admin@jayveermart.com';
 
   const formattedDate = loginTime.toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
   const formattedTime = loginTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });

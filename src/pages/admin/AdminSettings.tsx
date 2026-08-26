@@ -60,9 +60,9 @@ export const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'store' | 'security' | 'audit' | 'emails' | 'database'>('profile');
 
   // Profile State
-  const [firstName, setFirstName] = useState(user?.first_name || 'Harsh');
-  const [lastName, setLastName] = useState(user?.last_name || 'Sathvara');
-  const [email, setEmail] = useState(user?.email || 'harshsathvara134@gmail.com');
+  const [firstName, setFirstName] = useState(user?.first_name || 'Admin');
+  const [lastName, setLastName] = useState(user?.last_name || 'User');
+  const [email, setEmail] = useState(user?.email || 'admin@jayveermart.com');
 
   // Password State
   const [currentPassword, setCurrentPassword] = useState('');
@@ -101,9 +101,9 @@ export const AdminSettings: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      setFirstName(user.first_name || 'Harsh');
-      setLastName(user.last_name || 'Sathvara');
-      setEmail(user.email || 'harshsathvara134@gmail.com');
+      setFirstName(user.first_name || 'Admin');
+      setLastName(user.last_name || 'User');
+      setEmail(user.email || 'admin@jayveermart.com');
     }
   }, [user]);
 

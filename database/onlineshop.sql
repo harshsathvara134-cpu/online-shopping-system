@@ -28,7 +28,7 @@ CREATE TABLE `admin_info` (
 --
 
 INSERT INTO `admin_info` (`admin_id`, `admin_name`, `admin_email`, `admin_password`) VALUES
-(1, 'Harsh', 'harsh@gmail.com', '$2y$10$dGELF/HVK9aQ3Z.Fy977vOEtSH/B52f/F8/FJpD34qjCYaYrAARga');
+(1, 'Administrator', 'admin@example.com', '$2y$10$dGELF/HVK9aQ3Z.Fy977vOEtSH/B52f/F8/FJpD34qjCYaYrAARga');
 
 -- --------------------------------------------------------
 
@@ -72,11 +72,6 @@ CREATE TABLE `cart` (
 -- Dumping data for table `cart`
 --
 
-INSERT INTO `cart` (`id`, `p_id`, `ip_add`, `user_id`, `qty`) VALUES
-(272, 72, '::1', 12, 1),
-(281, 1, '::1', 12, 1),
-(282, 8, '::1', 12, 3);
-
 -- --------------------------------------------------------
 
 --
@@ -118,7 +113,7 @@ CREATE TABLE `email_info` (
 --
 
 INSERT INTO `email_info` (`email_id`, `email`) VALUES
-(3, 'admin@gmail.com');
+(1, 'admin@example.com');
 
 -- --------------------------------------------------------
 
@@ -150,10 +145,6 @@ CREATE TABLE `orders` (
 --
 -- Dumping data for table `orders`
 --
-
-INSERT INTO `orders` (`order_id`, `user_id`, `product_id`, `qty`, `trx_id`, `p_status`) VALUES
-(1, 12, 7, 1, '07M47684BS5725041', 'Completed'),
-(2, 14, 2, 1, '07M47684BS5725041', 'Completed');
 
 -- --------------------------------------------------------
 
@@ -314,13 +305,6 @@ CREATE TABLE `wishlist` (
 --
 -- Dumping data for table `wishlist`
 --
-
-INSERT INTO `wishlist` (`id`, `p_id`, `ip_add`, `user_id`) VALUES
-(224, 0, '::1', -1),
-(282, 3, '::1', -1),
-(283, 73, '::1', 12),
-(284, 74, '::1', 12),
-(285, 0, '::1', 12);
 
 --
 -- Indexes for dumped tables

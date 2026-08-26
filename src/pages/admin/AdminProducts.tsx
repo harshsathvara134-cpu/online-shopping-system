@@ -67,10 +67,22 @@ export const AdminProducts: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image file size should be less than 5MB.');
+      const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/avif'];
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.avif'];
+      const ext = '.' + file.name.split('.').pop()?.toLowerCase();
+
+      if (!allowedMimes.includes(file.type) || !allowedExtensions.includes(ext)) {
+        alert('Invalid file format. Please select a valid image file (JPEG, PNG, WebP, SVG, AVIF).');
+        if (e.target) e.target.value = '';
         return;
       }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image file size should be less than 5MB.');
+        if (e.target) e.target.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {

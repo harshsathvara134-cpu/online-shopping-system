@@ -56,6 +56,7 @@ export const MyProfilePage: React.FC = () => {
     addSavedUpi,
     deleteSavedPaymentMethod,
     setDefaultPaymentMethod,
+    getActiveSessions,
   } = useAuth();
 
   const { orders } = useOrders();

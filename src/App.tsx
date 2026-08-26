@@ -27,6 +27,8 @@ import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { MyOrdersPage } from './pages/MyOrdersPage';
 import { MyProfilePage } from './pages/MyProfilePage';
 import { LoginPage } from './pages/LoginPage';
+import { ConditionsOfUsePage } from './pages/ConditionsOfUsePage';
+import { PrivacyNoticePage } from './pages/PrivacyNoticePage';
 
 // Admin Suite Pages
 import { AdminLayout } from './pages/admin/AdminLayout';
@@ -88,6 +90,13 @@ export const App: React.FC = () => {
                   <Route path="/account" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
                   <Route path="/account/*" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
                   <Route path="/login" element={<StorefrontLayout><LoginPage /></StorefrontLayout>} />
+                  <Route path="/conditions-of-use" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
+                  <Route path="/terms-of-service" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
+                  <Route path="/terms" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
+                  <Route path="/conditions" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
+                  <Route path="/privacy-notice" element={<StorefrontLayout><PrivacyNoticePage /></StorefrontLayout>} />
+                  <Route path="/privacy-policy" element={<StorefrontLayout><PrivacyNoticePage /></StorefrontLayout>} />
+                  <Route path="/privacy" element={<StorefrontLayout><PrivacyNoticePage /></StorefrontLayout>} />
 
                   {/* Admin Portal Routes (Protected by AdminRouteGuard) */}
                   <Route path="/admin/login" element={<AdminLoginPage />} />
