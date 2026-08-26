@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">JAYVEERMart</string>
+    <string name="title_activity_main">JAYVEERMart</string>
+    <string name="package_name">com.jayveermart.app</string>
+    <string name="custom_url_scheme">com.jayveermart.app</string>
+</resources>
