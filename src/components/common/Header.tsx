@@ -96,29 +96,42 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Main Navbar */}
-      <div className="container" style={{ padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem' }}>
+      <div
+        className="container"
+        style={{
+          padding: '0.625rem 1rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '0.75rem',
+          width: '100%',
+          maxWidth: '100vw',
+          boxSizing: 'border-box',
+        }}
+      >
         {/* Brand Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', minWidth: 0, flexShrink: 0 }}>
           <div
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
+              width: '36px',
+              height: '36px',
+              borderRadius: '9px',
               background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              boxShadow: '0 4px 10px rgba(79, 70, 229, 0.3)',
+              boxShadow: '0 3px 8px rgba(79, 70, 229, 0.3)',
+              flexShrink: 0,
             }}
           >
-            <ShoppingBag size={22} />
+            <ShoppingBag size={20} />
           </div>
           <div>
-            <span style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)', color: '#0f172a' }}>
+            <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.03em', fontFamily: 'var(--font-heading)', color: '#0f172a', whiteSpace: 'nowrap' }}>
               JAYVEER<span style={{ color: 'var(--primary)' }}>Mart</span>
             </span>
-            <span style={{ display: 'block', fontSize: '0.625rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '-4px' }}>
+            <span style={{ display: 'block', fontSize: '0.58rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '-3px' }}>
               Enterprise Store
             </span>
           </div>
@@ -238,11 +251,11 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {/* Wishlist Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          {/* Wishlist Button (Desktop only, mobile has bottom bar) */}
           <Link
             to="/wishlist"
-            className="btn btn-outline btn-icon"
+            className="btn btn-outline btn-icon hide-mobile"
             style={{ position: 'relative', border: 'none' }}
             title="Wishlist"
           >
@@ -274,10 +287,10 @@ export const Header: React.FC = () => {
           <button
             onClick={toggleCart}
             className="btn btn-primary"
-            style={{ padding: '0.5rem 0.9rem', gap: '8px', borderRadius: 'var(--radius-full)' }}
+            style={{ padding: '0.45rem 0.75rem', gap: '6px', borderRadius: 'var(--radius-full)' }}
           >
             <div style={{ position: 'relative' }}>
-              <ShoppingBag size={19} />
+              <ShoppingBag size={18} />
               {cartCount > 0 && (
                 <span
                   style={{
@@ -287,9 +300,9 @@ export const Header: React.FC = () => {
                     backgroundColor: '#f59e0b',
                     color: '#0f172a',
                     borderRadius: '50%',
-                    width: '17px',
-                    height: '17px',
-                    fontSize: '0.65rem',
+                    width: '16px',
+                    height: '16px',
+                    fontSize: '0.625rem',
                     fontWeight: 800,
                     display: 'flex',
                     alignItems: 'center',
@@ -305,8 +318,8 @@ export const Header: React.FC = () => {
             </span>
           </button>
 
-          {/* User Profile Dropdown */}
-          <div ref={userMenuRef} style={{ position: 'relative' }}>
+          {/* User Profile Dropdown (Desktop only, mobile has bottom bar and drawer) */}
+          <div ref={userMenuRef} style={{ position: 'relative' }} className="hide-mobile">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="btn btn-secondary btn-icon"
@@ -319,7 +332,7 @@ export const Header: React.FC = () => {
               }}
             >
               <UserIcon size={18} />
-              <span className="hide-mobile" style={{ fontSize: '0.85rem', fontWeight: 600, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {user ? user.first_name : 'Account'}
               </span>
               <ChevronDown size={14} />

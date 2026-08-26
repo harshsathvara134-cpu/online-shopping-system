@@ -70,52 +70,53 @@ export const HomePage: React.FC = () => {
         />
 
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '3rem', alignItems: 'center' }}>
+          <div className="hero-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '2.5rem', alignItems: 'center' }}>
             <div>
               <div
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  gap: '6px',
                   backgroundColor: 'rgba(255, 255, 255, 0.12)',
                   backdropFilter: 'blur(8px)',
-                  padding: '6px 14px',
+                  padding: '5px 12px',
                   borderRadius: 'var(--radius-full)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
-                  fontSize: '0.8125rem',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
                   color: '#a5b4fc',
-                  marginBottom: '1.5rem',
+                  marginBottom: '1rem',
                 }}
               >
-                <Sparkles size={16} color="#fbbf24" />
+                <Sparkles size={14} color="#fbbf24" />
                 <span>Next-Generation E-Commerce Experience</span>
               </div>
 
               <h1
                 style={{
-                  fontSize: 'clamp(2.2rem, 5vw, 3.6rem)',
+                  fontSize: 'clamp(1.75rem, 6vw, 3.4rem)',
                   fontWeight: 900,
                   color: 'white',
-                  lineHeight: 1.15,
-                  marginBottom: '1.25rem',
+                  lineHeight: 1.18,
+                  marginBottom: '1rem',
                   fontFamily: 'var(--font-heading)',
+                  wordBreak: 'break-word',
                 }}
               >
                 {t('heroTitle')}
               </h1>
 
-              <p style={{ fontSize: '1.1rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '2rem', maxWidth: '560px' }}>
+              <p style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '1.5rem', maxWidth: '560px' }}>
                 {t('heroSubtitle')}
               </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
                 <Link
                   to="/store"
                   className="btn btn-primary btn-lg"
-                  style={{ borderRadius: 'var(--radius-full)', padding: '0.85rem 2rem', fontSize: '1.05rem' }}
+                  style={{ borderRadius: 'var(--radius-full)', padding: '0.7rem 1.6rem', fontSize: '0.95rem' }}
                 >
-                  {t('explore')} <ArrowRight size={20} />
+                  {t('explore')} <ArrowRight size={18} />
                 </Link>
 
                 <Link
@@ -125,10 +126,11 @@ export const HomePage: React.FC = () => {
                     borderRadius: 'var(--radius-full)',
                     color: 'white',
                     borderColor: 'rgba(255, 255, 255, 0.3)',
-                    padding: '0.85rem 1.75rem',
+                    padding: '0.7rem 1.4rem',
+                    fontSize: '0.95rem',
                   }}
                 >
-                  <Laptop size={18} /> {t('electronics')}
+                  <Laptop size={16} /> {t('electronics')}
                 </Link>
               </div>
 
@@ -136,23 +138,24 @@ export const HomePage: React.FC = () => {
               <div
                 style={{
                   display: 'flex',
-                  gap: '2.5rem',
-                  marginTop: '3rem',
-                  paddingTop: '2rem',
+                  flexWrap: 'wrap',
+                  gap: '1.25rem',
+                  marginTop: '2rem',
+                  paddingTop: '1.5rem',
                   borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white', fontFamily: 'var(--font-heading)' }}>50,000+</div>
-                  <div style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Happy Customers</div>
+                <div style={{ minWidth: '80px' }}>
+                  <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'white', fontFamily: 'var(--font-heading)' }}>50,000+</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Happy Customers</div>
                 </div>
-                <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#38bdf8', fontFamily: 'var(--font-heading)' }}>100%</div>
-                  <div style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Authentic Brands</div>
+                <div style={{ minWidth: '80px' }}>
+                  <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#38bdf8', fontFamily: 'var(--font-heading)' }}>100%</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Authentic Brands</div>
                 </div>
-                <div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#fbbf24', fontFamily: 'var(--font-heading)' }}>4.9 / 5</div>
-                  <div style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Store Rating</div>
+                <div style={{ minWidth: '80px' }}>
+                  <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#fbbf24', fontFamily: 'var(--font-heading)' }}>4.9 / 5</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Store Rating</div>
                 </div>
               </div>
             </div>
