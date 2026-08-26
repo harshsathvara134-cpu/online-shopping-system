@@ -19,7 +19,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 import { ProductCard } from '../components/store/ProductCard';
 import { StarRating } from '../components/common/StarRating';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency, formatDate, getProductImageUrl } from '../utils/formatters';
 import { useLanguage } from '../context/LanguageContext';
 import { sanitizeInput } from '../utils/security';
 
@@ -169,7 +169,7 @@ export const ProductDetailPage: React.FC = () => {
             }}
           >
             <img
-              src={currentImage}
+              src={getProductImageUrl(currentImage)}
               alt={product.product_title}
               onError={(e) => {
                 (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
@@ -248,7 +248,7 @@ export const ProductDetailPage: React.FC = () => {
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  <img src={img} alt="Thumbnail" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                  <img src={getProductImageUrl(img)} alt="Thumbnail" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
                 </button>
               ))}
             </div>

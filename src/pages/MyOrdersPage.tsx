@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Package, Truck, CheckCircle2, Clock, XCircle, ArrowRight, ShoppingBag } from 'lucide-react';
 import { useOrders } from '../context/OrderContext';
 import { useAuth } from '../context/AuthContext';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency, formatDate, getProductImageUrl } from '../utils/formatters';
 import { OrderStatus } from '../types';
 
 export const MyOrdersPage: React.FC = () => {
@@ -245,7 +245,7 @@ export const MyOrdersPage: React.FC = () => {
                       }}
                     >
                       <img
-                        src={item.product_image}
+                        src={getProductImageUrl(item.product_image)}
                         alt={item.product_title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';

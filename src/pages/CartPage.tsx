@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
-import { formatCurrency, AVAILABLE_COUPONS } from '../utils/formatters';
+import { formatCurrency, AVAILABLE_COUPONS, getProductImageUrl } from '../utils/formatters';
 
 export const CartPage: React.FC = () => {
   const {
@@ -111,7 +111,7 @@ export const CartPage: React.FC = () => {
                     }}
                   >
                     <img
-                      src={item.product.product_image}
+                      src={getProductImageUrl(item.product.product_image)}
                       alt={item.product.product_title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';

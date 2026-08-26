@@ -17,7 +17,7 @@ import { useProducts } from '../context/ProductContext';
 import { ProductCard } from '../components/store/ProductCard';
 import { QuickViewModal } from '../components/common/QuickViewModal';
 import { Product } from '../types';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../utils/formatters';
 import { useLanguage } from '../context/LanguageContext';
 
 export const StorePage: React.FC = () => {
@@ -529,7 +529,7 @@ export const StorePage: React.FC = () => {
                 >
                   <div style={{ height: '160px', background: '#f8fafc', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <img
-                      src={product.product_image}
+                      src={getProductImageUrl(product.product_image)}
                       alt={product.product_title}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';

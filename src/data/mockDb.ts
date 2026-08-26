@@ -73,7 +73,22 @@ function setStorageItem<T>(key: string, value: T): void {
 }
 
 export const mockDb = {
-  getProducts: (): Product[] => getStorageItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS),
+  getProducts: (): Product[] => {
+    const products = getStorageItem<Product[]>(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+    const initialMap = new Map(INITIAL_PRODUCTS.map((p) => [p.product_id, p]));
+    return products.map((p) => {
+      const initial = initialMap.get(p.product_id);
+      if (initial && (p.product_image?.startsWith('/product_images/17781') || p.product_image?.startsWith('/product_images/1772203508') || !p.product_image)) {
+        return {
+          ...p,
+          product_image: initial.product_image,
+          product_image2: initial.product_image2 || p.product_image2,
+          product_image3: initial.product_image3 || p.product_image3,
+        };
+      }
+      return p;
+    });
+  },
   saveProducts: (products: Product[]): void => setStorageItem(STORAGE_KEYS.PRODUCTS, products),
 
   getCategories: (): Category[] => getStorageItem(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES),

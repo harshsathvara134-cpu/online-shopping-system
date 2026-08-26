@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
 import { Product } from '../../types';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../../utils/formatters';
 import { sanitizeInput, sanitizeUrl } from '../../utils/security';
 
 export const AdminProducts: React.FC = () => {
@@ -935,7 +935,7 @@ export const AdminProducts: React.FC = () => {
                       }}
                     >
                       <img
-                        src={p.product_image}
+                        src={getProductImageUrl(p.product_image)}
                         alt={p.product_title}
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =

@@ -16,6 +16,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { ProductCard } from '../components/store/ProductCard';
 import { QuickViewModal } from '../components/common/QuickViewModal';
 import { Product } from '../types';
+import { getProductImageUrl } from '../utils/formatters';
 
 export const HomePage: React.FC = () => {
   const { products, brands } = useProducts();
@@ -177,7 +178,7 @@ export const HomePage: React.FC = () => {
               >
                 <div style={{ position: 'relative', height: '280px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-lg)', marginBottom: '1rem', overflow: 'hidden' }}>
                   <img
-                    src="/product_images/1772203299_1770809937_samsung-galaxy-s25-ultra-front-and-back-2.png"
+                    src={getProductImageUrl('product_images/1772203299_1770809937_samsung-galaxy-s25-ultra-front-and-back-2.png')}
                     alt="Featured S25 Ultra"
                     style={{ maxHeight: '240px', maxWidth: '90%', objectFit: 'contain' }}
                   />
@@ -352,7 +353,7 @@ export const HomePage: React.FC = () => {
 
           <div className="hide-mobile" style={{ display: 'flex', justifyContent: 'center', zIndex: 2 }}>
             <img
-              src="/product_images/1772203508_1770813469_669025df1d73a44bd21c762c-hp-pavilion-15-6-fhd-touchscreen.png"
+              src={getProductImageUrl('product_images/HP Pavilion 15.6 Laptop.png')}
               alt="Promo Laptop"
               style={{ maxHeight: '240px', maxWidth: '100%', objectFit: 'contain', filter: 'drop-shadow(0 20px 25px rgba(0,0,0,0.3))' }}
             />

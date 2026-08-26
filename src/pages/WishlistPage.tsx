@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../utils/formatters';
 
 export const WishlistPage: React.FC = () => {
   const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlist();
@@ -107,7 +107,7 @@ export const WishlistPage: React.FC = () => {
                 }}
               >
                 <img
-                  src={item.product.product_image}
+                  src={getProductImageUrl(item.product.product_image)}
                   alt={item.product.product_title}
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';

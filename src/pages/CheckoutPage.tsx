@@ -16,7 +16,7 @@ import confetti from 'canvas-confetti';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrderContext';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../utils/formatters';
 
 export const CheckoutPage: React.FC = () => {
   const { cartItems, subtotal, tax, shipping, total, discountAmount, couponCode, clearCart } = useCart();
@@ -419,7 +419,7 @@ export const CheckoutPage: React.FC = () => {
               {cartItems.map((item) => (
                 <div key={item.id} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <img
-                    src={item.product.product_image}
+                    src={getProductImageUrl(item.product.product_image)}
                     alt={item.product.product_title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';

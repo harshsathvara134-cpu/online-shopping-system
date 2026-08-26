@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Tag, Check } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../../utils/formatters';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -155,7 +155,7 @@ export const CartDrawer: React.FC = () => {
                   }}
                 >
                   <img
-                    src={item.product.product_image}
+                    src={getProductImageUrl(item.product.product_image)}
                     alt={item.product.product_title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';

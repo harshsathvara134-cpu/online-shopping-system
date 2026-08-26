@@ -17,7 +17,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useProducts } from '../../context/ProductContext';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../../utils/formatters';
 import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -215,7 +215,7 @@ export const Header: React.FC = () => {
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
                   <img
-                    src={prod.product_image}
+                    src={getProductImageUrl(prod.product_image)}
                     alt={prod.product_title}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
@@ -583,7 +583,7 @@ export const Header: React.FC = () => {
                 }}
               >
                 <img
-                  src={prod.product_image}
+                  src={getProductImageUrl(prod.product_image)}
                   alt={prod.product_title}
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =

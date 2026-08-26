@@ -6,7 +6,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useProducts } from '../../context/ProductContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, getProductImageUrl } from '../../utils/formatters';
 import { StarRating } from '../common/StarRating';
 
 interface ProductCardProps {
@@ -138,7 +138,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
           }}
         >
           <img
-            src={product.product_image}
+            src={getProductImageUrl(product.product_image)}
             alt={product.product_title}
             onError={(e) => {
               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
