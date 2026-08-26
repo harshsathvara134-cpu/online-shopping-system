@@ -285,3 +285,19 @@ export interface CaptchaChallenge {
   expiresAt: number;
 }
 
+export interface Review {
+  review_id: number;
+  product_id: number;
+  name: string;
+  email: string;
+  rating: number;
+  review: string;
+  datetime: string;
+  is_verified_purchase?: boolean;
+  status?: 'Approved' | 'Pending' | 'Flagged' | 'Rejected';
+  admin_reply?: string | null;
+  admin_reply_at?: string | null;
+  admin_name?: string | null;
+}
+
+

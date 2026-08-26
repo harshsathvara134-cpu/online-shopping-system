@@ -10,6 +10,7 @@ import {
   Settings,
   ExternalLink,
   ShieldCheck,
+  MessageSquare,
 } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
@@ -20,6 +21,7 @@ export const AdminLayout: React.FC = () => {
     { to: '/admin/categories', label: 'Categories', icon: <Layers size={18} /> },
     { to: '/admin/brands', label: 'Brands', icon: <Tag size={18} /> },
     { to: '/admin/orders', label: 'Orders', icon: <ShoppingBag size={18} /> },
+    { to: '/admin/reviews', label: 'Customer Reviews', icon: <MessageSquare size={18} /> },
     { to: '/admin/analytics', label: 'Analytics', icon: <BarChart3 size={18} /> },
     { to: '/admin/settings', label: 'Settings', icon: <Settings size={18} /> },
   ];

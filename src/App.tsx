@@ -36,6 +36,7 @@ import { AdminProducts } from './pages/admin/AdminProducts';
 import { AdminCategories } from './pages/admin/AdminCategories';
 import { AdminBrands } from './pages/admin/AdminBrands';
 import { AdminOrders } from './pages/admin/AdminOrders';
+import { AdminReviews } from './pages/admin/AdminReviews';
 import { AdminAnalytics } from './pages/admin/AdminAnalytics';
 import { AdminSettings } from './pages/admin/AdminSettings';
 
@@ -103,6 +104,7 @@ export const App: React.FC = () => {
                     <Route path="categories" element={<AdminCategories />} />
                     <Route path="brands" element={<AdminBrands />} />
                     <Route path="orders" element={<AdminOrders />} />
+                    <Route path="reviews" element={<AdminReviews />} />
                     <Route path="analytics" element={<AdminAnalytics />} />
                     <Route path="settings" element={<AdminSettings />} />
                   </Route>

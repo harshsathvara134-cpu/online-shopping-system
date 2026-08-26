@@ -10,21 +10,26 @@ import {
   Plus,
   CheckCircle2,
   Clock,
+  MessageSquare,
+  Star,
 } from 'lucide-react';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
 export const AdminDashboard: React.FC = () => {
-  const { products } = useProducts();
+  const { products, reviews } = useProducts();
   const { orders } = useOrders();
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.status !== 'Cancelled' ? o.total_amt : 0), 0);
   const totalOrders = orders.length;
   const totalProducts = products.length;
+  const totalReviews = reviews.length;
+  const avgRating = totalReviews > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1) : '5.0';
   const lowStockProducts = products.filter(p => p.product_qty <= 5);
 
   const recentOrders = orders.slice(0, 5);
+  const recentReviews = reviews.slice(0, 4);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -150,6 +155,32 @@ export const AdminDashboard: React.FC = () => {
             </span>
           </div>
         </div>
+        {/* Customer Reviews KPI */}
+        <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '14px',
+              backgroundColor: '#ede9fe',
+              color: '#7c3aed',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <MessageSquare size={26} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 600 }}>Customer Reviews</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)', fontFamily: 'var(--font-heading)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {totalReviews} <span style={{ fontSize: '0.9rem', color: '#f59e0b', fontWeight: 700 }}>({avgRating}★)</span>
+            </div>
+            <Link to="/admin/reviews" style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+              Manage & Reply →
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Main 2-Column Dashboard Area */}
@@ -191,9 +222,7 @@ export const AdminDashboard: React.FC = () => {
                       {formatCurrency(order.total_amt)}
                     </td>
                     <td style={{ padding: '12px 10px' }}>
-                      <span className={`badge ${order.status === 'Delivered' ? 'badge-success' : order.status === 'Cancelled' ? 'badge-danger' : 'badge-primary'}`}>
-                        {order.status}
-                      </span>
+                      <span className="badge badge-primary">{order.status}</span>
                     </td>
                   </tr>
                 ))}
@@ -202,51 +231,94 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Low Stock Warning List */}
-        <div className="card" style={{ padding: '1.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.25rem' }}>
-            <AlertTriangle size={20} color="var(--warning)" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Inventory Alerts</h2>
+        {/* Right Column: Inventory Alerts & Latest Reviews */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Low Stock Warning List */}
+          <div className="card" style={{ padding: '1.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.25rem' }}>
+              <AlertTriangle size={20} color="var(--warning)" />
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Inventory Alerts</h2>
+            </div>
+
+            {lowStockProducts.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '1.5rem 1rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                ✓ All inventory items are adequately stocked.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {lowStockProducts.map((p) => (
+                  <div
+                    key={p.product_id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '10px 12px',
+                      backgroundColor: 'var(--bg-subtle)',
+                      borderRadius: 'var(--radius-md)',
+                    }}
+                  >
+                    <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {p.product_title}
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--danger)', fontWeight: 700 }}>
+                        Only {p.product_qty} in stock
+                      </span>
+                    </div>
+
+                    <Link
+                      to="/admin/products"
+                      className="btn btn-sm btn-secondary"
+                      style={{ fontSize: '0.75rem', padding: '4px 8px' }}
+                    >
+                      Restock
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {lowStockProducts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem 1rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-              ✓ All inventory items are adequately stocked.
+          {/* Latest Reviews Widget */}
+          <div className="card" style={{ padding: '1.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Star size={20} color="#f59e0b" fill="#f59e0b" />
+                <h2 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Latest Reviews</h2>
+              </div>
+              <Link to="/admin/reviews" style={{ fontSize: '0.8125rem', color: 'var(--primary)', fontWeight: 600 }}>
+                Manage All →
+              </Link>
             </div>
-          ) : (
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {lowStockProducts.map((p) => (
+              {recentReviews.map((rev) => (
                 <div
-                  key={p.product_id}
+                  key={rev.review_id}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
                     padding: '10px 12px',
                     backgroundColor: 'var(--bg-subtle)',
                     borderRadius: 'var(--radius-md)',
+                    borderLeft: rev.admin_reply ? '3px solid var(--primary)' : '3px solid #cbd5e1',
                   }}
                 >
-                  <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {p.product_title}
-                    </div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--danger)', fontWeight: 700 }}>
-                      Only {p.product_qty} in stock
-                    </span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.8125rem' }}>{rev.name}</span>
+                    <span style={{ fontSize: '0.75rem', color: '#f59e0b', fontWeight: 700 }}>{rev.rating} ★</span>
                   </div>
-
-                  <Link
-                    to="/admin/products"
-                    className="btn btn-sm btn-secondary"
-                    style={{ fontSize: '0.75rem', padding: '4px 8px' }}
-                  >
-                    Restock
-                  </Link>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    "{rev.review}"
+                  </p>
+                  {rev.admin_reply && (
+                    <div style={{ fontSize: '0.6875rem', color: 'var(--primary)', fontWeight: 600, marginTop: '4px' }}>
+                      ✓ Replied by Store
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

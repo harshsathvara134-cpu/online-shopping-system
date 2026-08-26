@@ -12,6 +12,10 @@ import {
   Check,
   MessageSquarePlus,
   ZoomIn,
+  CheckCircle2,
+  CornerDownRight,
+  Trash2,
+  MessageSquare,
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
@@ -25,10 +29,10 @@ import { sanitizeInput } from '../utils/security';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const productId = parseInt(id || '0', 10);
   const navigate = useNavigate();
-  const productId = Number(id);
 
-  const { getProductById, getCategoryById, getBrandById, getProductReviews, addReview, products } = useProducts();
+  const { getProductById, getCategoryById, getBrandById, getProductReviews, addReview, replyToReview, deleteReview, products } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { user } = useAuth();
@@ -61,6 +65,8 @@ export const ProductDetailPage: React.FC = () => {
   const [reviewerEmail, setReviewerEmail] = useState(user ? user.email : '');
   const [reviewComment, setReviewComment] = useState('');
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [activeReplyReviewId, setActiveReplyReviewId] = useState<number | null>(null);
+  const [activeReplyText, setActiveReplyText] = useState('');
 
   if (!product) {
     return (
@@ -478,18 +484,141 @@ export const ProductDetailPage: React.FC = () => {
                           padding: '1.25rem',
                           backgroundColor: 'var(--bg-subtle)',
                           borderRadius: 'var(--radius-lg)',
+                          border: '1px solid var(--border-light)',
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                          <span style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{rev.name}</span>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{formatDate(rev.datetime)}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{rev.name}</span>
+                            {rev.is_verified_purchase && (
+                              <span style={{ fontSize: '0.75rem', backgroundColor: '#ecfdf5', color: '#059669', padding: '2px 8px', borderRadius: '4px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <CheckCircle2 size={12} /> Verified Buyer
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{formatDate(rev.datetime)}</span>
+                            {user?.role === 'admin' && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (window.confirm('Delete this review as admin?')) {
+                                    deleteReview(rev.review_id);
+                                  }
+                                }}
+                                title="Delete Review (Admin)"
+                                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px' }}
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                          </div>
                         </div>
+
                         <div style={{ marginBottom: '0.75rem' }}>
                           <StarRating rating={rev.rating} size={14} />
                         </div>
-                        <p style={{ fontSize: '0.875rem', color: 'var(--text-main)', lineHeight: 1.6 }}>
-                          {rev.review}
+
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-main)', lineHeight: 1.6, marginBottom: rev.admin_reply ? '1rem' : '0.5rem' }}>
+                          "{rev.review}"
                         </p>
+
+                        {/* Official Store Admin Reply */}
+                        {rev.admin_reply && (
+                          <div
+                            style={{
+                              backgroundColor: 'white',
+                              borderRadius: 'var(--radius-md)',
+                              borderLeft: '3px solid var(--primary)',
+                              padding: '0.875rem 1rem',
+                              marginTop: '0.75rem',
+                              boxShadow: 'var(--shadow-sm)',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <ShieldCheck size={14} color="var(--primary)" />
+                                <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.8125rem' }}>
+                                  {rev.admin_name || 'Official JAYVEER Store Response'}
+                                </span>
+                              </div>
+                              {rev.admin_reply_at && (
+                                <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>
+                                  {formatDate(rev.admin_reply_at)}
+                                </span>
+                              )}
+                            </div>
+                            <p style={{ fontSize: '0.8125rem', color: 'var(--text-main)', lineHeight: 1.5, margin: 0 }}>
+                              {rev.admin_reply}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Admin Inline Quick Reply Trigger */}
+                        {user?.role === 'admin' && !rev.admin_reply && activeReplyReviewId !== rev.review_id && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveReplyReviewId(rev.review_id);
+                              setActiveReplyText('');
+                            }}
+                            style={{
+                              marginTop: '0.5rem',
+                              background: 'none',
+                              border: 'none',
+                              color: 'var(--primary)',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <MessageSquare size={12} /> Reply as Admin
+                          </button>
+                        )}
+
+                        {/* Admin Inline Reply Box */}
+                        {activeReplyReviewId === rev.review_id && (
+                          <div style={{ marginTop: '0.75rem', backgroundColor: 'white', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--primary)' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '4px' }}>
+                              Post Official Admin Response:
+                            </div>
+                            <textarea
+                              rows={2}
+                              value={activeReplyText}
+                              onChange={(e) => setActiveReplyText(e.target.value)}
+                              placeholder="Write reply..."
+                              className="input-field"
+                              style={{ fontSize: '0.8125rem', marginBottom: '6px' }}
+                            />
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                              <button
+                                type="button"
+                                onClick={() => setActiveReplyReviewId(null)}
+                                className="btn btn-secondary btn-sm"
+                                style={{ fontSize: '0.75rem', padding: '3px 8px' }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (activeReplyText.trim()) {
+                                    replyToReview(rev.review_id, activeReplyText.trim(), 'JAYVEER Store Manager');
+                                    setActiveReplyReviewId(null);
+                                    setActiveReplyText('');
+                                  }
+                                }}
+                                className="btn btn-primary btn-sm"
+                                style={{ fontSize: '0.75rem', padding: '3px 8px' }}
+                              >
+                                Post Reply
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

@@ -100,7 +100,13 @@ export const mockDb = {
   getOrders: (): Order[] => getStorageItem(STORAGE_KEYS.ORDERS, INITIAL_ORDERS),
   saveOrders: (orders: Order[]): void => setStorageItem(STORAGE_KEYS.ORDERS, orders),
 
-  getReviews: (): Review[] => getStorageItem(STORAGE_KEYS.REVIEWS, INITIAL_REVIEWS),
+  getReviews: (): Review[] => {
+    const saved = getStorageItem<Review[]>(STORAGE_KEYS.REVIEWS, []);
+    if (!saved || saved.length === 0) {
+      return INITIAL_REVIEWS;
+    }
+    return saved;
+  },
   saveReviews: (reviews: Review[]): void => setStorageItem(STORAGE_KEYS.REVIEWS, reviews),
 
   getStoreSettings: (): StoreSettings => getStorageItem(STORAGE_KEYS.STORE_SETTINGS, INITIAL_STORE_SETTINGS),

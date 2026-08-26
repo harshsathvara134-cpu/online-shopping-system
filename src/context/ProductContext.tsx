@@ -15,6 +15,9 @@ interface ProductContextType {
   addBrand: (brand_title: string) => Brand;
   deleteBrand: (brand_id: number) => void;
   addReview: (review: Omit<Review, 'review_id' | 'datetime'>) => void;
+  replyToReview: (reviewId: number, adminReply: string, adminName?: string) => void;
+  deleteReview: (reviewId: number) => void;
+  updateReviewStatus: (reviewId: number, status: 'Approved' | 'Pending' | 'Flagged' | 'Rejected') => void;
   getProductById: (id: number) => Product | undefined;
   getCategoryById: (id: number) => Category | undefined;
   getBrandById: (id: number) => Brand | undefined;
@@ -99,13 +102,15 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       ...reviewData,
       review_id: Date.now(),
       datetime: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      status: reviewData.status || 'Approved',
+      is_verified_purchase: reviewData.is_verified_purchase ?? true,
     };
     const updatedReviews = [newReview, ...reviews];
     setReviews(updatedReviews);
 
     // Update product average rating & review count
-    const productReviews = updatedReviews.filter(r => r.product_id === reviewData.product_id);
-    const avgRating = productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length;
+    const productReviews = updatedReviews.filter(r => r.product_id === reviewData.product_id && r.status !== 'Rejected');
+    const avgRating = productReviews.length > 0 ? productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length : 5.0;
 
     setProducts(prev => prev.map(p => {
       if (p.product_id === reviewData.product_id) {
@@ -119,10 +124,57 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }));
   };
 
+  const replyToReview = (reviewId: number, adminReply: string, adminName: string = 'JAYVEER Support Team') => {
+    const updatedReviews = reviews.map(r => {
+      if (r.review_id === reviewId) {
+        return {
+          ...r,
+          admin_reply: adminReply.trim(),
+          admin_reply_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          admin_name: adminName,
+        };
+      }
+      return r;
+    });
+    setReviews(updatedReviews);
+  };
+
+  const deleteReview = (reviewId: number) => {
+    const reviewToDelete = reviews.find(r => r.review_id === reviewId);
+    const updatedReviews = reviews.filter(r => r.review_id !== reviewId);
+    setReviews(updatedReviews);
+
+    if (reviewToDelete) {
+      const productReviews = updatedReviews.filter(r => r.product_id === reviewToDelete.product_id && r.status !== 'Rejected');
+      const avgRating = productReviews.length > 0 ? productReviews.reduce((sum, r) => sum + r.rating, 0) / productReviews.length : 5.0;
+
+      setProducts(prev => prev.map(p => {
+        if (p.product_id === reviewToDelete.product_id) {
+          return {
+            ...p,
+            rating: Number(avgRating.toFixed(1)),
+            review_count: productReviews.length,
+          };
+        }
+        return p;
+      }));
+    }
+  };
+
+  const updateReviewStatus = (reviewId: number, status: 'Approved' | 'Pending' | 'Flagged' | 'Rejected') => {
+    const updatedReviews = reviews.map(r => {
+      if (r.review_id === reviewId) {
+        return { ...r, status };
+      }
+      return r;
+    });
+    setReviews(updatedReviews);
+  };
+
   const getProductById = (id: number) => products.find(p => p.product_id === id);
   const getCategoryById = (id: number) => categories.find(c => c.cat_id === id);
   const getBrandById = (id: number) => brands.find(b => b.brand_id === id);
-  const getProductReviews = (productId: number) => reviews.filter(r => r.product_id === productId);
+  const getProductReviews = (productId: number) => reviews.filter(r => r.product_id === productId && r.status !== 'Rejected');
 
   return (
     <ProductContext.Provider
@@ -139,6 +191,9 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addBrand,
         deleteBrand,
         addReview,
+        replyToReview,
+        deleteReview,
+        updateReviewStatus,
         getProductById,
         getCategoryById,
         getBrandById,
