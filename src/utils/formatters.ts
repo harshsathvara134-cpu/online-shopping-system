@@ -1,13 +1,15 @@
-export const formatCurrency = (amount: number): string => {
+export const formatCurrency = (amount?: number | null): string => {
+  const num = typeof amount === 'number' && !isNaN(amount) ? amount : 0;
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(num);
 };
 
-export const formatDate = (dateString: string): string => {
+export const formatDate = (dateString?: string | null): string => {
   try {
+    if (!dateString || typeof dateString !== 'string') return '';
     const date = new Date(dateString.replace(' ', 'T'));
     if (isNaN(date.getTime())) return dateString;
     return new Intl.DateTimeFormat('en-IN', {
@@ -18,12 +20,12 @@ export const formatDate = (dateString: string): string => {
       minute: '2-digit',
     }).format(date);
   } catch {
-    return dateString;
+    return dateString || '';
   }
 };
 
-export const truncateText = (text: string, maxLength: number): string => {
-  if (!text) return '';
+export const truncateText = (text?: string | null, maxLength: number = 100): string => {
+  if (!text || typeof text !== 'string') return '';
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength).trim() + '...';
 };

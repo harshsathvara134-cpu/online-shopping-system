@@ -63,16 +63,60 @@ const StorefrontLayout: React.FC<{ children: React.ReactNode }> = ({ children })
   );
 };
 
+class GlobalErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Unhandled UI Exception caught by ErrorBoundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', color: '#f8fafc', padding: '2rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
+          <div style={{ maxWidth: '480px', backgroundColor: '#1e293b', padding: '2.5rem', borderRadius: '1rem', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f43f5e', marginBottom: '1rem' }}>Something went wrong</h1>
+            <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+              The application encountered a temporary display issue. Click below to refresh and reset the store state.
+            </p>
+            <button
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = window.location.origin + window.location.pathname;
+              }}
+              style={{ backgroundColor: '#4f46e5', color: '#ffffff', padding: '0.75rem 1.5rem', borderRadius: '0.5rem', fontWeight: 700, border: 'none', cursor: 'pointer' }}
+            >
+              Reset & Reload Store
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export const App: React.FC = () => {
   return (
-    <LanguageProvider>
-    <AuthProvider>
-      <ProductProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <OrderProvider>
-              <Router>
-                <ScrollToTop />
+    <GlobalErrorBoundary>
+      <LanguageProvider>
+        <AuthProvider>
+          <ProductProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <OrderProvider>
+                  <Router>
+                    <ScrollToTop />
                 <Routes>
                   {/* Public Storefront Routes */}
                   <Route path="/" element={<StorefrontLayout><HomePage /></StorefrontLayout>} />
@@ -133,9 +177,10 @@ export const App: React.FC = () => {
           </WishlistProvider>
         </CartProvider>
       </ProductProvider>
-    </AuthProvider>
-    </LanguageProvider>
-  );
-};
+          </AuthProvider>
+        </LanguageProvider>
+      </GlobalErrorBoundary>
+    );
+  };
 
 export default App;
