@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -40,7 +40,15 @@ jobs:
           GITHUB_PAGES: 'true'
 
       - name: Copy index.html to 404.html for SPA fallback
-        run: cp dist/index.html dist/404.html
+        run: |
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+
+      - name: Deploy to gh-pages Branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
