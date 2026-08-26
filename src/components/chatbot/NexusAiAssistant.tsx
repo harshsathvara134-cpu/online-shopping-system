@@ -47,7 +47,7 @@ export const NexusAiAssistant: React.FC = () => {
     {
       id: 'welcome_1',
       sender: 'bot',
-      text: `Hello ${user ? user.first_name : 'there'}! 👋 I am **NexusAI 2.0**, your smart personal shopping assistant.\n\nAsk me anything in **English**, **Hindi**, or **Hinglish**:\n• 🔍 *"Show gaming laptops under 75k"*\n• 📱 *"Compare Samsung S25 and iPhone 15"*\n• 📦 *"Track my recent order"*\n• 🎟️ *"What coupons are available?"*`,
+      text: `Hello ${user ? user.first_name : 'there'}! 👋 I am **JAYVEER AI**, your smart personal shopping assistant.\n\nAsk me anything in **English**, **Hindi**, or **Hinglish**:\n• 🔍 *"Show gaming laptops under 75k"*\n• 📱 *"Compare Samsung S25 and iPhone 15"*\n• 📦 *"Track my recent order"*\n• 🎟️ *"What coupons are available?"*`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       quickReplies: ['🔥 Trending Deals', '📱 Phones Under 25k', '💻 Gaming Laptops', '⚖️ Compare Flagships', '🎟️ Available Coupons', '📦 Track My Order'],
     },
@@ -201,7 +201,7 @@ export const NexusAiAssistant: React.FC = () => {
             justifyContent: 'center',
             transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
-          title="Chat with NexusAI Smart Assistant"
+          title="Chat with JAYVEER AI Smart Assistant"
         >
           <MessageSquare size={28} />
           <span
@@ -282,7 +282,7 @@ export const NexusAiAssistant: React.FC = () => {
               </div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  NexusAI Smart Assistant <Sparkles size={14} color="#fde047" />
+                  JAYVEER AI Smart Assistant <Sparkles size={14} color="#fde047" />
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>
                   Multilingual AI • Instant Support
@@ -615,7 +615,7 @@ export const NexusAiAssistant: React.FC = () => {
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary)', animation: 'pulse-subtle 1s infinite' }} />
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary)', animation: 'pulse-subtle 1s infinite 0.2s' }} />
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--primary)', animation: 'pulse-subtle 1s infinite 0.4s' }} />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '4px' }}>NexusAI is thinking...</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '4px' }}>JAYVEER AI is thinking...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -697,3 +697,6 @@ export const NexusAiAssistant: React.FC = () => {
     </>
   );
 };
+
+export const JayveerAiAssistant = NexusAiAssistant;
+export default NexusAiAssistant;

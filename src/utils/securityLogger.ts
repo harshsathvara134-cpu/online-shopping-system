@@ -9,7 +9,7 @@ import { getClientDeviceMeta } from './security';
 const STORAGE_KEY = 'jayveermart_security_audit_logs';
 
 /**
- * Mask an email for safe audit logging (e.g. a***n@nexusmart.com)
+ * Mask an email for safe audit logging (e.g. a***n@jayveermart.com)
  */
 export const maskEmail = (email?: string): string => {
   if (!email || !email.includes('@')) return 'anonymous';

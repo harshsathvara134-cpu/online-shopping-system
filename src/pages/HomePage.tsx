@@ -431,7 +431,7 @@ export const HomePage: React.FC = () => {
               {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="#f59e0b" />)}
             </div>
             <p style={{ fontSize: '0.9375rem', color: 'var(--text-main)', lineHeight: 1.6, fontStyle: 'italic' }}>
-              "The NexusAI assistant helped me choose between HP Omen and Acer Nitro gaming laptops in seconds. Super smooth checkout experience."
+              "The JAYVEER AI assistant helped me choose between HP Omen and Acer Nitro gaming laptops in seconds. Super smooth checkout experience."
             </p>
             <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#d97706' }}>

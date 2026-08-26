@@ -1,5 +1,5 @@
 -- ========================================================
--- NexusMart Enterprise E-Commerce Database Schema
+-- JAYVEERMart Enterprise E-Commerce Database Schema
 -- Version: 3.0.0
 -- Encoding: UTF-8 (utf8mb4_unicode_ci)
 -- ========================================================
@@ -23,7 +23,7 @@ CREATE TABLE `admin_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `admin_info` (`admin_id`, `admin_name`, `admin_email`, `admin_password`) VALUES
-(1, 'Administrator', 'admin@nexusmart.com', '$2y$10$dGELF/HVK9aQ3Z.Fy977vOEtSH/B52f/F8/FJpD34qjCYaYrAARga');
+(1, 'Administrator', 'admin@jayveermart.com', '$2y$10$dGELF/HVK9aQ3Z.Fy977vOEtSH/B52f/F8/FJpD34qjCYaYrAARga');
 
 -- --------------------------------------------------------
 -- Table structure for table `categories`
@@ -60,7 +60,7 @@ INSERT INTO `brands` (`brand_id`, `brand_title`) VALUES
 (3, 'Apple'),
 (4, 'Motorola'),
 (5, 'LG'),
-(6, 'Nexus Fashion'),
+(6, 'JAYVEER Fashion'),
 (7, 'Generic');
 
 -- --------------------------------------------------------

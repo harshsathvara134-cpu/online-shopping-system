@@ -46,38 +46,7 @@ export const MyOrdersPage: React.FC = () => {
     { label: 'Delivered', desc: 'Completed' },
   ];
 
-  // 1. Enforce Authentication Requirement (Prevents Guest IDOR Information Disclosure)
-  if (!user) {
-    return (
-      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
-        <div
-          style={{
-            width: '100px',
-            height: '100px',
-            borderRadius: '50%',
-            backgroundColor: 'var(--bg-subtle)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.5rem',
-            color: 'var(--text-muted)',
-          }}
-        >
-          <Package size={48} />
-        </div>
-        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.75rem' }}>Sign In to Track Orders</h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', maxWidth: '450px', margin: '0 auto 2rem' }}>
-          Please log in to your account to view your live milestone shipments, past purchases, and downloadable invoices.
-        </p>
-        <Link to="/login" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)' }}>
-          Sign In to Account <ArrowRight size={18} />
-        </Link>
-      </div>
-    );
-  }
-
-  // 2. Strict User Ownership Scoping
-  const userOrders = getUserOrders(user.user_id);
+  const userOrders = user ? getUserOrders(user.user_id) : [];
 
   if (userOrders.length === 0) {
     return (
@@ -99,7 +68,7 @@ export const MyOrdersPage: React.FC = () => {
         </div>
         <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.75rem' }}>No Orders Placed Yet</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', maxWidth: '450px', margin: '0 auto 2rem' }}>
-          When you place an order, you will see real-time milestone delivery tracking right here.
+          When you place an order, you will see real-time milestone delivery tracking and downloadable invoices right here.
         </p>
         <Link to="/store" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)' }}>
           Start Shopping <ArrowRight size={18} />

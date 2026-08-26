@@ -288,7 +288,7 @@ export const CartDrawer: React.FC = () => {
                     <Tag size={15} style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-muted)' }} />
                     <input
                       type="text"
-                      placeholder="Promo code (e.g. NEXUS10)"
+                      placeholder="Promo code (e.g. JAYVEER10)"
                       value={inputCoupon}
                       onChange={(e) => setInputCoupon(e.target.value)}
                       style={{

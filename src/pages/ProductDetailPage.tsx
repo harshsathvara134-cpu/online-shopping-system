@@ -218,22 +218,34 @@ export const ProductDetailPage: React.FC = () => {
 
           {/* Thumbnail Gallery */}
           {allImages.length > 1 && (
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                overflowX: 'auto',
+                paddingBottom: '4px',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
               {allImages.map((img, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => setActiveImg(img)}
                   style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '72px',
+                    height: '72px',
                     borderRadius: 'var(--radius-md)',
-                    border: currentImage === img ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                    border: currentImage === img ? '2.5px solid var(--primary)' : '1px solid var(--border-color)',
                     background: 'white',
-                    padding: '6px',
+                    padding: '4px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    flexShrink: 0,
+                    boxShadow: currentImage === img ? '0 0 0 3px rgba(79, 70, 229, 0.15)' : 'none',
+                    transition: 'all 0.15s ease',
                   }}
                 >
                   <img src={img} alt="Thumbnail" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
@@ -567,23 +579,51 @@ export const ProductDetailPage: React.FC = () => {
       )}
 
       {/* Sticky Mobile Bottom Buy Bar */}
-      <div className="mobile-sticky-buy-bar show-mobile-only">
+      <div
+        className="mobile-sticky-buy-bar show-mobile-only"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: 'rgba(255, 255, 255, 0.96)',
+          backdropFilter: 'blur(16px)',
+          borderTop: '1px solid var(--border-color)',
+          padding: '8px 12px calc(env(safe-area-inset-bottom, 0px) + 8px)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          zIndex: 9005,
+          boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <div style={{ flex: '0 0 auto' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
+            {formatCurrency(product.product_price)}
+          </div>
+          <div style={{ fontSize: '0.625rem', color: '#15803d', fontWeight: 700 }}>
+            {isOutOfStock ? 'Out of stock' : '✓ Free Delivery'}
+          </div>
+        </div>
+
         <button
+          type="button"
           onClick={handleAddToCart}
           disabled={isOutOfStock}
           className={`btn btn-secondary ${addedAnim ? 'btn-success' : ''}`}
-          style={{ flex: 1, padding: '10px', fontSize: '0.875rem' }}
+          style={{ flex: 1, padding: '9px 8px', fontSize: '0.8125rem', fontWeight: 700, borderRadius: '10px' }}
         >
           {addedAnim ? '✓ Added' : t('addToCart')}
         </button>
 
         <button
+          type="button"
           onClick={handleBuyNow}
           disabled={isOutOfStock}
           className="btn btn-primary"
-          style={{ flex: 1, padding: '10px', fontSize: '0.875rem' }}
+          style={{ flex: 1.1, padding: '9px 8px', fontSize: '0.8125rem', fontWeight: 800, borderRadius: '10px', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', border: 'none' }}
         >
-          {t('buyNow')} ⚡
+          <Zap size={15} color="#fbbf24" style={{ display: 'inline', marginRight: '4px' }} /> {t('buyNow')}
         </button>
       </div>
     </div>

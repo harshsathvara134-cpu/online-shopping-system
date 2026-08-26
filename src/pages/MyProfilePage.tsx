@@ -1,41 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import {
   User as UserIcon,
-  Mail,
-  Phone,
-  MapPin,
-  Lock,
-  Check,
-  ShieldCheck,
-  AlertCircle,
-  ArrowRight,
   Package,
+  MapPin,
   CreditCard,
   Heart,
-  KeyRound,
-  Fingerprint,
-  Laptop,
-  Smartphone,
   Plus,
   Trash2,
   Edit2,
   CheckCircle2,
-  LogOut,
+  AlertCircle,
+  QrCode,
+  Truck,
+  ArrowRight,
   ExternalLink,
-  ShieldAlert,
-  Clock,
-  Eye,
-  EyeOff,
-  Copy,
-  ChevronRight,
+  Save,
 } from 'lucide-react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useOrders } from '../context/OrderContext';
 import { useWishlist } from '../context/WishlistContext';
-import { CustomerAddress, SavedPaymentMethod, Order } from '../types';
-import { validatePasswordPolicy, generate2FASecret, getActive2FAOTP } from '../utils/security';
-import { getSecurityLogs } from '../utils/securityLogger';
+import { CustomerAddress, SavedPaymentMethod } from '../types';
+import { formatCurrency, formatDate } from '../utils/formatters';
 
 export const MyProfilePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,9 +29,7 @@ export const MyProfilePage: React.FC = () => {
 
   const {
     user,
-    logout,
     updateProfile,
-    updatePassword,
     getCustomerAddresses,
     addCustomerAddress,
     updateCustomerAddress,
@@ -56,39 +40,31 @@ export const MyProfilePage: React.FC = () => {
     addSavedUpi,
     deleteSavedPaymentMethod,
     setDefaultPaymentMethod,
-    getActiveSessions,
   } = useAuth();
 
   const { orders } = useOrders();
   const { wishlistItems } = useWishlist();
-  const navigate = useNavigate();
 
   // Active Tab state
-  const [activeTab, setActiveTab] = useState<'hub' | 'orders' | 'security' | 'addresses' | 'payments'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'hub' | 'orders' | 'profile' | 'addresses' | 'payments'>(initialTab);
 
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab') as any;
-    if (tabFromUrl && ['hub', 'orders', 'security', 'addresses', 'payments'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['hub', 'orders', 'profile', 'addresses', 'payments'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl);
     }
   }, [searchParams]);
 
-  const setTab = (tab: 'hub' | 'orders' | 'security' | 'addresses' | 'payments') => {
+  const setTab = (tab: 'hub' | 'orders' | 'profile' | 'addresses' | 'payments') => {
     setActiveTab(tab);
     setSearchParams(tab === 'hub' ? {} : { tab });
   };
 
   // Profile Edit State
-  const [firstName, setFirstName] = useState(user?.first_name || '');
-  const [lastName, setLastName] = useState(user?.last_name || '');
-  const [mobile, setMobile] = useState(user?.mobile || '');
-
-  // Password State
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showCurrentPass, setShowCurrentPass] = useState(false);
-  const [showNewPass, setShowNewPass] = useState(false);
+  const [firstName, setFirstName] = useState(user?.first_name || 'Rahul');
+  const [lastName, setLastName] = useState(user?.last_name || 'Sharma');
+  const [mobile, setMobile] = useState(user?.mobile || '+91 98765 43210');
+  const [email, setEmail] = useState(user?.email || 'customer@jayveermart.com');
 
   // Address Management State
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
@@ -112,104 +88,53 @@ export const MyProfilePage: React.FC = () => {
   const [cardHolder, setCardHolder] = useState('');
   const [expiryMonth, setExpiryMonth] = useState('12');
   const [expiryYear, setExpiryYear] = useState('2028');
-  const [cardBrand, setCardBrand] = useState<'Visa' | 'Mastercard' | 'RuPay'>('Visa');
   const [upiIdInput, setUpiIdInput] = useState('');
 
   // Feedback Notifications
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const showStatus = (type: 'success' | 'error', text: string) => {
+    setStatusMessage({ type, text });
+    setTimeout(() => setStatusMessage(null), 4000);
+  };
+
+  // Sync state on mount
   useEffect(() => {
     if (user) {
       setFirstName(user.first_name || '');
       setLastName(user.last_name || '');
       setMobile(user.mobile || '');
-      setAddresses(getCustomerAddresses());
-      setPayments(getSavedPaymentMethods());
+      setEmail(user.email || '');
     }
-  }, [user, activeTab]);
+    setAddresses(getCustomerAddresses());
+    setPayments(getSavedPaymentMethods());
+  }, [user, getCustomerAddresses, getSavedPaymentMethods]);
 
-  const showNotification = (type: 'success' | 'error', text: string) => {
-    setStatusMessage({ type, text });
-    setTimeout(() => setStatusMessage(null), 4000);
-  };
-
-  if (!user) {
-    return (
-      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center' }}>
-        <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: 'var(--bg-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', color: 'var(--text-muted)' }}>
-          <Lock size={36} />
-        </div>
-        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.75rem' }}>Sign In to Your Account</h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', maxWidth: '450px', margin: '0 auto 2rem' }}>
-          Please sign in to view your orders, delivery addresses, payment methods, and account security controls.
-        </p>
-        <Link to="/login" className="btn btn-primary btn-lg" style={{ borderRadius: 'var(--radius-full)' }}>
-          Sign In to Account <ArrowRight size={18} />
-        </Link>
-      </div>
-    );
-  }
-
-  // 1. Profile Save
-  const handleProfileSave = (e: React.FormEvent) => {
+  // Profile Update Handler
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim()) {
-      showNotification('error', 'First name is required.');
-      return;
-    }
-    const res = updateProfile({
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      mobile: mobile.trim(),
-    });
-    if (res.success) {
-      showNotification('success', 'Personal information updated successfully.');
-    } else {
-      showNotification('error', res.message);
-    }
-  };
-
-  // 2. Password Change
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!currentPassword) {
-      showNotification('error', 'Please enter your current password.');
-      return;
-    }
-    const policy = validatePasswordPolicy(newPassword);
-    if (!policy.isValid) {
-      showNotification('error', policy.errors[0]);
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      showNotification('error', 'New passwords do not match.');
-      return;
-    }
-
     setIsSubmitting(true);
     try {
-      const res = await updatePassword(currentPassword, newPassword);
-      if (res.success) {
-        showNotification('success', 'Password updated successfully! Salted SHA-256 hash regenerated.');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-      } else {
-        showNotification('error', res.message);
-      }
+      await updateProfile({
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+        mobile: mobile.trim(),
+        email: email.trim(),
+      });
+      showStatus('success', 'Profile details updated successfully.');
     } catch {
-      showNotification('error', 'Failed to update password.');
+      showStatus('error', 'Failed to update profile.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // 3. Address Handlers
+  // Address Handlers
   const handleOpenAddAddress = () => {
     setEditingAddressId(null);
-    setAddrName(`${user.first_name || ''} ${user.last_name || ''}`.trim());
-    setAddrMobile(user.mobile || '');
+    setAddrName(`${user?.first_name || ''} ${user?.last_name || ''}`.trim());
+    setAddrMobile(user?.mobile || '');
     setAddrLine1('');
     setAddrLine2('');
     setAddrCity('Bengaluru');
@@ -220,17 +145,31 @@ export const MyProfilePage: React.FC = () => {
     setIsAddressModalOpen(true);
   };
 
+  const handleOpenEditAddress = (addr: CustomerAddress) => {
+    setEditingAddressId(addr.id);
+    setAddrName(addr.fullName);
+    setAddrMobile(addr.mobile);
+    setAddrLine1(addr.addressLine1);
+    setAddrLine2(addr.addressLine2 || '');
+    setAddrCity(addr.city);
+    setAddrState(addr.state);
+    setAddrZip(addr.zip);
+    setAddrType(addr.addressType || 'Home');
+    setAddrIsDefault(!!addr.isDefault);
+    setIsAddressModalOpen(true);
+  };
+
   const handleSaveAddress = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addrLine1.trim() || !addrCity.trim() || !addrZip.trim()) {
-      showNotification('error', 'Please fill in required address fields.');
+    if (!addrName.trim() || !addrLine1.trim() || !addrCity.trim() || !addrZip.trim()) {
+      showStatus('error', 'Please fill in all required address fields.');
       return;
     }
 
     if (editingAddressId) {
       updateCustomerAddress({
         id: editingAddressId,
-        userId: user.user_id,
+        userId: user?.user_id || 1,
         fullName: addrName.trim(),
         mobile: addrMobile.trim(),
         addressLine1: addrLine1.trim(),
@@ -239,12 +178,13 @@ export const MyProfilePage: React.FC = () => {
         state: addrState.trim(),
         zip: addrZip.trim(),
         country: 'India',
-        isDefault: addrIsDefault,
         addressType: addrType,
+        isDefault: addrIsDefault,
       });
-      showNotification('success', 'Delivery address updated.');
+      showStatus('success', 'Address updated successfully.');
     } else {
       addCustomerAddress({
+        userId: user?.user_id || 1,
         fullName: addrName.trim(),
         mobile: addrMobile.trim(),
         addressLine1: addrLine1.trim(),
@@ -253,64 +193,75 @@ export const MyProfilePage: React.FC = () => {
         state: addrState.trim(),
         zip: addrZip.trim(),
         country: 'India',
-        isDefault: addrIsDefault,
         addressType: addrType,
+        isDefault: addrIsDefault,
       });
-      showNotification('success', 'New delivery address added.');
+      showStatus('success', 'New delivery address added.');
     }
+
     setAddresses(getCustomerAddresses());
     setIsAddressModalOpen(false);
   };
 
-  // 5. Payment Handlers
+  const handleDeleteAddress = (id: string) => {
+    deleteCustomerAddress(id);
+    setAddresses(getCustomerAddresses());
+    showStatus('success', 'Address removed.');
+  };
+
+  // Payment Handlers
   const handleSaveCard = (e: React.FormEvent) => {
     e.preventDefault();
-    if (cardNumber.replace(/\D/g, '').length < 15) {
-      showNotification('error', 'Please enter a valid card number.');
+    if (cardNumber.replace(/\s+/g, '').length < 15 || !cardHolder.trim()) {
+      showStatus('error', 'Please enter a valid card number and holder name.');
       return;
     }
-    addSavedCard(cardNumber, expiryMonth, expiryYear, cardHolder, cardBrand);
+    const exp = `${expiryMonth}/${expiryYear.slice(-2)}`;
+    addSavedCard(cardHolder.trim(), cardNumber.trim(), exp, payments.length === 0);
     setPayments(getSavedPaymentMethods());
     setIsCardModalOpen(false);
     setCardNumber('');
     setCardHolder('');
-    showNotification('success', 'Card saved securely (Tokenized).');
+    showStatus('success', 'Card saved successfully.');
   };
 
   const handleSaveUpi = (e: React.FormEvent) => {
     e.preventDefault();
     if (!upiIdInput.includes('@')) {
-      showNotification('error', 'Please enter a valid UPI ID (e.g. mobile@upi).');
+      showStatus('error', 'Please enter a valid UPI ID (e.g. name@bank).');
       return;
     }
-    addSavedUpi(upiIdInput);
+    addSavedUpi(upiIdInput.trim(), payments.length === 0);
     setPayments(getSavedPaymentMethods());
     setIsUpiModalOpen(false);
     setUpiIdInput('');
-    showNotification('success', 'UPI ID saved.');
+    showStatus('success', 'UPI ID linked successfully.');
   };
 
-  const myOrders = orders.filter((o: Order) => o.user_id === user.user_id || o.email === user.email);
-  const activeSessions = getActiveSessions();
-  const recentAuditLogs = getSecurityLogs().filter((l) => l.userId === user.user_id || l.email === user.email).slice(0, 5);
-  const newPassPolicy = validatePasswordPolicy(newPassword);
+  const handleDeletePayment = (id: string) => {
+    deleteSavedPaymentMethod(id);
+    setPayments(getSavedPaymentMethods());
+    showStatus('success', 'Payment method removed.');
+  };
+
+  const myOrders = orders;
 
   return (
-    <div className="container" style={{ padding: '2.5rem 1.5rem 5rem', maxWidth: '1020px' }}>
-      {/* Account Overview Header */}
+    <div className="container" style={{ padding: '2.5rem 1.5rem 6rem', maxWidth: '1100px' }}>
+      {/* Profile Header Banner */}
       <div
-        className="card"
         style={{
-          padding: '2rem',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+          borderRadius: '20px',
+          padding: '2rem 2.5rem',
+          color: 'white',
           marginBottom: '2rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '1.5rem',
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%)',
-          color: 'white',
-          borderRadius: '16px',
+          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.3)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
@@ -319,33 +270,28 @@ export const MyProfilePage: React.FC = () => {
               width: '64px',
               height: '64px',
               borderRadius: '50%',
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              fontSize: '1.5rem',
               fontWeight: 800,
-              fontSize: '1.75rem',
               color: 'white',
-              border: '2px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
             }}
           >
-            {user.first_name ? user.first_name[0].toUpperCase() : 'U'}
+            {user?.first_name ? user.first_name[0].toUpperCase() : 'U'}
           </div>
           <div>
-            <h1 style={{ fontSize: '1.65rem', fontWeight: 800, margin: '0 0 4px', letterSpacing: '-0.02em', color: '#ffffff' }}>
-              Hello, {user.first_name} {user.last_name}! 👋
-            </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.8125rem', color: '#c7d2fe', flexWrap: 'wrap' }}>
-              <span>{user.email}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h1 style={{ fontSize: '1.65rem', fontWeight: 800, margin: 0, fontFamily: 'var(--font-heading)' }}>
+                {user?.first_name} {user?.last_name}
+              </h1>
+            </div>
+            <div style={{ fontSize: '0.875rem', color: '#94a3b8', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span>{user?.email}</span>
               <span>•</span>
-              <span style={{ padding: '2px 8px', backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#34d399', borderRadius: '4px', fontWeight: 700, fontSize: '0.6875rem' }}>
-                ● EMAIL VERIFIED
-              </span>
-              {user.two_factor_enabled && (
-                <span style={{ padding: '2px 8px', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: '#a5b4fc', borderRadius: '4px', fontWeight: 700, fontSize: '0.6875rem' }}>
-                  🛡️ 2FA PROTECTED
-                </span>
-              )}
+              <span>{user?.mobile}</span>
             </div>
           </div>
         </div>
@@ -355,21 +301,20 @@ export const MyProfilePage: React.FC = () => {
             <button
               type="button"
               onClick={() => setTab('hub')}
-              style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.25)', backgroundColor: 'transparent', color: 'white', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                backgroundColor: 'transparent',
+                color: 'white',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
             >
-              ← Account Home
+              ← Account Center
             </button>
           )}
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              navigate('/login');
-            }}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '8px', border: 'none', backgroundColor: '#ef4444', color: 'white', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
-          >
-            <LogOut size={14} /> Sign Out
-          </button>
         </div>
       </div>
 
@@ -396,11 +341,11 @@ export const MyProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─── 1. HUB OVERVIEW (Amazon Tile Grid) ────────────────────────────── */}
+      {/* ─── 1. HUB OVERVIEW ──────────────────────────────────────────────── */}
       {activeTab === 'hub' && (
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.25rem' }}>
-            Your Account Center
+            Your Account Hub
           </h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
@@ -436,9 +381,9 @@ export const MyProfilePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Tile 2: Login & Security */}
+            {/* Tile 2: Profile Details */}
             <div
-              onClick={() => setTab('security')}
+              onClick={() => setTab('profile')}
               style={{
                 backgroundColor: 'white',
                 border: '1px solid #e2e8f0',
@@ -455,15 +400,15 @@ export const MyProfilePage: React.FC = () => {
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#e2e8f0')}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#ecfdf5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <ShieldCheck size={24} />
+                <UserIcon size={24} />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>Login & Security</h3>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>Profile & Details</h3>
                 <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0, lineHeight: 1.4 }}>
-                  Edit name, mobile, password, configure 2FA, and manage logged-in devices.
+                  Update your display name, contact phone, and email preferences.
                 </p>
                 <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#059669', marginTop: '8px', display: 'inline-block' }}>
-                  Manage security settings →
+                  Edit details →
                 </span>
               </div>
             </div>
@@ -524,7 +469,7 @@ export const MyProfilePage: React.FC = () => {
               <div>
                 <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>Payment Options</h3>
                 <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0, lineHeight: 1.4 }}>
-                  Manage saved tokenized cards & UPI IDs. No raw CVV or PAN stored.
+                  Manage saved tokenized cards & UPI IDs for 1-click checkout.
                 </p>
                 <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#a21caf', marginTop: '8px', display: 'inline-block' }}>
                   {payments.length} payment methods →
@@ -547,16 +492,18 @@ export const MyProfilePage: React.FC = () => {
                 gap: '14px',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#6366f1')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#e2e8f0')}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#ffe4e6', color: '#e11d48', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Heart size={24} />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>Your Wishlist</h3>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>Saved Wishlist</h3>
                 <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0, lineHeight: 1.4 }}>
-                  View saved favorite products and price drop notifications.
+                  View and manage your favorite items and deals saved for later.
                 </p>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#dc2626', marginTop: '8px', display: 'inline-block' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#e11d48', marginTop: '8px', display: 'inline-block' }}>
                   {wishlistItems.length} items saved →
                 </span>
               </div>
@@ -565,57 +512,136 @@ export const MyProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─── 2. TAB: YOUR ORDERS ─────────────────────────────────────────── */}
-      {activeTab === 'orders' && (
-        <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Your Order History</h2>
-              <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '4px 0 0' }}>View and track recent purchases</p>
+      {/* ─── 2. PROFILE EDIT TAB ────────────────────────────────────────── */}
+      {activeTab === 'profile' && (
+        <div style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '2rem', maxWidth: '650px' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem' }}>
+            Customer Profile Details
+          </h2>
+          <form onSubmit={handleSaveProfile}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>First Name</label>
+                <input
+                  type="text"
+                  required
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Last Name</label>
+                <input
+                  type="text"
+                  required
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+                />
+              </div>
             </div>
-            <Link to="/store" className="btn btn-sm btn-primary">Continue Shopping</Link>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Email Address</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1.75rem' }}>
+              <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Mobile Phone</label>
+              <input
+                type="tel"
+                required
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value)}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}
+              />
+            </div>
+
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary" style={{ gap: '8px' }}>
+              <Save size={16} /> Save Profile Changes
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* ─── 3. ORDERS TAB ──────────────────────────────────────────────── */}
+      {activeTab === 'orders' && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+              Order History ({myOrders.length})
+            </h2>
+            <Link to="/store" className="btn btn-secondary btn-sm">
+              Continue Shopping
+            </Link>
           </div>
 
           {myOrders.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-              <Package size={40} style={{ margin: '0 auto 12px', color: '#cbd5e1' }} />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>No orders placed yet</h3>
-              <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem' }}>Browse our catalog and place your first order!</p>
-              <Link to="/store" className="btn btn-primary">Explore Products</Link>
+            <div style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '3.5rem 2rem', textAlign: 'center' }}>
+              <Package size={48} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>No orders placed yet</h3>
+              <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Your past purchases and invoice receipts will appear here.</p>
+              <Link to="/store" className="btn btn-primary">Browse Catalog</Link>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {myOrders.map((order: Order) => (
-                <div key={order.order_id} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
-                  <div style={{ padding: '12px 16px', backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', fontSize: '0.8125rem' }}>
+              {myOrders.map((order) => (
+                <div
+                  key={order.order_id}
+                  style={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
                     <div>
-                      <span style={{ color: '#64748b' }}>ORDER PLACED: </span>
-                      <strong>{new Date(order.created_at).toLocaleDateString()}</strong>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>ORDER #{order.order_id}</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a' }}>Placed on {formatDate(order.created_at)}</div>
                     </div>
-                    <div>
-                      <span style={{ color: '#64748b' }}>TOTAL: </span>
-                      <strong>₹{order.total_amt.toLocaleString('en-IN')}</strong>
-                    </div>
-                    <div>
-                      <span style={{ color: '#64748b' }}>SHIP TO: </span>
-                      <strong>{order.f_name}</strong>
-                    </div>
-                    <div>
-                      <span style={{ color: '#64748b' }}>ORDER # </span>
-                      <strong>{order.order_id}</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '4px 10px', borderRadius: '20px', backgroundColor: '#e0e7ff', color: '#4338ca' }}>
+                        {order.status}
+                      </span>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
+                        {formatCurrency(order.total_amt)}
+                      </div>
                     </div>
                   </div>
-                  <div style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#0f172a', marginBottom: '4px' }}>
-                        Status: <span style={{ color: '#4f46e5' }}>{order.status}</span>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
+                    {order.items.map((item, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img
+                          src={item.product_image}
+                          alt={item.product_title}
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
+                          }}
+                          style={{ width: '48px', height: '48px', objectFit: 'contain', background: '#f8fafc', borderRadius: '8px', border: '1px solid #f1f5f9' }}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {item.product_title}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Qty: {item.qty} × {formatCurrency(item.amt)}</div>
+                        </div>
                       </div>
-                      <div style={{ fontSize: '0.8125rem', color: '#64748b' }}>
-                        {order.items?.length || order.prod_count} item(s) • Payment: {order.payment_method}
-                      </div>
-                    </div>
-                    <Link to={`/order-success/${order.order_id}`} className="btn btn-sm btn-outline">
-                      View Order Details →
+                    ))}
+                  </div>
+
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                    <Link to={`/order-success/${order.order_id}`} className="btn btn-secondary btn-sm" style={{ gap: '6px' }}>
+                      <ExternalLink size={14} /> View Invoice & Receipt
                     </Link>
                   </div>
                 </div>
@@ -625,218 +651,83 @@ export const MyProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─── 3. TAB: LOGIN & SECURITY ─────────────────────────────────────── */}
-      {activeTab === 'security' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {/* Section A: Personal Information */}
-          <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f1f5f9' }}>
-              Personal Information
-            </h3>
-
-            <form onSubmit={handleProfileSave}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>First Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Last Name</label>
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Mobile Number</label>
-                  <input
-                    type="tel"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Email Address (Verified)</label>
-                  <input
-                    type="email"
-                    disabled
-                    value={user.email}
-                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', color: '#94a3b8', fontSize: '0.875rem', cursor: 'not-allowed' }}
-                  />
-                </div>
-              </div>
-
-              <button type="submit" className="btn btn-primary btn-sm">
-                Save Personal Changes
-              </button>
-            </form>
-          </div>
-
-          {/* Section B: Password Change */}
-          <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: '0 0 4px' }}>Password Settings</h3>
-            <p style={{ fontSize: '0.8125rem', color: '#64748b', marginBottom: '1.25rem' }}>
-              Enforces salted SHA-256 encryption. Requires your existing password.
-            </p>
-
-            <form onSubmit={handlePasswordChange}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Current Password</label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type={showCurrentPass ? 'text' : 'password'}
-                      required
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      style={{ width: '100%', padding: '9px 36px 9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowCurrentPass(!showCurrentPass)}
-                      style={{ position: 'absolute', right: '10px', top: '10px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
-                    >
-                      {showCurrentPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>New Password</label>
-                  <div style={{ position: 'relative' }}>
-                    <input
-                      type={showNewPass ? 'text' : 'password'}
-                      required
-                      placeholder="Min 8 chars, 1 uppercase, 1 symbol"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      style={{ width: '100%', padding: '9px 36px 9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPass(!showNewPass)}
-                      style={{ position: 'absolute', right: '10px', top: '10px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
-                    >
-                      {showNewPass ? <EyeOff size={15} /> : <Eye size={15} />}
-                    </button>
-                  </div>
-                  {newPassword && (
-                    <div style={{ marginTop: '5px' }}>
-                      <span style={{ fontSize: '0.6875rem', color: '#64748b' }}>
-                        Strength: <strong>{newPassPolicy.strengthLabel}</strong>
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>Confirm New Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', outline: 'none' }}
-                  />
-                </div>
-              </div>
-
-              <button type="submit" disabled={isSubmitting} className="btn btn-primary btn-sm">
-                Update Password
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ─── 4. TAB: YOUR ADDRESSES ───────────────────────────────────────── */}
+      {/* ─── 4. ADDRESSES TAB ───────────────────────────────────────────── */}
       {activeTab === 'addresses' && (
-        <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Your Delivery Addresses</h2>
-              <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '4px 0 0' }}>Manage shipping locations for express checkout</p>
-            </div>
-            <button type="button" onClick={handleOpenAddAddress} className="btn btn-sm btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Plus size={15} /> Add New Address
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+              Saved Delivery Addresses ({addresses.length})
+            </h2>
+            <button type="button" onClick={handleOpenAddAddress} className="btn btn-primary btn-sm" style={{ gap: '6px' }}>
+              <Plus size={16} /> Add New Address
             </button>
           </div>
 
           {addresses.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-              <MapPin size={40} style={{ margin: '0 auto 12px', color: '#cbd5e1' }} />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>No saved addresses</h3>
-              <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem' }}>Add a delivery address for fast 1-click checkout.</p>
-              <button type="button" onClick={handleOpenAddAddress} className="btn btn-primary">Add Address Now</button>
+            <div style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '3.5rem 2rem', textAlign: 'center' }}>
+              <MapPin size={48} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>No addresses saved</h3>
+              <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Add a delivery address to speed up your checkout process.</p>
+              <button type="button" onClick={handleOpenAddAddress} className="btn btn-primary">Add Address</button>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {addresses.map((addr) => (
                 <div
                   key={addr.id}
                   style={{
-                    border: addr.isDefault ? '2px solid #4f46e5' : '1px solid #e2e8f0',
-                    borderRadius: '12px',
-                    padding: '1.25rem',
+                    backgroundColor: 'white',
+                    border: addr.isDefault ? '2px solid #6366f1' : '1px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
                     position: 'relative',
-                    backgroundColor: addr.isDefault ? '#f8faff' : 'white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
                   }}
                 >
-                  {addr.isDefault && (
-                    <span style={{ position: 'absolute', top: '12px', right: '12px', padding: '2px 8px', backgroundColor: '#e0e7ff', color: '#4338ca', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 800 }}>
-                      DEFAULT
-                    </span>
-                  )}
-                  <span style={{ display: 'inline-block', padding: '2px 6px', backgroundColor: '#f1f5f9', color: '#475569', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 700, marginBottom: '8px' }}>
-                    {addr.addressType.toUpperCase()}
-                  </span>
-                  <h4 style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>{addr.fullName}</h4>
-                  <p style={{ fontSize: '0.8125rem', color: '#475569', margin: '0 0 8px', lineHeight: 1.4 }}>
-                    {addr.addressLine1}
-                    {addr.addressLine2 && <><br />{addr.addressLine2}</>}
-                    <br />{addr.city}, {addr.state} - {addr.zip}
-                  </p>
-                  <div style={{ fontSize: '0.8125rem', color: '#64748b', marginBottom: '12px' }}>
-                    Phone: <strong>+91 {addr.mobile}</strong>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div style={{ fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{addr.fullName}</div>
+                    {addr.isDefault && (
+                      <span style={{ fontSize: '0.6875rem', fontWeight: 800, padding: '2px 8px', borderRadius: '12px', backgroundColor: '#e0e7ff', color: '#4338ca' }}>
+                        DEFAULT
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: '0.8125rem', color: '#475569', lineHeight: 1.5, marginBottom: '1rem' }}>
+                    <div>{addr.addressLine1}</div>
+                    {addr.addressLine2 && <div>{addr.addressLine2}</div>}
+                    <div>{addr.city}, {addr.state} - {addr.zip}</div>
+                    <div style={{ marginTop: '4px', fontWeight: 600, color: '#0f172a' }}>Phone: {addr.mobile}</div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #f1f5f9', paddingTop: '10px' }}>
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditAddress(addr)}
+                        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteAddress(addr.id)}
+                        style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                     {!addr.isDefault && (
                       <button
                         type="button"
                         onClick={() => {
                           setDefaultAddress(addr.id);
                           setAddresses(getCustomerAddresses());
-                          showNotification('success', 'Default address updated.');
                         }}
-                        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                        style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
                       >
                         Set as Default
                       </button>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        deleteCustomerAddress(addr.id);
-                        setAddresses(getCustomerAddresses());
-                        showNotification('success', 'Address deleted.');
-                      }}
-                      style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto', padding: 0 }}
-                    >
-                      Delete
-                    </button>
                   </div>
                 </div>
               ))}
@@ -845,89 +736,88 @@ export const MyProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─── 5. TAB: PAYMENT OPTIONS ──────────────────────────────────────── */}
+      {/* ─── 5. PAYMENTS TAB ────────────────────────────────────────────── */}
       {activeTab === 'payments' && (
-        <div style={{ backgroundColor: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid #f1f5f9' }}>
-            <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Saved Payment Methods</h2>
-              <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: '4px 0 0' }}>
-                Secure PCI-DSS tokenized cards and UPI IDs. CVV/raw details are never stored.
-              </p>
-            </div>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '10px' }}>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
+              Saved Payment Methods ({payments.length})
+            </h2>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button type="button" onClick={() => setIsCardModalOpen(true)} className="btn btn-sm btn-primary">
-                + Add Card
+              <button type="button" onClick={() => setIsCardModalOpen(true)} className="btn btn-secondary btn-sm" style={{ gap: '6px' }}>
+                <CreditCard size={16} /> Save Card
               </button>
-              <button type="button" onClick={() => setIsUpiModalOpen(true)} className="btn btn-sm btn-outline">
-                + Add UPI
+              <button type="button" onClick={() => setIsUpiModalOpen(true)} className="btn btn-primary btn-sm" style={{ gap: '6px' }}>
+                <QrCode size={16} /> Link UPI ID
               </button>
             </div>
           </div>
 
           {payments.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-              <CreditCard size={40} style={{ margin: '0 auto 12px', color: '#cbd5e1' }} />
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1e293b', marginBottom: '6px' }}>No saved payment methods</h3>
-              <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem' }}>Save a card or UPI ID for seamless 1-click checkout.</p>
-              <button type="button" onClick={() => setIsCardModalOpen(true)} className="btn btn-primary">Add Payment Card</button>
+            <div style={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '3.5rem 2rem', textAlign: 'center' }}>
+              <CreditCard size={48} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>No payment methods saved</h3>
+              <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Save a card or UPI ID for instant 1-click checkout.</p>
+              <button type="button" onClick={() => setIsUpiModalOpen(true)} className="btn btn-primary">Link UPI ID</button>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
               {payments.map((p) => (
-                <div key={p.id} style={{ border: p.isDefault ? '2px solid #4f46e5' : '1px solid #e2e8f0', borderRadius: '12px', padding: '1.25rem', backgroundColor: p.isDefault ? '#f8faff' : 'white' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <span style={{ padding: '2px 8px', backgroundColor: '#e2e8f0', color: '#334155', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 800 }}>
-                      {p.type === 'CARD' ? `${p.cardBrand || 'Card'}` : 'UPI ID'}
-                    </span>
+                <div
+                  key={p.id}
+                  style={{
+                    backgroundColor: 'white',
+                    border: p.isDefault ? '2px solid #6366f1' : '1px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '1.5rem',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      {p.type === 'UPI' ? <QrCode size={22} color="#4f46e5" /> : <CreditCard size={22} color="#059669" />}
+                      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#0f172a' }}>
+                        {p.type === 'UPI' ? 'UPI Virtual Address' : `${p.cardBrand || 'Card'} •••• ${p.last4 || '••••'}`}
+                      </span>
+                    </div>
                     {p.isDefault && (
-                      <span style={{ padding: '2px 6px', backgroundColor: '#e0e7ff', color: '#4338ca', borderRadius: '4px', fontSize: '0.6875rem', fontWeight: 800 }}>
+                      <span style={{ fontSize: '0.6875rem', fontWeight: 800, padding: '2px 8px', borderRadius: '12px', backgroundColor: '#e0e7ff', color: '#4338ca' }}>
                         DEFAULT
                       </span>
                     )}
                   </div>
 
-                  {p.type === 'CARD' ? (
-                    <div>
-                      <div style={{ fontSize: '1rem', fontWeight: 800, fontFamily: 'monospace', color: '#0f172a', letterSpacing: '1px' }}>
-                        •••• •••• •••• {p.last4}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>
-                        Expires: {p.expiryMonth}/{p.expiryYear} • {p.cardHolderName}
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#0f172a' }}>{p.upiId}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#10b981', marginTop: '4px' }}>✓ Verified UPI Handle</div>
-                    </div>
-                  )}
+                  <div style={{ fontSize: '0.875rem', color: '#475569', marginBottom: '1.25rem' }}>
+                    {p.type === 'UPI' ? (
+                      <div style={{ fontFamily: 'monospace', fontWeight: 600, color: '#0f172a' }}>{p.upiId}</div>
+                    ) : (
+                      <>
+                        <div style={{ fontWeight: 600 }}>{p.cardHolderName}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Expires: {p.expiryMonth}/{p.expiryYear}</div>
+                      </>
+                    )}
+                  </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #f1f5f9', paddingTop: '10px', marginTop: '12px' }}>
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePayment(p.id)}
+                      style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Remove
+                    </button>
                     {!p.isDefault && (
                       <button
                         type="button"
                         onClick={() => {
                           setDefaultPaymentMethod(p.id);
                           setPayments(getSavedPaymentMethods());
-                          showNotification('success', 'Default payment method set.');
                         }}
-                        style={{ background: 'none', border: 'none', color: '#4f46e5', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', padding: 0 }}
+                        style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
                       >
-                        Set Default
+                        Set as Default
                       </button>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        deleteSavedPaymentMethod(p.id);
-                        setPayments(getSavedPaymentMethods());
-                        showNotification('success', 'Payment method removed.');
-                      }}
-                      style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto', padding: 0 }}
-                    >
-                      Delete
-                    </button>
                   </div>
                 </div>
               ))}
@@ -936,139 +826,105 @@ export const MyProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─── MODAL: Add Address ────────────────────────────────────────────── */}
+      {/* Address Modal */}
       {isAddressModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ width: '100%', maxWidth: '500px', backgroundColor: 'white', borderRadius: '16px', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 1.25rem' }}>
-              {editingAddressId ? 'Edit Address' : 'Add a New Delivery Address'}
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '1rem' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', width: '100%', maxWidth: '520px', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.25rem' }}>
+              {editingAddressId ? 'Edit Address' : 'Add Delivery Address'}
             </h3>
-
             <form onSubmit={handleSaveAddress}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Full Name *</label>
-                <input type="text" required value={addrName} onChange={(e) => setAddrName(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Mobile Number *</label>
-                <input type="tel" required placeholder="10-digit mobile" value={addrMobile} onChange={(e) => setAddrMobile(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Street Address / Flat / Building *</label>
-                <input type="text" required placeholder="House No., Building, Area" value={addrLine1} onChange={(e) => setAddrLine1(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Landmark / Street (Optional)</label>
-                <input type="text" placeholder="Near metro, landmark" value={addrLine2} onChange={(e) => setAddrLine2(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>City *</label>
-                  <input type="text" required value={addrCity} onChange={(e) => setAddrCity(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Full Name *</label>
+                  <input type="text" required value={addrName} onChange={(e) => setAddrName(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>State *</label>
-                  <input type="text" required value={addrState} onChange={(e) => setAddrState(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>PIN Code *</label>
-                  <input type="text" required value={addrZip} onChange={(e) => setAddrZip(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Mobile Phone *</label>
+                  <input type="tel" required value={addrMobile} onChange={(e) => setAddrMobile(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginBottom: '1.25rem' }}>
-                {(['Home', 'Work', 'Other'] as const).map((t) => (
-                  <label key={t} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', cursor: 'pointer' }}>
-                    <input type="radio" name="addrType" checked={addrType === t} onChange={() => setAddrType(t)} />
-                    {t}
-                  </label>
-                ))}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Street Address / Flat No *</label>
+                <input type="text" required value={addrLine1} onChange={(e) => setAddrLine1(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', cursor: 'pointer' }}>
-                  <input type="checkbox" checked={addrIsDefault} onChange={(e) => setAddrIsDefault(e.target.checked)} />
-                  <span>Make this my default shipping address</span>
-                </label>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Area / Landmark</label>
+                <input type="text" value={addrLine2} onChange={(e) => setAddrLine2(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
               </div>
 
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" onClick={() => setIsAddressModalOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', backgroundColor: '#4f46e5', color: 'white', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer' }}>Save Address</button>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>City *</label>
+                  <input type="text" required value={addrCity} onChange={(e) => setAddrCity(e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>State *</label>
+                  <input type="text" required value={addrState} onChange={(e) => setAddrState(e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>PIN Code *</label>
+                  <input type="text" required value={addrZip} onChange={(e) => setAddrZip(e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem' }}>
+                <button type="button" onClick={() => setIsAddressModalOpen(false)} className="btn btn-secondary">Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Address</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* ─── MODAL: Add Payment Card ───────────────────────────────────────── */}
+      {/* Card Modal */}
       {isCardModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ width: '100%', maxWidth: '440px', backgroundColor: 'white', borderRadius: '16px', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 1.25rem' }}>
-              Add Credit / Debit Card
-            </h3>
-
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '1rem' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', width: '100%', maxWidth: '440px', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.25rem' }}>Save Credit / Debit Card</h3>
             <form onSubmit={handleSaveCard}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Card Number *</label>
-                <input type="text" required maxLength={19} placeholder="4532 •••• •••• 8899" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem', fontFamily: 'monospace' }} />
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Cardholder Name</label>
+                <input type="text" required value={cardHolder} onChange={(e) => setCardHolder(e.target.value)} placeholder="Rahul Sharma" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
               </div>
-
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Name on Card *</label>
-                <input type="text" required placeholder="HARSH SATHVARA" value={cardHolder} onChange={(e) => setCardHolder(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }} />
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Card Number</label>
+                <input type="text" required value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4242 4242 4242 4242" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Expiry Month</label>
-                  <select value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}>
-                    {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0')).map((m) => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Expiry Month</label>
+                  <input type="text" value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)} placeholder="12" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>Expiry Year</label>
-                  <select value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.8125rem' }}>
-                    {['2025', '2026', '2027', '2028', '2029', '2030', '2031'].map((y) => (
-                      <option key={y} value={y}>{y}</option>
-                    ))}
-                  </select>
+                  <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Expiry Year</label>
+                  <input type="text" value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)} placeholder="2028" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
                 </div>
               </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" onClick={() => setIsCardModalOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', backgroundColor: '#4f46e5', color: 'white', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer' }}>Save Card</button>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem' }}>
+                <button type="button" onClick={() => setIsCardModalOpen(false)} className="btn btn-secondary">Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Card</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* ─── MODAL: Add UPI ────────────────────────────────────────────────── */}
+      {/* UPI Modal */}
       {isUpiModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ width: '100%', maxWidth: '400px', backgroundColor: 'white', borderRadius: '16px', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', margin: '0 0 1.25rem' }}>
-              Link UPI ID
-            </h3>
-
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '1rem' }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '16px', width: '100%', maxWidth: '440px', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '1.25rem' }}>Link UPI ID (VPA)</h3>
             <form onSubmit={handleSaveUpi}>
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>UPI ID (e.g. mobile@upi / username@okhdfcbank)</label>
-                <input type="text" required placeholder="yourname@okhdfcbank" value={upiIdInput} onChange={(e) => setUpiIdInput(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }} />
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 600, color: '#475569', marginBottom: '4px' }}>Virtual Payment Address (UPI ID)</label>
+                <input type="text" required value={upiIdInput} onChange={(e) => setUpiIdInput(e.target.value)} placeholder="username@okaxis" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
               </div>
-
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button type="button" onClick={() => setIsUpiModalOpen(false)} style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#475569', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', backgroundColor: '#4f46e5', color: 'white', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer' }}>Link UPI</button>
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem' }}>
+                <button type="button" onClick={() => setIsUpiModalOpen(false)} className="btn btn-secondary">Cancel</button>
+                <button type="submit" className="btn btn-primary">Link UPI ID</button>
               </div>
             </form>
           </div>
@@ -1077,3 +933,5 @@ export const MyProfilePage: React.FC = () => {
     </div>
   );
 };
+
+export default MyProfilePage;

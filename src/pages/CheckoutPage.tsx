@@ -26,7 +26,7 @@ export const CheckoutPage: React.FC = () => {
 
   // Form State
   const [fullName, setFullName] = useState(user ? `${user.first_name} ${user.last_name}`.trim() : 'Rahul Sharma');
-  const [email, setEmail] = useState(user ? user.email : 'customer@nexusmart.com');
+  const [email, setEmail] = useState(user ? user.email : 'customer@jayveermart.com');
   const [mobile, setMobile] = useState(user ? user.mobile : '+91 98765 43210');
   const [address, setAddress] = useState(user ? user.address1 : '402, Skyline Towers, MG Road');
   const [city, setCity] = useState('Bengaluru');

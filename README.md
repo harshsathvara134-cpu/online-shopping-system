@@ -5,7 +5,7 @@
 [![Vite](https://img.shields.io/badge/Vite-8.x-purple.svg?logo=vite)](https://vitejs.dev/)
 [![Security](https://img.shields.io/badge/Security-PBKDF2%20%7C%202FA%20%7C%20DPDP%20Ready-emerald.svg)](https://github.com/)
 
-**JAYVEERMart Enterprise** is a high-performance, responsive single-page e-commerce web application engineered with **React 19**, **TypeScript**, and **Vite**. It features an intelligent AI customer assistant (**NexusAI**), multi-language localization (9 Indian languages), a complete administrative control suite, robust authentication with Two-Factor Authentication (2FA), and offline-first persistent state storage.
+**JAYVEERMart Enterprise** is a high-performance, responsive single-page e-commerce web application engineered with **React 19**, **TypeScript**, and **Vite**. It features an intelligent AI customer assistant (**JAYVEER AI**), multi-language localization (9 Indian languages), a complete administrative control suite, robust authentication with Two-Factor Authentication (2FA), and offline-first persistent state storage.
 
 ---
 
@@ -18,7 +18,7 @@
 - **Animated Cart Drawer & Wishlist**: Slide-out cart with promo coupon engine (`SUPER20`, `WELCOME500`), instant item quantity adjustments, and saved wishlist migration.
 - **Checkout & Order Tracking**: Multi-method checkout (Instant UPI QR Code, Card simulation, Cash on Delivery) with milestone tracking (`/my-orders`).
 - **Legal & Compliance Pages**: Dedicated, interactive **Conditions of Use** and **Privacy Notice** compliant with the Digital Personal Data Protection (DPDP) Act, 2023.
-- **NexusAI Support Assistant**: Integrated intelligent virtual shopping assistant supporting product recommendations, order tracking, and FAQ resolution.
+- **JAYVEER AI Support Assistant**: Integrated intelligent virtual shopping assistant supporting product recommendations, order tracking, and FAQ resolution.
 - **Multi-Language Support**: Seamless instant translation across 9 languages: English, Hindi, Gujarati, Tamil, Telugu, Kannada, Malayalam, Bengali, and Marathi.
 
 ### 🛡️ Administrative Control Suite (`/admin`)

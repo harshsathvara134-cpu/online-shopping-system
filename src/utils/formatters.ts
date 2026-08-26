@@ -29,7 +29,7 @@ export const truncateText = (text: string, maxLength: number): string => {
 };
 
 export const AVAILABLE_COUPONS: Record<string, { discountPercent: number; minOrder: number; label: string }> = {
-  'NEXUS10': { discountPercent: 10, minOrder: 1000, label: '10% OFF on orders above ₹1,000' },
+  'JAYVEER10': { discountPercent: 10, minOrder: 1000, label: '10% OFF on orders above ₹1,000' },
   'SUPER20': { discountPercent: 20, minOrder: 5000, label: '20% OFF on orders above ₹5,000' },
   'WELCOME500': { discountPercent: 15, minOrder: 2000, label: 'Flat 15% Welcome Discount' },
 };

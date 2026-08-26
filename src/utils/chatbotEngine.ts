@@ -187,11 +187,11 @@ export const processChatMessage = (
     return {
       id: `bot_${Date.now()}`,
       sender: 'bot',
-      text: `🎉 **Today's Active Store Coupons**:\n\n• **SUPER20** — ⚡ **Flat 20% OFF** on orders above ₹5,000\n• **NEXUS10** — **10% OFF** on orders above ₹1,000\n• **WELCOME500** — **15% Welcome Discount** for new shoppers\n\nClick the 1-click apply button below to auto-apply **SUPER20** to your cart!`,
+      text: `🎉 **Today's Active Store Coupons**:\n\n• **SUPER20** — ⚡ **Flat 20% OFF** on orders above ₹5,000\n• **JAYVEER10** — **10% OFF** on orders above ₹1,000\n• **WELCOME500** — **15% Welcome Discount** for new shoppers\n\nClick the 1-click apply button below to auto-apply **SUPER20** to your cart!`,
       timestamp: time,
       couponToApply: 'SUPER20',
       actionLinks: [{ label: 'View Shopping Cart', url: '/cart' }],
-      quickReplies: ['🔥 Apply SUPER20', 'Apply NEXUS10', 'Browse Trending Products'],
+      quickReplies: ['🔥 Apply SUPER20', 'Apply JAYVEER10', 'Browse Trending Products'],
     };
   }
 
@@ -266,7 +266,7 @@ export const processChatMessage = (
     return {
       id: `bot_${Date.now()}`,
       sender: 'bot',
-      text: `Namaste${greetingName}! 🙏 I am **NexusAI**, your 24/7 personal shopping assistant.\n\nI can help you:\n• 🔍 Find products matching your exact budget\n• ⚖️ Compare laptops and smartphones side-by-side\n• 📦 Track orders with live milestone timelines\n• 🎟️ Auto-apply exclusive discount coupons\n\nWhat would you like to explore?`,
+      text: `Namaste${greetingName}! 🙏 I am **JAYVEER AI**, your 24/7 personal shopping assistant.\n\nI can help you:\n• 🔍 Find products matching your exact budget\n• ⚖️ Compare laptops and smartphones side-by-side\n• 📦 Track orders with live milestone timelines\n• 🎟️ Auto-apply exclusive discount coupons\n\nWhat would you like to explore?`,
       timestamp: time,
       quickReplies: ['🔥 Trending Deals', '💻 Gaming Laptops', '📱 Flagship Phones', '📦 Track My Order', '🎟️ Available Coupons'],
     };

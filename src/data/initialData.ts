@@ -16,7 +16,7 @@ export const INITIAL_BRANDS: Brand[] = [
   { brand_id: 3, brand_title: 'Apple' },
   { brand_id: 4, brand_title: 'Motorola' },
   { brand_id: 5, brand_title: 'LG' },
-  { brand_id: 6, brand_title: 'Nexus Fashion' },
+  { brand_id: 6, brand_title: 'JAYVEER Fashion' },
   { brand_id: 7, brand_title: 'Generic' },
 ];
 
@@ -204,17 +204,26 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
 ];
 
+export const INITIAL_USER: User = {
+  user_id: 1,
+  first_name: 'Rahul',
+  last_name: 'Sharma',
+  email: 'customer@jayveermart.com',
+  mobile: '+91 98765 43210',
+  address1: '402, Skyline Towers, MG Road',
+  address2: 'Indiranagar, Bengaluru, Karnataka 560001',
+  role: 'customer',
+};
+
 export const INITIAL_ADMIN: User = {
   user_id: 999,
-  first_name: 'Admin',
+  first_name: 'Administrator',
   last_name: 'JAYVEERMart',
-  email: 'admin@nexusmart.com',
+  email: 'admin@jayveermart.com',
   mobile: '+91 99999 00000',
   address1: 'JAYVEER HQ',
-  address2: 'Tech Park, Mumbai',
+  address2: 'Tech Park, Bengaluru, Karnataka 560100',
   role: 'admin',
-  password_hash: '529d01281827afdc93db57f99a7d22d7fc863d43dbaaad5907558a0324f9103e',
-  password_salt: 'salt_admin_nexus_2026',
 };
 
 export const INITIAL_ORDERS: Order[] = [];

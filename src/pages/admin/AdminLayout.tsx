@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
@@ -8,20 +8,11 @@ import {
   ShoppingBag,
   BarChart3,
   Settings,
-  LogOut,
   ExternalLink,
   ShieldCheck,
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 
 export const AdminLayout: React.FC = () => {
-  const { user, isAdmin, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/admin/login');
-  };
 
   const navItems = [
     { to: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={18} />, end: true },
@@ -104,7 +95,6 @@ export const AdminLayout: React.FC = () => {
         <div style={{ padding: '1rem', borderTop: '1px solid #1e293b', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <Link
             to="/"
-            target="_blank"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -119,28 +109,8 @@ export const AdminLayout: React.FC = () => {
               textDecoration: 'none',
             }}
           >
-            <ExternalLink size={14} /> Open Storefront
+            <ExternalLink size={14} /> Back to Storefront
           </Link>
-
-          <button
-            onClick={handleLogout}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              padding: '8px',
-              backgroundColor: 'transparent',
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
-              color: '#ef4444',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
-          >
-            <LogOut size={14} /> Sign Out Admin
-          </button>
         </div>
       </aside>
 

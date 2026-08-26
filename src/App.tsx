@@ -26,13 +26,11 @@ import { CheckoutPage } from './pages/CheckoutPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { MyOrdersPage } from './pages/MyOrdersPage';
 import { MyProfilePage } from './pages/MyProfilePage';
-import { LoginPage } from './pages/LoginPage';
 import { ConditionsOfUsePage } from './pages/ConditionsOfUsePage';
 import { PrivacyNoticePage } from './pages/PrivacyNoticePage';
 
 // Admin Suite Pages
 import { AdminLayout } from './pages/admin/AdminLayout';
-import { AdminLoginPage } from './pages/admin/AdminLoginPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminProducts } from './pages/admin/AdminProducts';
 import { AdminCategories } from './pages/admin/AdminCategories';
@@ -40,8 +38,6 @@ import { AdminBrands } from './pages/admin/AdminBrands';
 import { AdminOrders } from './pages/admin/AdminOrders';
 import { AdminAnalytics } from './pages/admin/AdminAnalytics';
 import { AdminSettings } from './pages/admin/AdminSettings';
-import { CustomerRouteGuard } from './components/common/CustomerRouteGuard';
-import { AdminRouteGuard } from './components/common/AdminRouteGuard';
 
 // Scroll to top helper on route change
 const ScrollToTop: React.FC = () => {
@@ -86,10 +82,10 @@ export const App: React.FC = () => {
                   <Route path="/checkout" element={<StorefrontLayout><CheckoutPage /></StorefrontLayout>} />
                   <Route path="/order-success/:orderId" element={<StorefrontLayout><OrderSuccessPage /></StorefrontLayout>} />
                   <Route path="/my-orders" element={<StorefrontLayout><MyOrdersPage /></StorefrontLayout>} />
-                  <Route path="/my-profile" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
-                  <Route path="/account" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
-                  <Route path="/account/*" element={<StorefrontLayout><CustomerRouteGuard><MyProfilePage /></CustomerRouteGuard></StorefrontLayout>} />
-                  <Route path="/login" element={<StorefrontLayout><LoginPage /></StorefrontLayout>} />
+                  <Route path="/my-profile" element={<StorefrontLayout><MyProfilePage /></StorefrontLayout>} />
+                  <Route path="/account" element={<StorefrontLayout><MyProfilePage /></StorefrontLayout>} />
+                  <Route path="/account/*" element={<StorefrontLayout><MyProfilePage /></StorefrontLayout>} />
+                  <Route path="/login" element={<StorefrontLayout><MyProfilePage /></StorefrontLayout>} />
                   <Route path="/conditions-of-use" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
                   <Route path="/terms-of-service" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
                   <Route path="/terms" element={<StorefrontLayout><ConditionsOfUsePage /></StorefrontLayout>} />
@@ -98,17 +94,10 @@ export const App: React.FC = () => {
                   <Route path="/privacy-policy" element={<StorefrontLayout><PrivacyNoticePage /></StorefrontLayout>} />
                   <Route path="/privacy" element={<StorefrontLayout><PrivacyNoticePage /></StorefrontLayout>} />
 
-                  {/* Admin Portal Routes (Protected by AdminRouteGuard) */}
-                  <Route path="/admin/login" element={<AdminLoginPage />} />
-                  <Route path="/admin-login" element={<AdminLoginPage />} />
-                  <Route
-                    path="/admin"
-                    element={
-                      <AdminRouteGuard>
-                        <AdminLayout />
-                      </AdminRouteGuard>
-                    }
-                  >
+                  {/* Admin Portal Routes (Direct Public Access) */}
+                  <Route path="/admin/login" element={<StorefrontLayout><AdminDashboard /></StorefrontLayout>} />
+                  <Route path="/admin-login" element={<StorefrontLayout><AdminDashboard /></StorefrontLayout>} />
+                  <Route path="/admin" element={<AdminLayout />}>
                     <Route index element={<AdminDashboard />} />
                     <Route path="products" element={<AdminProducts />} />
                     <Route path="categories" element={<AdminCategories />} />

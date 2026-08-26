@@ -112,7 +112,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const coupon = AVAILABLE_COUPONS[cleanCode];
 
     if (!coupon) {
-      return { success: false, message: 'Invalid promo code. Try NEXUS10, SUPER20, or WELCOME500.' };
+      return { success: false, message: 'Invalid promo code. Try JAYVEER10, SUPER20, or WELCOME500.' };
     }
 
     if (subtotal < coupon.minOrder) {

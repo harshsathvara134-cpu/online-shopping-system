@@ -16,7 +16,7 @@ import {
   DeviceFingerprint,
   PasswordResetToken,
 } from '../types';
-import { INITIAL_PRODUCTS, INITIAL_CATEGORIES, INITIAL_BRANDS, INITIAL_ORDERS, INITIAL_REVIEWS, INITIAL_ADMIN } from './initialData';
+import { INITIAL_PRODUCTS, INITIAL_CATEGORIES, INITIAL_BRANDS, INITIAL_ORDERS, INITIAL_REVIEWS, INITIAL_ADMIN, INITIAL_USER } from './initialData';
 
 export const INITIAL_STORE_SETTINGS: StoreSettings = {
   storeName: 'JAYVEERMart Enterprise',
@@ -33,15 +33,15 @@ export const INITIAL_STORE_SETTINGS: StoreSettings = {
 };
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'nexusmart_products',
-  CATEGORIES: 'nexusmart_categories',
-  BRANDS: 'nexusmart_brands',
-  ORDERS: 'nexusmart_orders',
-  REVIEWS: 'nexusmart_reviews',
-  USERS: 'nexusmart_users',
-  CURRENT_USER: 'nexusmart_current_user',
-  CART: 'nexusmart_cart',
-  WISHLIST: 'nexusmart_wishlist',
+  PRODUCTS: 'jayveermart_products',
+  CATEGORIES: 'jayveermart_categories',
+  BRANDS: 'jayveermart_brands',
+  ORDERS: 'jayveermart_orders',
+  REVIEWS: 'jayveermart_reviews',
+  USERS: 'jayveermart_users',
+  CURRENT_USER: 'jayveermart_current_user',
+  CART: 'jayveermart_cart',
+  WISHLIST: 'jayveermart_wishlist',
   STORE_SETTINGS: 'jayveermart_store_settings',
   ADMIN_SESSIONS: 'jayveermart_admin_sessions',
   CURRENT_ADMIN_SESSION: 'jayveermart_current_admin_session',
@@ -56,7 +56,7 @@ const STORAGE_KEYS = {
 
 function getStorageItem<T>(key: string, fallback: T): T {
   try {
-    const data = localStorage.getItem(key);
+    const data = localStorage.getItem(key) || localStorage.getItem(key.replace('jayveermart_', 'nexusmart_'));
     return data ? JSON.parse(data) : fallback;
   } catch (error) {
     console.error(`Error reading ${key} from localStorage:`, error);
@@ -92,25 +92,11 @@ export const mockDb = {
   saveStoreSettings: (settings: StoreSettings): void => setStorageItem(STORAGE_KEYS.STORE_SETTINGS, settings),
 
   getUsers: (): User[] => {
-    const rawUsers = getStorageItem<User[]>(STORAGE_KEYS.USERS, [INITIAL_ADMIN]);
-    const hasAdmin = rawUsers.some((u) => u.email.toLowerCase() === 'admin@nexusmart.com');
-    const allUsers = hasAdmin ? rawUsers : [INITIAL_ADMIN, ...rawUsers];
-
-    return allUsers.map((u) => {
-      if (u.email.toLowerCase() === 'admin@nexusmart.com') {
-        return {
-          ...u,
-          role: 'admin' as const,
-          password_hash: u.password_hash || INITIAL_ADMIN.password_hash,
-          password_salt: u.password_salt || INITIAL_ADMIN.password_salt,
-        };
-      }
-      return u;
-    });
+    return getStorageItem<User[]>(STORAGE_KEYS.USERS, [INITIAL_USER, INITIAL_ADMIN]);
   },
   saveUsers: (users: User[]): void => setStorageItem(STORAGE_KEYS.USERS, users),
 
-  getCurrentUser: (): User | null => getStorageItem(STORAGE_KEYS.CURRENT_USER, null),
+  getCurrentUser: (): User | null => getStorageItem(STORAGE_KEYS.CURRENT_USER, INITIAL_USER),
   saveCurrentUser: (user: User | null): void => setStorageItem(STORAGE_KEYS.CURRENT_USER, user),
 
   getCart: (): CartItem[] => getStorageItem(STORAGE_KEYS.CART, []),
@@ -119,67 +105,19 @@ export const mockDb = {
   getWishlist: (): WishlistItem[] => getStorageItem(STORAGE_KEYS.WISHLIST, []),
   saveWishlist: (wishlist: WishlistItem[]): void => setStorageItem(STORAGE_KEYS.WISHLIST, wishlist),
 
-  // ─── Enterprise Admin Sessions ─────────────────────────────────────────────
-  getAdminSessions: (): AdminSession[] => getStorageItem(STORAGE_KEYS.ADMIN_SESSIONS, []),
-  saveAdminSessions: (sessions: AdminSession[]): void => setStorageItem(STORAGE_KEYS.ADMIN_SESSIONS, sessions),
-
-  getCurrentAdminSession: (): AdminSession | null => getStorageItem(STORAGE_KEYS.CURRENT_ADMIN_SESSION, null),
-  saveCurrentAdminSession: (session: AdminSession | null): void => setStorageItem(STORAGE_KEYS.CURRENT_ADMIN_SESSION, session),
-
-  terminateAdminSession: (sessionId: string): void => {
-    const sessions = getStorageItem<AdminSession[]>(STORAGE_KEYS.ADMIN_SESSIONS, []);
-    const updated = sessions.filter((s) => s.sessionId !== sessionId);
-    setStorageItem(STORAGE_KEYS.ADMIN_SESSIONS, updated);
-
-    const current = getStorageItem<AdminSession | null>(STORAGE_KEYS.CURRENT_ADMIN_SESSION, null);
-    if (current && current.sessionId === sessionId) {
-      setStorageItem(STORAGE_KEYS.CURRENT_ADMIN_SESSION, null);
-      setStorageItem(STORAGE_KEYS.CURRENT_USER, null);
-    }
-  },
-
-  terminateAllAdminSessions: (userId: number, exceptSessionId?: string): void => {
-    const sessions = getStorageItem<AdminSession[]>(STORAGE_KEYS.ADMIN_SESSIONS, []);
-    const updated = sessions.filter((s) => s.userId !== userId || (exceptSessionId && s.sessionId === exceptSessionId));
-    setStorageItem(STORAGE_KEYS.ADMIN_SESSIONS, updated);
-
-    const current = getStorageItem<AdminSession | null>(STORAGE_KEYS.CURRENT_ADMIN_SESSION, null);
-    if (current && current.userId === userId && (!exceptSessionId || current.sessionId !== exceptSessionId)) {
-      setStorageItem(STORAGE_KEYS.CURRENT_ADMIN_SESSION, null);
-      setStorageItem(STORAGE_KEYS.CURRENT_USER, null);
-    }
-  },
-
-  // ─── Customer Sessions ─────────────────────────────────────────────────────
-  getCustomerSessions: (): CustomerSession[] => getStorageItem(STORAGE_KEYS.CUSTOMER_SESSIONS, []),
-  saveCustomerSessions: (sessions: CustomerSession[]): void => setStorageItem(STORAGE_KEYS.CUSTOMER_SESSIONS, sessions),
-
-  getCurrentCustomerSession: (): CustomerSession | null => getStorageItem(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, null),
-  saveCurrentCustomerSession: (session: CustomerSession | null): void => setStorageItem(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, session),
-
-  terminateCustomerSession: (sessionId: string): void => {
-    const sessions = getStorageItem<CustomerSession[]>(STORAGE_KEYS.CUSTOMER_SESSIONS, []);
-    const updated = sessions.filter((s) => s.sessionId !== sessionId);
-    setStorageItem(STORAGE_KEYS.CUSTOMER_SESSIONS, updated);
-
-    const current = getStorageItem<CustomerSession | null>(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, null);
-    if (current && current.sessionId === sessionId) {
-      setStorageItem(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, null);
-      setStorageItem(STORAGE_KEYS.CURRENT_USER, null);
-    }
-  },
-
-  terminateAllCustomerSessions: (userId: number, exceptSessionId?: string): void => {
-    const sessions = getStorageItem<CustomerSession[]>(STORAGE_KEYS.CUSTOMER_SESSIONS, []);
-    const updated = sessions.filter((s) => s.userId !== userId || (exceptSessionId && s.sessionId === exceptSessionId));
-    setStorageItem(STORAGE_KEYS.CUSTOMER_SESSIONS, updated);
-
-    const current = getStorageItem<CustomerSession | null>(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, null);
-    if (current && current.userId === userId && (!exceptSessionId || current.sessionId !== exceptSessionId)) {
-      setStorageItem(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, null);
-      setStorageItem(STORAGE_KEYS.CURRENT_USER, null);
-    }
-  },
+  // ─── Sessions & Profile Compatibility ─────────────────────────────────────
+  getAdminSessions: (): AdminSession[] => [],
+  saveAdminSessions: (): void => {},
+  getCurrentAdminSession: (): AdminSession | null => null,
+  saveCurrentAdminSession: (): void => {},
+  terminateAdminSession: (): void => {},
+  terminateAllAdminSessions: (): void => {},
+  getCustomerSessions: (): CustomerSession[] => [],
+  saveCustomerSessions: (): void => {},
+  getCurrentCustomerSession: (): CustomerSession | null => null,
+  saveCurrentCustomerSession: (): void => {},
+  terminateCustomerSession: (): void => {},
+  terminateAllCustomerSessions: (): void => {},
 
   // ─── Customer Addresses ────────────────────────────────────────────────────
   getCustomerAddresses: (userId?: number): CustomerAddress[] => {
@@ -274,17 +212,10 @@ export const mockDb = {
     setStorageItem(STORAGE_KEYS.BRANDS, INITIAL_BRANDS);
     setStorageItem(STORAGE_KEYS.ORDERS, []);
     setStorageItem(STORAGE_KEYS.REVIEWS, []);
-    setStorageItem(STORAGE_KEYS.USERS, [INITIAL_ADMIN]);
-    setStorageItem(STORAGE_KEYS.CURRENT_USER, null);
+    setStorageItem(STORAGE_KEYS.USERS, [INITIAL_USER, INITIAL_ADMIN]);
+    setStorageItem(STORAGE_KEYS.CURRENT_USER, INITIAL_USER);
     setStorageItem(STORAGE_KEYS.STORE_SETTINGS, INITIAL_STORE_SETTINGS);
-    setStorageItem(STORAGE_KEYS.ADMIN_SESSIONS, []);
-    setStorageItem(STORAGE_KEYS.CURRENT_ADMIN_SESSION, null);
-    setStorageItem(STORAGE_KEYS.CUSTOMER_SESSIONS, []);
-    setStorageItem(STORAGE_KEYS.CURRENT_CUSTOMER_SESSION, null);
     setStorageItem(STORAGE_KEYS.CUSTOMER_ADDRESSES, []);
     setStorageItem(STORAGE_KEYS.SAVED_PAYMENTS, []);
-    setStorageItem(STORAGE_KEYS.KNOWN_DEVICES, []);
-    setStorageItem(STORAGE_KEYS.OTP_TOKENS, []);
-    setStorageItem(STORAGE_KEYS.RESET_TOKENS, []);
   },
 };

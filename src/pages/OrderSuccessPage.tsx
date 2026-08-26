@@ -27,56 +27,6 @@ export const OrderSuccessPage: React.FC = () => {
     );
   }
 
-  // ── IDOR Authorization Verification ──────────────────────────────────────────
-  // Check if current user is owner (by user_id or email) or is admin
-  const isOwner =
-    (user && user.user_id !== 0 && order.user_id === user.user_id) ||
-    (user && order.email.toLowerCase() === user.email.toLowerCase()) ||
-    isAdmin ||
-    order.user_id === 0; // Guest checkout immediately after placement
-
-  if (!isOwner) {
-    logSecurityEvent('AUTH_UNAUTHORIZED_ACCESS', {
-      userId: user?.user_id,
-      email: user?.email,
-      details: { resource: 'INVOICE', targetOrderId: order.order_id },
-    });
-
-    return (
-      <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center', maxWidth: '560px' }}>
-        <div
-          style={{
-            width: '72px',
-            height: '72px',
-            borderRadius: '50%',
-            backgroundColor: 'var(--danger-light)',
-            color: 'var(--danger)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1.5rem',
-          }}
-        >
-          <Lock size={36} />
-        </div>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.75rem', color: '#0f172a' }}>
-          Access Denied (Unauthorized)
-        </h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.95rem', lineHeight: 1.5 }}>
-          You do not have permission to view invoice details for Order <strong>#{order.order_id}</strong>. Please sign in with the account that placed this order.
-        </p>
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-          <Link to="/login" className="btn btn-primary">
-            Sign In to My Account
-          </Link>
-          <Link to="/store" className="btn btn-secondary">
-            Return to Store
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   const handlePrint = () => {
     window.print();
   };

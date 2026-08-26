@@ -108,7 +108,7 @@ export const PrivacyNoticePage: React.FC = () => {
                   <Sparkles size={16} color="#4f46e5" /> AI Chatbot Interactions
                 </div>
                 <p style={{ fontSize: '0.8125rem', color: '#64748b', margin: 0 }}>
-                  Conversational inquiries submitted to our Nexus AI Assistant to provide live recommendations, order assistance, and support resolution.
+                  Conversational inquiries submitted to our JAYVEER AI Assistant to provide live recommendations, order assistance, and support resolution.
                 </p>
               </div>
             </div>
@@ -159,17 +159,17 @@ export const PrivacyNoticePage: React.FC = () => {
                 </thead>
                 <tbody>
                   <tr style={{ borderBottom: '1px solid #e2e8f0', backgroundColor: '#f8fafc' }}>
-                    <td style={{ padding: '10px 14px', fontWeight: 600 }}><code>nexus_auth_token</code></td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}><code>jayveer_profile_token</code></td>
                     <td style={{ padding: '10px 14px' }}>Essential</td>
-                    <td style={{ padding: '10px 14px' }}>Maintains secure authenticated session token. Expires on logout or 30 days.</td>
+                    <td style={{ padding: '10px 14px' }}>Maintains public customer address preferences and active profile.</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
-                    <td style={{ padding: '10px 14px', fontWeight: 600 }}><code>nexus_cart_items</code></td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}><code>jayveermart_cart</code></td>
                     <td style={{ padding: '10px 14px' }}>Functional</td>
                     <td style={{ padding: '10px 14px' }}>Retains your selected cart and wishlist items across browser reloads.</td>
                   </tr>
                   <tr style={{ backgroundColor: '#f8fafc' }}>
-                    <td style={{ padding: '10px 14px', fontWeight: 600 }}><code>nexusmart_lang</code></td>
+                    <td style={{ padding: '10px 14px', fontWeight: 600 }}><code>jayveermart_lang</code></td>
                     <td style={{ padding: '10px 14px' }}>Preference</td>
                     <td style={{ padding: '10px 14px' }}>Saves your preferred language selection (EN, HI, GU, TA, TE, KN, ML, BN, MR).</td>
                   </tr>

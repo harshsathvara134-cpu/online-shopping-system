@@ -321,12 +321,12 @@ const LanguageContext = createContext<LanguageContextType>({
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLangState] = useState<string>(() =>
-    localStorage.getItem('nexusmart_lang') || 'EN'
+    localStorage.getItem('jayveermart_lang') || localStorage.getItem('nexusmart_lang') || 'EN'
   );
 
   const setLanguage = useCallback((code: string) => {
     setLangState(code);
-    localStorage.setItem('nexusmart_lang', code);
+    localStorage.setItem('jayveermart_lang', code);
     document.documentElement.lang = code.toLowerCase();
   }, []);
 

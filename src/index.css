@@ -514,7 +514,20 @@ button, input, select, textarea {
   align-items: start;
 }
 
+@keyframes slide-in-right {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 @media (max-width: 768px) {
+  body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
   .store-layout-grid,
   .product-detail-grid,
   .cart-layout-grid,
@@ -525,14 +538,38 @@ button, input, select, textarea {
 
   .store-products-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.75rem !important;
+    gap: 0.625rem !important;
+  }
+
+  .product-card {
+    border-radius: 14px !important;
+  }
+
+  .product-card-img-wrap {
+    height: 140px !important;
+    padding: 0.4rem !important;
+  }
+
+  .product-card-body {
+    padding: 0.625rem !important;
+  }
+
+  .product-card-title {
+    font-size: 0.8125rem !important;
+    height: 2.15rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .product-card-price {
+    font-size: 0.95rem !important;
   }
 
   .chatbot-launcher-btn {
-    bottom: 76px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important;
     right: 16px !important;
     width: 52px !important;
     height: 52px !important;
+    box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4) !important;
   }
 
   .chatbot-window-responsive {

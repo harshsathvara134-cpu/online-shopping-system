@@ -56,15 +56,21 @@ export const AdminProducts: React.FC = () => {
   const [brandId, setBrandId] = useState<number>(brands[0]?.brand_id || 1);
   const [price, setPrice] = useState<number>(999);
   const [qty, setQty] = useState<number>(10);
+  // Multi-Image Form State (Up to 3 images)
   const [image, setImage] = useState<string>('/product_images/1772203299_1770809937_samsung-galaxy-s25-ultra-front-and-back-2.png');
+  const [image2, setImage2] = useState<string>('');
+  const [image3, setImage3] = useState<string>('');
+  const [activeImageSlot, setActiveImageSlot] = useState<1 | 2 | 3>(1);
   const [imageInputMode, setImageInputMode] = useState<'upload' | 'url'>('upload');
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef1 = useRef<HTMLInputElement>(null);
+  const fileInputRef2 = useRef<HTMLInputElement>(null);
+  const fileInputRef3 = useRef<HTMLInputElement>(null);
   const [keywords, setKeywords] = useState('');
   const [description, setDescription] = useState('');
   const [featured, setFeatured] = useState(false);
   const [trending, setTrending] = useState(false);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (slot: 1 | 2 | 3, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/avif'];
@@ -86,7 +92,9 @@ export const AdminProducts: React.FC = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
-          setImage(reader.result);
+          if (slot === 1) setImage(reader.result);
+          else if (slot === 2) setImage2(reader.result);
+          else if (slot === 3) setImage3(reader.result);
         }
       };
       reader.readAsDataURL(file);
@@ -195,6 +203,10 @@ export const AdminProducts: React.FC = () => {
     setPrice(1999);
     setQty(15);
     setImage('/product_images/1772203299_1770809937_samsung-galaxy-s25-ultra-front-and-back-2.png');
+    setImage2('');
+    setImage3('');
+    setActiveImageSlot(1);
+    setImageInputMode('upload');
     setKeywords('');
     setDescription('');
     setFeatured(false);
@@ -210,7 +222,11 @@ export const AdminProducts: React.FC = () => {
     setBrandId(p.product_brand);
     setPrice(p.product_price);
     setQty(p.product_qty);
-    setImage(p.product_image);
+    setImage(p.product_image || '');
+    setImage2(p.product_image2 || '');
+    setImage3(p.product_image3 || '');
+    setActiveImageSlot(1);
+    setImageInputMode('upload');
     setKeywords(p.product_keywords);
     setDescription(p.product_desc);
     setFeatured(!!p.featured);
@@ -227,6 +243,8 @@ export const AdminProducts: React.FC = () => {
       product_price: p.product_price,
       product_qty: p.product_qty,
       product_image: p.product_image,
+      product_image2: p.product_image2 || null,
+      product_image3: p.product_image3 || null,
       product_keywords: p.product_keywords,
       product_desc: p.product_desc,
       featured: p.featured,
@@ -250,6 +268,8 @@ export const AdminProducts: React.FC = () => {
     const safePrice = Math.max(1, Math.round(Number(price) || 1));
     const safeQty = Math.max(0, Math.floor(Number(qty) || 0));
     const safeImage = sanitizeUrl(image.trim());
+    const safeImage2 = image2.trim() ? sanitizeUrl(image2.trim()) : null;
+    const safeImage3 = image3.trim() ? sanitizeUrl(image3.trim()) : null;
     const safeKeywords = sanitizeInput(keywords.trim());
     const safeDesc = sanitizeInput(description.trim());
 
@@ -262,6 +282,8 @@ export const AdminProducts: React.FC = () => {
         product_price: safePrice,
         product_qty: safeQty,
         product_image: safeImage,
+        product_image2: safeImage2,
+        product_image3: safeImage3,
         product_keywords: safeKeywords,
         product_desc: safeDesc,
         featured,
@@ -275,6 +297,8 @@ export const AdminProducts: React.FC = () => {
         product_price: safePrice,
         product_qty: safeQty,
         product_image: safeImage,
+        product_image2: safeImage2,
+        product_image3: safeImage3,
         product_keywords: safeKeywords,
         product_desc: safeDesc,
         featured,
@@ -1202,25 +1226,33 @@ export const AdminProducts: React.FC = () => {
                   />
                 </div>
 
+                {/* ─── Multi-Image Gallery Station (3 Images) ─────────────────── */}
                 <div className="input-group" style={{ gridColumn: 'span 2' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <label className="input-label" style={{ fontWeight: 600, fontSize: '0.8125rem', margin: 0 }}>
-                      Product Image *
-                    </label>
-                    <div style={{ display: 'flex', gap: '4px', backgroundColor: '#f1f5f9', padding: '2px', borderRadius: '6px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <div>
+                      <label className="input-label" style={{ fontWeight: 700, fontSize: '0.875rem', margin: 0, color: '#0f172a' }}>
+                        Product Images & Gallery (3 Photos)
+                      </label>
+                      <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        Main cover photo is required. Additional angles are optional.
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '4px', backgroundColor: '#f1f5f9', padding: '3px', borderRadius: '8px' }}>
                       <button
                         type="button"
                         onClick={() => setImageInputMode('upload')}
                         style={{
-                          padding: '3px 10px',
+                          padding: '4px 12px',
                           fontSize: '0.75rem',
                           fontWeight: imageInputMode === 'upload' ? 700 : 500,
                           backgroundColor: imageInputMode === 'upload' ? 'white' : 'transparent',
                           color: imageInputMode === 'upload' ? '#0f172a' : '#64748b',
-                          borderRadius: '4px',
+                          borderRadius: '6px',
                           border: 'none',
                           cursor: 'pointer',
-                          boxShadow: imageInputMode === 'upload' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+                          boxShadow: imageInputMode === 'upload' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                          transition: 'all 0.15s',
                         }}
                       >
                         Upload Image
@@ -1229,15 +1261,16 @@ export const AdminProducts: React.FC = () => {
                         type="button"
                         onClick={() => setImageInputMode('url')}
                         style={{
-                          padding: '3px 10px',
+                          padding: '4px 12px',
                           fontSize: '0.75rem',
                           fontWeight: imageInputMode === 'url' ? 700 : 500,
                           backgroundColor: imageInputMode === 'url' ? 'white' : 'transparent',
                           color: imageInputMode === 'url' ? '#0f172a' : '#64748b',
-                          borderRadius: '4px',
+                          borderRadius: '6px',
                           border: 'none',
                           cursor: 'pointer',
-                          boxShadow: imageInputMode === 'url' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+                          boxShadow: imageInputMode === 'url' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                          transition: 'all 0.15s',
                         }}
                       >
                         Image URL / Path
@@ -1245,23 +1278,92 @@ export const AdminProducts: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* 3 Image Slot Selector Tabs */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+                    {[
+                      { slot: 1 as const, title: 'Image 1 (Main Cover) *', val: image, req: true, ref: fileInputRef1 },
+                      { slot: 2 as const, title: 'Image 2 (Angle View)', val: image2, req: false, ref: fileInputRef2 },
+                      { slot: 3 as const, title: 'Image 3 (Detail View)', val: image3, req: false, ref: fileInputRef3 },
+                    ].map((item) => {
+                      const isSelected = activeImageSlot === item.slot;
+                      const isFilled = !!item.val;
+                      return (
+                        <button
+                          key={item.slot}
+                          type="button"
+                          onClick={() => setActiveImageSlot(item.slot)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '8px 10px',
+                            borderRadius: '10px',
+                            border: isSelected ? '2px solid #6366f1' : '1px solid #e2e8f0',
+                            backgroundColor: isSelected ? '#f5f3ff' : '#ffffff',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            transition: 'all 0.15s',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '34px',
+                              height: '34px',
+                              borderRadius: '6px',
+                              backgroundColor: '#f8fafc',
+                              border: '1px solid #e2e8f0',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              overflow: 'hidden',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {isFilled ? (
+                              <img
+                                src={item.val}
+                                alt={`Slot ${item.slot}`}
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
+                                }}
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                              />
+                            ) : (
+                              <ImageIcon size={16} color="#94a3b8" />
+                            )}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isSelected ? '#4338ca' : '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              Image {item.slot} {item.req ? '*' : ''}
+                            </div>
+                            <div style={{ fontSize: '0.6875rem', color: isFilled ? '#15803d' : '#94a3b8', fontWeight: isFilled ? 700 : 500 }}>
+                              {isFilled ? '✓ Set' : item.req ? 'Required' : '+ Optional'}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Active Slot Uploader Area */}
                   {imageInputMode === 'upload' ? (
                     <div
                       style={{
                         display: 'flex',
                         gap: '14px',
                         alignItems: 'center',
-                        padding: '14px',
+                        padding: '14px 16px',
                         border: '1.5px dashed #cbd5e1',
-                        borderRadius: '10px',
+                        borderRadius: '12px',
                         backgroundColor: '#f8fafc',
                       }}
                     >
-                      {/* Image Thumbnail Preview */}
+                      {/* Active Thumbnail Preview */}
                       <div
                         style={{
-                          width: '74px',
-                          height: '74px',
+                          width: '76px',
+                          height: '76px',
                           borderRadius: '10px',
                           backgroundColor: 'white',
                           border: '1px solid #e2e8f0',
@@ -1271,55 +1373,91 @@ export const AdminProducts: React.FC = () => {
                           overflow: 'hidden',
                           flexShrink: 0,
                           padding: '4px',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                         }}
                       >
-                        {image ? (
+                        {(activeImageSlot === 1 ? image : activeImageSlot === 2 ? image2 : image3) ? (
                           <img
-                            src={image}
-                            alt="Product Preview"
+                            src={activeImageSlot === 1 ? image : activeImageSlot === 2 ? image2 : image3}
+                            alt={`Preview ${activeImageSlot}`}
                             onError={(e) => {
                               (e.target as HTMLImageElement).src =
                                 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60';
                             }}
-                            style={{ maxHeight: '64px', maxWidth: '64px', objectFit: 'contain' }}
+                            style={{ maxHeight: '68px', maxWidth: '68px', objectFit: 'contain' }}
                           />
                         ) : (
-                          <ImageIcon size={28} color="#94a3b8" />
+                          <ImageIcon size={30} color="#94a3b8" />
                         )}
                       </div>
 
                       {/* Upload Button & Format Info */}
                       <div style={{ flex: 1 }}>
                         <input
-                          ref={fileInputRef}
+                          ref={activeImageSlot === 1 ? fileInputRef1 : activeImageSlot === 2 ? fileInputRef2 : fileInputRef3}
                           type="file"
                           accept="image/png, image/jpeg, image/webp, image/svg+xml, image/avif"
-                          onChange={handleFileUpload}
+                          onChange={(e) => handleFileUpload(activeImageSlot, e)}
                           style={{ display: 'none' }}
                         />
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '7px 14px',
-                            backgroundColor: '#1e293b',
-                            color: 'white',
-                            borderRadius: '8px',
-                            fontSize: '0.8125rem',
-                            fontWeight: 700,
-                            border: 'none',
-                            cursor: 'pointer',
-                            marginBottom: '6px',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                          }}
-                        >
-                          <Upload size={14} /> Choose Image to Upload
-                        </button>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '6px' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (activeImageSlot === 1) fileInputRef1.current?.click();
+                              else if (activeImageSlot === 2) fileInputRef2.current?.click();
+                              else fileInputRef3.current?.click();
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '7px 14px',
+                              backgroundColor: '#1e293b',
+                              color: 'white',
+                              borderRadius: '8px',
+                              fontSize: '0.8125rem',
+                              fontWeight: 700,
+                              border: 'none',
+                              cursor: 'pointer',
+                              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            }}
+                          >
+                            <Upload size={14} /> Choose Image {activeImageSlot} to Upload
+                          </button>
+
+                          {activeImageSlot !== 1 && (activeImageSlot === 2 ? image2 : image3) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (activeImageSlot === 2) {
+                                  setImage2('');
+                                  if (fileInputRef2.current) fileInputRef2.current.value = '';
+                                } else {
+                                  setImage3('');
+                                  if (fileInputRef3.current) fileInputRef3.current.value = '';
+                                }
+                              }}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '7px 12px',
+                                backgroundColor: '#fee2e2',
+                                color: '#b91c1c',
+                                borderRadius: '8px',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                border: 'none',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <Trash2 size={13} /> Remove Photo {activeImageSlot}
+                            </button>
+                          )}
+                        </div>
                         <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                          Upload device photos (PNG, JPG, WebP, SVG up to 5MB)
+                          Upload device photos (PNG, JPG, WebP, SVG, AVIF up to 5MB) for <strong>Slot {activeImageSlot}</strong>.
                         </div>
                       </div>
                     </div>
@@ -1327,16 +1465,20 @@ export const AdminProducts: React.FC = () => {
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                       <input
                         type="text"
-                        required
-                        value={image}
-                        onChange={(e) => setImage(e.target.value)}
+                        required={activeImageSlot === 1}
+                        value={activeImageSlot === 1 ? image : activeImageSlot === 2 ? image2 : image3}
+                        onChange={(e) => {
+                          if (activeImageSlot === 1) setImage(e.target.value);
+                          else if (activeImageSlot === 2) setImage2(e.target.value);
+                          else setImage3(e.target.value);
+                        }}
                         className="input-field"
-                        placeholder="/product_images/filename.jpg or https://..."
+                        placeholder={activeImageSlot === 1 ? '/product_images/photo1.jpg or https://...' : 'Optional image URL for angle / gallery photo...'}
                         style={{ borderRadius: '8px', padding: '8px 12px', flex: 1 }}
                       />
-                      {image && (
+                      {(activeImageSlot === 1 ? image : activeImageSlot === 2 ? image2 : image3) && (
                         <img
-                          src={image}
+                          src={activeImageSlot === 1 ? image : activeImageSlot === 2 ? image2 : image3}
                           alt="Preview"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src =
@@ -1352,6 +1494,19 @@ export const AdminProducts: React.FC = () => {
                             padding: '2px',
                           }}
                         />
+                      )}
+                      {activeImageSlot !== 1 && (activeImageSlot === 2 ? image2 : image3) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (activeImageSlot === 2) setImage2('');
+                            else setImage3('');
+                          }}
+                          style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '6px' }}
+                          title="Clear Image"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       )}
                     </div>
                   )}
