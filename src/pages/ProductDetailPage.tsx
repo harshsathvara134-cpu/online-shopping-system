@@ -137,7 +137,7 @@ export const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="container" style={{ padding: '2rem 1.5rem 5rem' }}>
+    <div className="container pdp-container" style={{ padding: '2rem 1.5rem 5rem' }}>
       {/* Breadcrumbs */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
         <Link to="/" style={{ color: 'var(--text-muted)' }}>Home</Link>
@@ -742,33 +742,58 @@ export const ProductDetailPage: React.FC = () => {
         </section>
       )}
 
-      {/* Sticky Mobile Bottom Buy Bar */}
+      {/* Sticky Mobile Bottom Buy Bar (Docked gracefully above MobileNav) */}
       <div
         className="mobile-sticky-buy-bar show-mobile-only"
         style={{
           position: 'fixed',
-          bottom: 0,
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 54px)',
           left: 0,
           right: 0,
-          background: 'rgba(255, 255, 255, 0.96)',
+          background: 'rgba(255, 255, 255, 0.97)',
           backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
           borderTop: '1px solid var(--border-color)',
-          padding: '8px 12px calc(env(safe-area-inset-bottom, 0px) + 8px)',
+          padding: '8px 12px',
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          zIndex: 9005,
-          boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.1)',
+          gap: '8px',
+          zIndex: 8990,
+          boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.08)',
         }}
       >
-        <div style={{ flex: '0 0 auto' }}>
-          <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
+        <div style={{ flex: '0 0 auto', marginRight: '2px' }}>
+          <div style={{ fontSize: '1.125rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1.1, fontFamily: 'var(--font-heading)' }}>
             {formatCurrency(product.product_price)}
           </div>
           <div style={{ fontSize: '0.625rem', color: '#15803d', fontWeight: 700 }}>
             {isOutOfStock ? 'Out of stock' : '✓ Free Delivery'}
           </div>
         </div>
+
+        {/* Quick Wishlist Action */}
+        <button
+          type="button"
+          onClick={handleWishlistToggle}
+          title={inWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+          aria-label={inWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+          style={{
+            background: inWishlist ? '#fef2f2' : '#f8fafc',
+            border: inWishlist ? '1px solid #fca5a5' : '1px solid var(--border-color)',
+            borderRadius: '10px',
+            width: '38px',
+            height: '38px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: inWishlist ? '#ef4444' : 'var(--text-muted)',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+          }}
+        >
+          <Heart size={18} fill={inWishlist ? '#ef4444' : 'none'} color={inWishlist ? '#ef4444' : 'currentColor'} />
+        </button>
 
         <button
           type="button"

@@ -578,11 +578,19 @@ button, input, select, textarea {
   }
 
   .chatbot-launcher-btn {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 120px) !important;
     right: 16px !important;
-    width: 52px !important;
-    height: 52px !important;
+    width: 50px !important;
+    height: 50px !important;
     box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4) !important;
+  }
+
+  .pdp-container {
+    padding-bottom: 9rem !important;
+  }
+
+  .mobile-sticky-buy-bar {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 54px) !important;
   }
 
   .chatbot-window-responsive {
