@@ -185,12 +185,33 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => toggleWishlist(product)}
-                  className="btn btn-secondary"
-                  title="Wishlist"
-                  style={{ padding: '0.75rem' }}
+                  className="btn"
+                  title={inWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                  aria-label={inWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                  style={{
+                    padding: '0.75rem 1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    backgroundColor: inWishlist ? '#fef2f2' : 'var(--bg-subtle)',
+                    border: inWishlist ? '1px solid #fca5a5' : '1px solid var(--border-color)',
+                    color: inWishlist ? '#ef4444' : 'var(--text-main)',
+                    borderRadius: 'var(--radius-md)',
+                    transition: 'all 0.2s ease',
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    cursor: 'pointer',
+                  }}
                 >
-                  <Heart size={20} fill={inWishlist ? '#ef4444' : 'none'} color={inWishlist ? '#ef4444' : 'inherit'} />
+                  <Heart
+                    size={18}
+                    fill={inWishlist ? '#ef4444' : 'none'}
+                    color={inWishlist ? '#ef4444' : 'currentColor'}
+                  />
+                  <span>{inWishlist ? 'Saved' : 'Wishlist'}</span>
                 </button>
               </div>
 

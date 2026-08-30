@@ -45,6 +45,14 @@ export const ProductDetailPage: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews'>('desc');
   const [addedAnim, setAddedAnim] = useState(false);
+  const [wishlistAnim, setWishlistAnim] = useState(false);
+
+  const handleWishlistToggle = () => {
+    if (!product) return;
+    setWishlistAnim(true);
+    toggleWishlist(product);
+    setTimeout(() => setWishlistAnim(false), 300);
+  };
 
   // Interactive Image Zoom State
   const [isZoomed, setIsZoomed] = useState(false);
@@ -374,11 +382,38 @@ export const ProductDetailPage: React.FC = () => {
               </button>
 
               <button
-                onClick={() => toggleWishlist(product)}
-                className="btn btn-outline btn-lg btn-icon"
-                title="Save to Wishlist"
+                type="button"
+                onClick={handleWishlistToggle}
+                className="btn btn-lg"
+                title={inWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                aria-label={inWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  backgroundColor: inWishlist ? '#fef2f2' : 'white',
+                  border: inWishlist ? '1px solid #fca5a5' : '1px solid var(--border-color)',
+                  color: inWishlist ? '#ef4444' : 'var(--text-main)',
+                  padding: '0.875rem 1.5rem',
+                  borderRadius: 'var(--radius-md)',
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer',
+                  transform: wishlistAnim ? 'scale(0.95)' : 'scale(1)',
+                }}
               >
-                <Heart size={22} fill={inWishlist ? '#ef4444' : 'none'} color={inWishlist ? '#ef4444' : 'inherit'} />
+                <Heart
+                  size={20}
+                  fill={inWishlist ? '#ef4444' : 'none'}
+                  color={inWishlist ? '#ef4444' : 'currentColor'}
+                  style={{
+                    transition: 'transform 0.2s ease',
+                    transform: inWishlist ? 'scale(1.1)' : 'scale(1)',
+                  }}
+                />
+                <span style={{ fontSize: '0.9375rem', fontWeight: 600 }}>
+                  {inWishlist ? 'Saved' : 'Wishlist'}
+                </span>
               </button>
             </div>
           </div>

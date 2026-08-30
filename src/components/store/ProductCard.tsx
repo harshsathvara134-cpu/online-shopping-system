@@ -76,10 +76,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
           type="button"
           onClick={handleWishlistToggle}
           title={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          aria-label={inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
           style={{
-            background: 'rgba(255, 255, 255, 0.95)',
+            background: inWishlist ? '#fef2f2' : 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(4px)',
-            border: '1px solid var(--border-color)',
+            border: inWishlist ? '1px solid #fca5a5' : '1px solid var(--border-color)',
             borderRadius: '50%',
             width: '34px',
             height: '34px',
@@ -89,10 +90,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }
             cursor: 'pointer',
             boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
             color: inWishlist ? '#ef4444' : 'var(--text-muted)',
-            transition: 'transform 0.2s, color 0.2s',
+            transition: 'transform 0.2s, color 0.2s, background-color 0.2s, border-color 0.2s',
           }}
         >
-          <Heart size={16} fill={inWishlist ? '#ef4444' : 'none'} />
+          <Heart size={16} fill={inWishlist ? '#ef4444' : 'none'} color={inWishlist ? '#ef4444' : 'currentColor'} />
         </button>
 
         {onQuickView && (
